@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⛩️ Sousuke — A Ficha</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inconsolata:wght@300;400;700&family=Noto+Serif+JP:wght@300;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:     #020303;
+  --deep:     #050807;
+  --surface:  #0a0d0b;
+  --slab:     #0e1210;
+  --seam:     #172018;
+  --grit:     #223020;
+
+  --bile:     #3a6e2a;
+  --bile-mid: #245018;
+  --bile-lit: #6aaa48;
+  --pus:      #a8c460;
+  --necrosis: #7a5a18;
+  --nec-lit:  #c09030;
+  --blood:    #8b1a1a;
+  --blood-lit:#d04040;
+  --char:     #ccc8b8;
+  --char-dim: #7a7660;
+  --ash:      #6f8675;
+  --dust:     #302820;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--char);font-family:'Libre Baskerville',serif;overflow-x:hidden}
+
+body::before{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.018) 3px,rgba(0,0,0,.018) 4px)}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 20%,rgba(18,42,12,.55) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 70% at 5% 90%,rgba(28,48,8,.3) 0%,transparent 60%),
+    radial-gradient(ellipse 35% 40% at 95% 60%,rgba(12,28,6,.25) 0%,transparent 55%)}
+
+/* COVER */
+.cover{min-height:100vh;position:relative;z-index:2;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;overflow:hidden;padding:80px 20px}
+
+.drips{position:absolute;top:0;left:0;right:0;height:180px;pointer-events:none;overflow:hidden}
+.drip{position:absolute;top:0;width:1px;border-radius:0 0 1px 1px;
+  background:linear-gradient(180deg,var(--bile) 0%,var(--bile-mid) 60%,transparent 100%);
+  animation:drip var(--d,6s) ease-in infinite var(--dl,0s)}
+@keyframes drip{0%{height:0;opacity:.9;top:0}60%{height:var(--h,110px);opacity:.8}90%{height:var(--h,110px);opacity:.6}100%{height:0;opacity:0;top:160px}}
+
+.spores{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.spore{position:absolute;width:var(--sz,2px);height:var(--sz,2px);background:var(--bile-lit);border-radius:50%;opacity:0;
+  animation:sdrift var(--d,10s) ease-in-out infinite var(--dl,0s)}
+@keyframes sdrift{0%{opacity:0;transform:translate(0,0)}15%{opacity:var(--op,.3)}85%{opacity:var(--op,.3)}100%{opacity:0;transform:translate(var(--vx,20px),var(--vy,-150px))}}
+
+.ckanji{font-family:'Noto Serif JP',serif;font-size:clamp(160px,25vw,310px);color:var(--bile-mid);
+  opacity:.06;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);user-select:none;pointer-events:none;
+  animation:kp 10s ease-in-out infinite}
+@keyframes kp{0%,100%{opacity:.045;transform:translate(-50%,-50%) scale(1)}50%{opacity:.09;transform:translate(-50%,-50%) scale(1.02)}}
+
+.cid{font-family:'Inconsolata',monospace;font-size:.58rem;letter-spacing:.5em;color:var(--ash);text-transform:uppercase;margin-bottom:26px;position:relative;z-index:1}
+.cname{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,20vw,12rem);letter-spacing:.18em;color:var(--char);line-height:1;position:relative;z-index:1;
+  text-shadow:0 0 110px rgba(58,110,42,.5),0 2px 0 rgba(0,0,0,.95);animation:nb 11s ease-in-out infinite}
+@keyframes nb{0%,100%{text-shadow:0 0 100px rgba(58,110,42,.35),0 2px 0 rgba(0,0,0,.95)}50%{text-shadow:0 0 170px rgba(58,110,42,.65),0 2px 0 rgba(0,0,0,.95)}}
+.csub{font-family:'Inconsolata',monospace;font-size:.6rem;letter-spacing:.5em;color:var(--ash);text-transform:uppercase;margin-top:10px;position:relative;z-index:1}
+.crule{width:280px;height:1px;background:linear-gradient(90deg,transparent,var(--bile-mid),var(--necrosis),transparent);margin:32px auto;position:relative;z-index:1}
+.cepitaph{font-style:italic;font-size:clamp(.88rem,2vw,1.05rem);color:var(--char-dim);text-align:center;max-width:480px;line-height:2.4;position:relative;z-index:1}
+.cscroll{position:absolute;bottom:34px;font-family:'Inconsolata',monospace;font-size:.58rem;letter-spacing:.4em;color:var(--ash);text-transform:uppercase;animation:bob 2.5s ease-in-out infinite;z-index:2}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+
+/* PAGE */
+.page{max-width:900px;margin:0 auto;padding:0 24px 120px;position:relative;z-index:2}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;gap:14px;margin:64px 0 24px}
+.sl{flex:1;height:1px;background:linear-gradient(90deg,var(--seam),transparent)}
+.sl.r{background:linear-gradient(270deg,var(--seam),transparent)}
+.st{font-family:'Inconsolata',monospace;font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--bile-lit);white-space:nowrap}
+.st.n{color:var(--nec-lit)}
+.st.d{color:var(--ash)}
+
+/* GRIDS */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--seam);border:1px solid var(--seam);margin-bottom:28px}
+.sc{background:var(--slab);padding:16px 20px;transition:background .2s}
+.sc:hover{background:var(--surface)}
+.sl2{font-family:'Inconsolata',monospace;font-size:.52rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ash);margin-bottom:5px}
+.sv{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--char);line-height:1.1}
+.sv.g{color:var(--bile-lit)}.sv.p{color:var(--pus)}.sv.n{color:var(--nec-lit)}.sv.sm{font-size:.85rem;font-family:'Inconsolata',monospace}
+
+.arow{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--seam);border:1px solid var(--seam);margin-bottom:28px}
+.ac{background:var(--slab);padding:20px 8px;text-align:center}
+.an{font-family:'Inconsolata',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:6px}
+.av{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--char);line-height:1}
+.av.peak{color:var(--bile-lit);text-shadow:0 0 20px rgba(58,110,42,.5)}
+.av.zero{color:var(--grit)}
+.anote{font-family:'Inconsolata',monospace;font-size:.52rem;color:var(--ash);margin-top:4px}
+
+/* BODY TEXT */
+.b{font-size:.92rem;line-height:2.05;color:var(--char-dim);margin-bottom:16px}
+.b strong{color:var(--char)}.b em{color:var(--bile-lit);font-style:italic}
+.note{font-family:'Inconsolata',monospace;font-size:.7rem;color:var(--ash)}
+
+/* PERICIAS */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--seam);border:1px solid var(--seam);margin-bottom:28px}
+.ps{background:var(--slab);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.ps:hover{background:var(--surface)}
+.psn{font-size:.82rem;color:var(--char-dim)}
+.psv{font-family:'Inconsolata',monospace;font-size:.72rem;color:var(--bile-lit)}
+.psv.b2{color:var(--grit)}
+
+/* ORIGEM */
+.origem{border:1px solid rgba(192,144,48,.35);background:linear-gradient(135deg,#080600,var(--slab));overflow:hidden;margin-bottom:28px;position:relative}
+.origem::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(122,90,24,.1) 0%,transparent 60%);pointer-events:none}
+.origem-head{padding:20px 26px 16px;border-bottom:1px solid rgba(192,144,48,.15)}
+.origem-jp{font-family:'Noto Serif JP',serif;font-size:.66rem;color:rgba(192,144,48,.4);margin-bottom:5px}
+.origem-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;color:var(--nec-lit);text-shadow:0 0 30px rgba(122,90,24,.4)}
+.origem-sub{font-family:'Inconsolata',monospace;font-size:.58rem;letter-spacing:.3em;color:var(--ash);margin-top:4px;text-transform:uppercase}
+.origem-body{padding:20px 26px}
+.bonus-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--seam);border:1px solid var(--seam);margin-top:16px}
+.bc{background:var(--deep);padding:14px 18px}
+.bc-l{font-family:'Inconsolata',monospace;font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:6px}
+.bc-v{font-size:.88rem;color:var(--nec-lit);line-height:1.75}
+
+/* ROT SYSTEM */
+.rot-sys{border:1px solid rgba(58,110,42,.45);background:linear-gradient(135deg,#030604,var(--slab));overflow:hidden;margin-bottom:28px;position:relative}
+.rot-sys::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 60%,rgba(58,110,42,.09) 0%,transparent 55%);pointer-events:none}
+.rsh{padding:22px 28px 18px;border-bottom:1px solid rgba(58,110,42,.2)}
+.rsjp{font-family:'Noto Serif JP',serif;font-size:.66rem;color:rgba(106,170,72,.38);margin-bottom:6px}
+.rst{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.1em;color:var(--bile-lit);text-shadow:0 0 30px rgba(58,110,42,.4)}
+.rss{font-family:'Inconsolata',monospace;font-size:.58rem;letter-spacing:.3em;color:var(--ash);margin-top:5px;text-transform:uppercase}
+.rsb{padding:22px 28px}
+
+/* LAYER NAVIGATOR */
+.lnav{display:flex;gap:0;border:1px solid var(--seam);overflow:hidden;margin:16px 0 0}
+.ln{flex:1;padding:10px 3px;text-align:center;border-right:1px solid var(--seam);cursor:pointer;transition:background .15s;position:relative;background:var(--deep)}
+.ln:last-child{border-right:none}
+.ln .lnum{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--grit);transition:color .2s;line-height:1}
+.ln::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;transform:scaleX(0);transition:transform .2s;transform-origin:center}
+/* phase colors on active */
+.ln.ph1 .lnum{color:var(--bile-lit)}.ln.ph1::after{transform:scaleX(1);background:var(--bile-lit)}
+.ln.ph2 .lnum{color:var(--pus)}.ln.ph2::after{transform:scaleX(1);background:var(--pus)}
+.ln.ph3 .lnum{color:var(--nec-lit)}.ln.ph3::after{transform:scaleX(1);background:var(--nec-lit)}
+.ln.ph4 .lnum{color:var(--blood-lit);text-shadow:0 0 8px rgba(200,50,50,.5)}.ln.ph4::after{transform:scaleX(1);background:var(--blood-lit)}
+
+.lpanel{background:rgba(0,0,0,.5);border:1px solid var(--seam);border-top:none;padding:16px 20px;
+  font-family:'Inconsolata',monospace;font-size:.68rem;line-height:1.9;display:none}
+.lpanel.show{display:block}
+.lpanel.c1{border-left:2px solid var(--bile-lit);color:var(--bile-lit)}
+.lpanel.c2{border-left:2px solid var(--pus);color:var(--pus)}
+.lpanel.c3{border-left:2px solid var(--nec-lit);color:var(--nec-lit)}
+.lpanel.c4{border-left:2px solid var(--blood-lit);color:#e07070}
+.ltitle{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--char);letter-spacing:.05em;display:block;margin-bottom:6px}
+.lphase{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;display:block;margin-bottom:10px;opacity:.7}
+
+/* GATILHOS TABLE */
+.gtable{width:100%;border-collapse:collapse;margin-top:16px}
+.gtable th{font-family:'Inconsolata',monospace;font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);padding:7px 10px;text-align:left;border-bottom:1px solid rgba(58,110,42,.12)}
+.gtable td{font-size:.83rem;color:var(--char-dim);padding:8px 10px;border-bottom:1px solid rgba(58,110,42,.06);vertical-align:top;line-height:1.7}
+.gtable td:first-child{font-family:'Inconsolata',monospace;font-size:.7rem;color:var(--bile-lit);white-space:nowrap;width:110px}
+.gtable tr:last-child td{border-bottom:none}
+.gtable tr:hover td{background:rgba(58,110,42,.04)}
+
+/* TÉCNICAS */
+.tech{border:1px solid var(--seam);background:var(--deep);margin-bottom:12px;overflow:hidden;transition:border-color .3s}
+.tech:hover{border-color:var(--grit)}
+.tech.core{border-color:rgba(58,110,42,.25)}.tech.core:hover{border-color:rgba(58,110,42,.5)}
+.tech.shiki{border-color:rgba(122,90,24,.3)}.tech.shiki:hover{border-color:rgba(192,144,48,.5)}
+.tech.dom{border-color:rgba(58,110,42,.45)}
+.th{padding:15px 22px;border-bottom:1px solid var(--seam);display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;cursor:pointer;user-select:none}
+.th:hover{background:rgba(58,110,42,.025)}
+.tjp{font-family:'Noto Serif JP',serif;font-size:.68rem;color:var(--ash);margin-bottom:3px}
+.tn{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.04em;color:var(--char)}
+.tc{font-family:'Inconsolata',monospace;font-size:.6rem;color:var(--bile-mid);text-align:right;white-space:nowrap}
+.tc.g{color:var(--bile-lit)}.tc.n{color:var(--nec-lit)}.tc.r{color:var(--blood-lit)}
+.hint{font-family:'Inconsolata',monospace;font-size:.5rem;color:var(--ash)}
+.tbody{padding:20px 22px;display:none}
+.tbody.open{display:block}
+.mech{background:rgba(0,0,0,.55);border-left:2px solid var(--bile-mid);padding:13px 15px;margin-top:13px;
+  font-family:'Inconsolata',monospace;font-size:.80rem;color:var(--bile-lit);line-height:1.9}
+.mech.n{border-left-color:var(--necrosis);color:var(--nec-lit)}
+.mech.r{border-left-color:var(--blood);color:#d06060}
+.rotbox{background:rgba(58,110,42,.05);border:1px solid rgba(58,110,42,.15);padding:11px 14px;margin-top:12px;
+  font-family:'Inconsolata',monospace;font-size:.9rem;color:rgba(106,170,72,.75);line-height:1.85}
+.rotbox::before{content:'↳ FUSHOKU — ';color:rgba(58,110,42,.45)}
+.tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px}
+.tag{padding:2px 9px;border:1px solid var(--seam);font-family:'Inconsolata',monospace;font-size:.57rem;letter-spacing:.07em;color:var(--ash)}
+.tag.g{border-color:var(--bile-mid);color:var(--bile-lit)}
+.tag.p{border-color:rgba(58,110,42,.3);color:var(--pus)}
+.tag.n{border-color:rgba(122,90,24,.4);color:var(--nec-lit)}
+.tag.r{border-color:rgba(139,26,26,.4);color:var(--blood-lit)}
+.tag.w{border-color:rgba(180,60,60,.3);color:rgba(210,90,90,.75)}
+
+/* SHIKIGAMI */
+.shikicard{border:1px solid rgba(122,90,24,.35);background:linear-gradient(135deg,#060403,var(--slab));padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
+.shikicard::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(122,90,24,.07) 0%,transparent 60%);pointer-events:none}
+.sname{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.07em;color:var(--nec-lit);margin-bottom:3px}
+.sjp{font-family:'Noto Serif JP',serif;font-size:.65rem;color:rgba(122,90,24,.45);margin-bottom:14px}
+.sstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--seam);border:1px solid var(--seam);margin:12px 0}
+.ss{background:var(--deep);padding:10px 14px}
+.ssl{font-family:'Inconsolata',monospace;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:4px}
+.ssv{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--nec-lit)}
+
+/* DOMAIN */
+.domain{border:1px solid rgba(58,110,42,.45);background:linear-gradient(135deg,#030604,var(--deep));padding:32px;position:relative;overflow:hidden}
+.domain::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 40% 40%,rgba(58,110,42,.1) 0%,transparent 65%);pointer-events:none}
+.domain::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(58,110,42,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(58,110,42,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.dname{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.1em;color:var(--bile-lit);line-height:1;margin-bottom:4px;text-shadow:0 0 50px rgba(58,110,42,.5);position:relative;z-index:1}
+.djp{font-family:'Noto Serif JP',serif;font-size:.7rem;color:var(--bile-mid);margin-bottom:22px;position:relative;z-index:1}
+.domain .b,.domain .mech{position:relative;z-index:1}
+
+/* BLOCKS */
+.oblock{border:1px solid var(--seam);background:var(--deep);padding:26px;position:relative;overflow:hidden;margin-bottom:14px}
+.oblock::before{content:'腐';position:absolute;right:-10px;bottom:-20px;font-family:'Noto Serif JP',serif;font-size:100px;color:var(--char);opacity:.015;user-select:none;pointer-events:none}
+
+/* QUOTE */
+.quote{border-left:2px solid var(--bile-mid);padding:14px 20px;margin:20px 0;background:rgba(58,110,42,.02)}
+.quote.n{border-left-color:var(--necrosis);background:rgba(122,90,24,.025)}
+.quote p{font-style:italic;font-size:.92rem;color:var(--ash);line-height:2.2}
+.quote cite{display:block;margin-top:8px;font-family:'Inconsolata',monospace;font-size:.58rem;letter-spacing:.2em;color:var(--grit);text-transform:uppercase}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .6s,transform .6s}
+.reveal.visible{opacity:1;transform:none}
+
+.footnote{margin-top:64px;padding-top:24px;border-top:1px solid var(--seam);font-style:italic;font-size:.78rem;color:var(--ash);text-align:center;line-height:2.4}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--void)}
+::-webkit-scrollbar-thumb{background:var(--seam);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="drips">
+    <div class="drip" style="left:6%;  --h:130px;--d:5.8s;--dl:0s"></div>
+    <div class="drip" style="left:15%; --h:80px; --d:7.5s;--dl:1.2s"></div>
+    <div class="drip" style="left:26%; --h:150px;--d:5.2s;--dl:.4s"></div>
+    <div class="drip" style="left:38%; --h:95px; --d:8.1s;--dl:2s"></div>
+    <div class="drip" style="left:50%; --h:120px;--d:6.3s;--dl:.8s"></div>
+    <div class="drip" style="left:61%; --h:70px; --d:9.2s;--dl:1.6s"></div>
+    <div class="drip" style="left:72%; --h:140px;--d:4.9s;--dl:.2s"></div>
+    <div class="drip" style="left:83%; --h:85px; --d:7s;  --dl:2.7s"></div>
+    <div class="drip" style="left:92%; --h:105px;--d:6s;  --dl:.1s"></div>
+  </div>
+  <div class="spores">
+    <div class="spore" style="left:10%;top:80%;--sz:2px;--d:12s;--dl:0s;  --op:.35;--vy:-200px;--vx:25px"></div>
+    <div class="spore" style="left:25%;top:75%;--sz:1px;--d:9s; --dl:1.4s;--op:.25;--vy:-170px;--vx:-18px"></div>
+    <div class="spore" style="left:42%;top:85%;--sz:2px;--d:14s;--dl:.6s; --op:.3; --vy:-220px;--vx:40px"></div>
+    <div class="spore" style="left:57%;top:70%;--sz:1px;--d:8s; --dl:2.3s;--op:.2; --vy:-150px;--vx:-30px"></div>
+    <div class="spore" style="left:70%;top:88%;--sz:2px;--d:11s;--dl:.4s; --op:.4; --vy:-190px;--vx:15px"></div>
+    <div class="spore" style="left:84%;top:65%;--sz:1px;--d:10s;--dl:3.1s;--op:.3; --vy:-130px;--vx:-22px"></div>
+    <div class="spore" style="left:33%;top:60%;--sz:1px;--d:16s;--dl:1s;  --op:.2; --vy:-110px;--vx:50px"></div>
+    <div class="spore" style="left:48%;top:90%;--sz:2px;--d:7s; --dl:.7s; --op:.45;--vy:-250px;--vx:-8px"></div>
+  </div>
+  <div class="ckanji">腐</div>
+  <div class="cid">⛩ GOLDEN ERA · FICHA Nº005 · FEITICEIRO · NV.1</div>
+  <div class="cname">Sousuke</div>
+  <div class="csub">生物兵器 · A Arma Que Sobrou</div>
+  <div class="crule"></div>
+  <div class="cepitaph">
+    "Não é veneno. Veneno mata rápido.<br>
+    Isso é outra coisa.<br>
+    Isso é o tempo com pressa<br>
+    e um endereço específico."
+  </div>
+  <div class="cscroll">▼ &nbsp; role para ver &nbsp; ▼</div>
+</div>
+
+<div class="page">
+
+<!-- IDENTIDADE -->
+<div class="sh reveal"><div class="sl"></div><div class="st">Identidade</div><div class="sl r"></div></div>
+<div class="sgrid reveal">
+  <div class="sc"><div class="sl2">Nome</div><div class="sv">Sousuke</div></div>
+  <div class="sc"><div class="sl2">Codinome</div><div class="sv g">A Arma</div></div>
+  <div class="sc"><div class="sl2">Idade</div><div class="sv">Desconhecida</div></div>
+  <div class="sc"><div class="sl2">Clã / Família</div><div class="sv sm" style="color:var(--ash)">Sem Afiliação</div></div>
+  <div class="sc"><div class="sl2">Colégio</div><div class="sv">Kyoto</div></div>
+  <div class="sc"><div class="sl2">Grau Inicial</div><div class="sv g">Grau 4</div></div>
+  <div class="sc"><div class="sl2">Classe</div><div class="sv">Feiticeiro</div></div>
+  <div class="sc"><div class="sl2">Nível</div><div class="sv">1</div></div>
+</div>
+
+<div class="b reveal"><strong>Descrição física:</strong> Altura mediana. Construção que parece calibrada — não como quem não come, como quem foi projetado sem excesso. A pele tem uma tonalidade esverdeada muito sutil, perceptível só em boa iluminação, como cobre em processo de oxidação. Cabelo escuro, sempre ligeiramente úmido sem razão aparente. Os olhos são íris verde-musgo sobre esclerótica amarelada — não doentia, mais como pergaminho velho guardado em lugar úmido. Não usa expressão de repouso no rosto. Não é ausência de sentimento — é ausência de necessidade de comunicar qualquer coisa para alguém.</div>
+
+<div class="b reveal"><strong>Personalidade:</strong> O Doutor não trata. Ele experimenta. Sousuke tem a mesma relação com os alvos que um patologista tem com tecido em lâmina: interesse técnico, zero investimento emocional no resultado. Não gosta de matar. Não evita matar. Matar é o que acontece quando o processo segue curso natural sem intervenção — e ele raramente intervém.<br><br>
+A vibe não é hostilidade. É metodologia. Quando Sousuke olha para alguém com Camada 6 instalada, está observando dados. Quando decide acionar Detonação em vez de controle, é uma escolha de eficiência, não crueldade. A crueldade implica apreciação do sofrimento. Sousuke não aprecia — ele <em>nota</em>.</div>
+
+<div class="quote n reveal">
+  <p>"O problema não é que ele é perigoso. É que ele parece genuinamente curioso sobre o que vai acontecer. Como alguém que planta uma semente e fica à espera pra ver qual formato a planta assume."</p>
+  <cite>— avaliação psicológica de admissão, inconclusiva</cite>
+</div>
+
+<!-- COMBATE -->
+<div class="sh reveal"><div class="sl"></div><div class="st">Combate · Nível 1</div><div class="sl r"></div></div>
+<div class="sgrid reveal">
+  <div class="sc"><div class="sl2">Vida</div><div class="sv g">15 / 15</div></div>
+  <div class="sc"><div class="sl2">Dado de Vida</div><div class="sv sm">1d6</div></div>
+  <div class="sc"><div class="sl2">Defesa</div><div class="sv">13</div></div>
+  <div class="sc"><div class="sl2">EA Inicial</div><div class="sv g">20 / 20</div></div>
+  <div class="sc"><div class="sl2">EA Máxima</div><div class="sv p">300</div></div>
+  <div class="sc"><div class="sl2">Dano Base</div><div class="sv sm g">8d6 + 2d4 + 5</div></div>
+  <div class="sc"><div class="sl2">Percepção Passiva</div><div class="sv">13</div></div>
+  <div class="sc"><div class="sl2">Custo Base / Técnica</div><div class="sv sm g">0–2 EA</div></div>
+</div>
+<div class="b reveal"><span class="note">// DANO BASE —</span> Técnica Iluminada (6d6) + Maestria Iluminada (+2d6) = 8d6. Uniforme (+2d4). Proficiência Feiticeiro (+5). Total: <strong>8d6 + 2d4 + 5</strong>. Maestria Iluminada: +1d20 nos testes, modificação em tempo real. A Origem reduz o custo base de EA de <em>todas</em> as técnicas em –3 — valores já aplicados nos custos da ficha. DT resistência = Mod Sousuke + 9.</div>
+
+<!-- ATRIBUTOS -->
+<div class="sh reveal"><div class="sl"></div><div class="st">Atributos</div><div class="sl r"></div></div>
+<div class="arow reveal">
+  <div class="ac"><div class="an">Força</div><div class="av zero">1</div><div class="anote">Base</div></div>
+  <div class="ac"><div class="an">Agilidade</div><div class="av peak">3</div><div class="anote">+Def/Esq</div></div>
+  <div class="ac"><div class="an">Constituição</div><div class="av zero">1</div><div class="anote">Base</div></div>
+  <div class="ac" style="background:rgba(58,110,42,.04)"><div class="an">Inteligência</div><div class="av peak">4</div><div class="anote" style="color:var(--bile-lit)">+1 livre</div></div>
+  <div class="ac"><div class="an">Presença</div><div class="av zero">1</div><div class="anote">Ausente</div></div>
+</div>
+
+<!-- ORIGEM HOMEBREW -->
+<div class="sh reveal"><div class="sl"></div><div class="st n">Origem</div><div class="sl r"></div></div>
+<div class="origem reveal">
+  <div class="origem-head">
+    <div class="origem-jp">生物兵器計画 — Seibutsu Heiki Keikaku</div>
+    <div class="origem-title">Projeto Arma Biológica</div>
+    <div class="origem-sub">Origem Classificada · Produto Sem Criador Registrado · A Arma Que Sobrou</div>
+  </div>
+  <div class="origem-body">
+    <div class="b">Alguém queria uma arma que não precisasse de instrução de uso. Que funcionasse por contato. Que se propagasse. Que deixasse os alvos operacionais tempo suficiente para serem redirecionados antes de dissolver. O projeto foi bem-sucedido no que importava e catastrófico no que não foi previsto: o produto final não esperou ser ativado. Não tem botão de desligar. Não tem modo seguro.<br><br>
+    A Fushoku não é uma técnica que Sousuke aprendeu — é o que o metabolismo dele produz. Cada célula do corpo foi modificada para secretar EA deteriorada como função primária. Ele não usa a técnica. Ele simplesmente existe, e tudo que toca começa a apodrecer na velocidade que a Fushoku decide ser apropriada.</div>
+    <div class="b"><strong>Gancho narrativo:</strong> o criador ou a organização ainda existe. Não perderam Sousuke por acidente — algo interrompeu o projeto antes da conclusão. Há algo que eles queriam instalar que ainda não está lá. O Colégio de Kyoto recebeu um arquivo com metade das páginas em branco.</div>
+    <div class="bonus-grid">
+      <div class="bc"><div class="bc-l">Bônus I — Custo de EA</div><div class="bc-v">Todas as técnicas de Sousuke custam –3 EA (mínimo 1). Já aplicado em todos os valores da ficha. Não é treinamento — é eficiência metabólica.</div></div>
+      <div class="bc"><div class="bc-l">Bônus II — Imunidade Total</div><div class="bc-v">Imune a qualquer forma de veneno, deterioração, podridão ou envenenamento (mágico ou físico). O sistema já está saturado. Não há espaço para mais.</div></div>
+      <div class="bc"><div class="bc-l">Passiva — Contato Passivo</div><div class="bc-v">Qualquer alvo hostil que iniciar o turno em contato físico direto com Sousuke recebe +1 Camada automaticamente. Sem custo. Sem ação de Sousuke.</div></div>
+      <div class="bc"><div class="bc-l">Passiva — Deterioração Ambiental</div><div class="bc-v">Superfícies orgânicas em contato prolongado com Sousuke se deterioram lentamente. Fora de combate: estético. Em combate: a primeira Camada começa antes de qualquer ação declarada em quem encostar.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PERÍCIAS -->
+<div class="sh reveal"><div class="sl"></div><div class="st">Perícias</div><div class="sl r"></div></div>
+<div class="b reveal">Feiticeiro nível 1: <strong>Feitiçaria</strong> e <strong>Iniciativa</strong> automáticas. 7 + Int(4) = <strong>11 adicionais</strong>. Total 13, bônus +5.</div>
+<div class="pgrid reveal">
+  <div class="ps"><span class="psn">⚡ Feitiçaria</span><span class="psv">+5 (auto)</span></div>
+  <div class="ps"><span class="psn">⚡ Iniciativa</span><span class="psv">+5 (auto)</span></div>
+  <div class="ps"><span class="psn">Esquiva</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Medicina</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Ocultismo</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Sobrevivência</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Investigação</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Aprendizado</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Fortitude</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Disciplina</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Rastreamento</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Furtividade</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Intuição</span><span class="psv">+5</span></div>
+  <div class="ps"><span class="psn">Luta</span><span class="psv b2">— sem bônus</span></div>
+  <div class="ps"><span class="psn">Persuasão</span><span class="psv b2">— sem bônus</span></div>
+</div>
+
+<!-- SISTEMA DE PODRIDÃO -->
+<div class="sh reveal"><div class="sl"></div><div class="st">Passiva Especial · Sistema de Podridão</div><div class="sl r"></div></div>
+<div class="rot-sys reveal">
+  <div class="rsh">
+    <div class="rsjp">腐食層位 · 10 Camadas · 4 Fases · Controle e Detonação</div>
+    <div class="rst">FUSHOKU — Estratigrafia da Deterioração</div>
+    <div class="rss">Permanente por Alvo · Não Regride · Dano por Turno · Domina Mente · Detona</div>
+  </div>
+  <div class="rsb">
+    <div class="b">A deterioração não é um efeito que Sousuke aplica. É o que acontece quando EA corrompida toca alguma coisa com Camadas suficientes instaladas. Cada hit instala uma Camada. Camadas não regridem, não são removidas por cura, não são bloqueadas por técnicas defensivas comuns.<br><br>
+    O dano passivo de Podridão ocorre <strong>a cada turno de qualquer combatente</strong> — não só no turno do alvo, não só no turno de Sousuke. O relógio corre no ritmo do combate inteiro. Cada ação que alguém declara, o alvo infectado sangra mais. Em combate caótico com muitos turnos por round, isso é devastador.<br><br>
+    Além do dano contínuo, <strong>no turno de Sousuke</strong>, cada alvo infectado sofre um pulso de deterioração adicional maior — a Fushoku responde à presença do originador, aprofundando o processo na frequência dele.</div>
+
+    <div style="font-family:'Inconsolata',monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(58,110,42,.4);text-transform:uppercase;margin:14px 0 8px">Clique em uma camada para ver os efeitos — fases acumulam</div>
+
+    <div class="lnav">
+      <div class="ln" id="ln1"  onclick="SL(1)"><div class="lnum">1</div></div>
+      <div class="ln" id="ln2"  onclick="SL(2)"><div class="lnum">2</div></div>
+      <div class="ln" id="ln3"  onclick="SL(3)"><div class="lnum">3</div></div>
+      <div class="ln" id="ln4"  onclick="SL(4)"><div class="lnum">4</div></div>
+      <div class="ln" id="ln5"  onclick="SL(5)"><div class="lnum">5</div></div>
+      <div class="ln" id="ln6"  onclick="SL(6)"><div class="lnum">6</div></div>
+      <div class="ln" id="ln7"  onclick="SL(7)"><div class="lnum">7</div></div>
+      <div class="ln" id="ln8"  onclick="SL(8)"><div class="lnum">8</div></div>
+      <div class="ln" id="ln9"  onclick="SL(9)"><div class="lnum">9</div></div>
+      <div class="ln" id="ln10" onclick="SL(10)"><div class="lnum">10</div></div>
+    </div>
+
+    <div class="lpanel c1" id="lp1">
+      <span class="ltitle">CAMADA 1 — Inoculação</span>
+      <span class="lphase" style="color:var(--bile-lit)">FASE I: Contágio · Camadas 1–3 · O Corpo Começa a Ceder</span>
+      A EA deteriorada encontrou entrada. Micro-fissuras invisíveis a olho nu. Sensação de ardência localizada.<br><br>
+      <strong>Dano por turno (todo turno):</strong> 1d4<br>
+      <strong>Pulso no turno de Sousuke:</strong> +1d6 adicional<br>
+      <strong>EA drenada por turno:</strong> –1 EA<br>
+      Nenhum debuff mecânico além do dano — o alvo ainda não percebe a gravidade.
+    </div>
+    <div class="lpanel c1" id="lp2">
+      <span class="ltitle">CAMADA 2 — Infiltração</span>
+      <span class="lphase" style="color:var(--bile-lit)">FASE I: Contágio · Camadas 1–3 · O Corpo Começa a Ceder</span>
+      A Podridão penetrou abaixo da superfície. Vasos capilares escurecem visivelmente. Defesas superficiais começam a falhar.<br><br>
+      <strong>Dano por turno:</strong> 1d6<br>
+      <strong>Pulso no turno de Sousuke:</strong> +1d8 adicional<br>
+      <strong>EA drenada por turno:</strong> –2 EA<br>
+      Cura recebida pelo alvo –20% eficácia. Redução de dano –2.
+    </div>
+    <div class="lpanel c1" id="lp3">
+      <span class="ltitle">CAMADA 3 — Necrose Inicial</span>
+      <span class="lphase" style="color:var(--bile-lit)">FASE I: Contágio · Camadas 1–3 · O Corpo Começa a Ceder</span>
+      Tecido começa a escurecer e perder coesão no ponto de entrada. Cheiro faint de decomposição. O alvo percebe que algo está muito errado.<br><br>
+      <strong>Dano por turno:</strong> 1d8<br>
+      <strong>Pulso no turno de Sousuke:</strong> +2d6 adicional<br>
+      <strong>EA drenada por turno:</strong> –3 EA<br>
+      –1 em todos os testes físicos. Redução de dano –4. Cura –30%.
+    </div>
+    <div class="lpanel c2" id="lp4">
+      <span class="ltitle">CAMADA 4 — Degradação Sistêmica</span>
+      <span class="lphase" style="color:var(--pus)">FASE II: Corrupção · Camadas 4–6 · Os Sistemas Falham</span>
+      A deterioração atingiu sistemas internos. Músculos contraem irregularmente. Técnicas inatas apresentam interferência — como tentar falar com ruído na linha.<br><br>
+      <strong>Dano por turno:</strong> 1d10<br>
+      <strong>Pulso no turno de Sousuke:</strong> +2d8 adicional<br>
+      <strong>EA drenada por turno:</strong> –4 EA. Técnicas do alvo custam +2 EA.<br>
+      –1 em todos os testes. Redução de dano –6. Cura –40%.
+    </div>
+    <div class="lpanel c2" id="lp5">
+      <span class="ltitle">CAMADA 5 — Colapso Orgânico</span>
+      <span class="lphase" style="color:var(--pus)">FASE II: Corrupção · Camadas 4–6 · Os Sistemas Falham</span>
+      Tecido necrótico visível a olho nu — partes do corpo escurecidas e de textura errada. Cheiro forte de decomposição. Movimentos começam a travar. A mente intacta torna a situação mais precisa, não menos.<br><br>
+      <strong>Dano por turno:</strong> 2d6<br>
+      <strong>Pulso no turno de Sousuke:</strong> +3d6 adicional<br>
+      <strong>EA drenada por turno:</strong> –5 EA. Técnicas custam +3 EA.<br>
+      –2 em todos os testes. Redução de dano –8. Cura –50%. Resistências físicas comuns tornam-se ineficazes.
+    </div>
+    <div class="lpanel c2" id="lp6">
+      <span class="ltitle">CAMADA 6 — Fragmentação Neural</span>
+      <span class="lphase" style="color:var(--pus)">FASE II: Corrupção · Camadas 4–6 · Os Sistemas Falham</span>
+      A deterioração chegou ao sistema nervoso. O alvo começa a ver o próprio corpo apodrecendo em tempo acelerado — não alucinação abstrata, a Fushoku literalmente mostrando a ele o que está acontecendo em escala molecular. Gótico e preciso.<br><br>
+      <strong>Dano por turno:</strong> 2d8<br>
+      <strong>Pulso no turno de Sousuke:</strong> +3d8 adicional<br>
+      <strong>EA drenada por turno:</strong> –6 EA. Técnicas custam +4 EA.<br>
+      –2 em todos os testes. Teste de Disciplina DT 14 por turno ou perde a ação de movimento (alucinação paralisa). Cura –60%.
+    </div>
+    <div class="lpanel c3" id="lp7">
+      <span class="ltitle">CAMADA 7 — Infestação da Mente</span>
+      <span class="lphase" style="color:var(--nec-lit)">FASE III: Sujeição · Camadas 7–9 · A Mente Não É Mais Só Dele</span>
+      A EA de Sousuke está dentro do sistema nervoso. Pensamentos alheios aparecem no meio dos próprios — não como voz, como impulso. O alvo ainda pensa, ainda luta. Mas algo sussurra de dentro.<br><br>
+      <strong>Dano por turno:</strong> 2d10<br>
+      <strong>Pulso no turno de Sousuke:</strong> +4d6 adicional<br>
+      <strong>EA drenada por turno:</strong> –8 EA. Técnicas custam +5 EA.<br>
+      <strong>Comando Simples (1x/turno de Sousuke):</strong> Sousuke declara 1 ação simples (mover, parar, soltar arma). Resistência: Disciplina DT = Mod+9. Falha → executa involuntariamente e ganha +1 Camada.<br>
+      –3 em todos os testes. Cura –70%.
+    </div>
+    <div class="lpanel c3" id="lp8">
+      <span class="ltitle">CAMADA 8 — Sobreposição de Vontade</span>
+      <span class="lphase" style="color:var(--nec-lit)">FASE III: Sujeição · Camadas 7–9 · A Mente Não É Mais Só Dele</span>
+      A distinção entre vontade do alvo e sinais de Sousuke está colapsando. O alvo existe dentro do próprio corpo — mas dividindo espaço. Cada decisão que tenta tomar encontra resistência de dentro. É o design original do Projeto funcionando.<br><br>
+      <strong>Dano por turno:</strong> 3d8<br>
+      <strong>Pulso no turno de Sousuke:</strong> +4d8 adicional<br>
+      <strong>EA drenada por turno:</strong> –10 EA. Técnicas custam +6 EA.<br>
+      <strong>Controle Parcial (1x/round, turno de Sousuke):</strong> Sousuke força o alvo a usar a ação padrão em qualquer ação simples. DT = Mod+11. Falha → executa. Sucesso → mantém autonomia mas –1d20 em tudo por 1 round.<br>
+      –3 em todos os testes. Toda cura recebida instala +1 Camada (o processo regenerativo está contaminado).
+    </div>
+    <div class="lpanel c3" id="lp9">
+      <span class="ltitle">CAMADA 9 — Conversão</span>
+      <span class="lphase" style="color:var(--nec-lit)">FASE III: Sujeição · Camadas 7–9 · A Mente Não É Mais Só Dele</span>
+      O alvo é funcionalmente de Sousuke. A personalidade original existe — encapsulada, incapaz de interferir. O corpo responde como extensão. Age no turno de Sousuke, usa as próprias técnicas, obedece comandos complexos, ataca os antigos aliados. Os aliados ouvindo a voz dele chama por socorro. Ele não consegue parar de atacá-los.<br><br>
+      <strong>Dano por turno:</strong> 3d10 (o corpo deteriora mesmo enquanto controlado — Sousuke usa, não conserva)<br>
+      <strong>Pulso no turno de Sousuke:</strong> +5d8 adicional<br>
+      <strong>Controle Total:</strong> Alvo age no turno de Sousuke como extensão direta. Usa atributos e técnicas próprias. Pode executar ações complexas. Narrativamente: está consciente de tudo, sem controle de nada.<br>
+      A cada 3 rodadas em Camada 9, Sousuke decide: manter controle ou avançar para Detonação. Não é possível manter indefinidamente — a deterioração progride.
+    </div>
+    <div class="lpanel c4" id="lp10">
+      <span class="ltitle">CAMADA 10 — DETONAÇÃO BIOLÓGICA</span>
+      <span class="lphase" style="color:var(--blood-lit)">FASE IV: Dissolução Final · Fim do Processo</span>
+      Não há mais distinção entre a deterioração e o alvo. O que resta é estrutura orgânica supersaturada de EA corrompida sob pressão interna máxima. Sousuke pode manter por 1 round — o alvo ainda age nesse turno, mas cada ação acelera o colapso. No turno de Sousuke, ele pode detonar como ação bônus.<br><br>
+      <strong>Detonação — Ação Bônus de Sousuke:</strong><br>
+      O alvo explode de dentro para fora. Não fragmentos sólidos — onda de deterioração concentrada emanando do ponto de colapso. Bile amaldiçoada, tecido necrótico e EA corrompida em todas as direções.<br><br>
+      <strong>Dano no alvo:</strong> 15d6 + 5 deterioração. Se o alvo está abaixo de 30% de vida: finalizado independente do HP (a estrutura não aguenta). Acima: dano bruto.<br><br>
+      <strong>Onda de Área (raio 8m):</strong> 8d6 deterioração em todos os alvos + instalação automática de Camada 4 (sem resistência — a onda já traz a infestação pré-avançada).<br><br>
+      <strong>O corpo não desaparece.</strong> O que sobra é o Resíduo de Deterioração. Ver: Shikigamis de Podridão.
+    </div>
+
+    <table class="gtable" style="margin-top:20px">
+      <thead><tr><th>Gatilho</th><th>Camadas Adicionadas</th></tr></thead>
+      <tbody>
+        <tr><td>Tag de Podridão acerta</td><td>+1 Camada</td></tr>
+        <tr><td>Pulso de Contato (toque direto)</td><td>+2 Camadas</td></tr>
+        <tr><td>Contato passivo de proximidade (início do turno)</td><td>+1 Camada (sem ação de Sousuke)</td></tr>
+        <tr><td>Distensão de Podridão (transmissão lateral)</td><td>+1 a +4 Camadas (ver técnica)</td></tr>
+        <tr><td>Alvo falha resistência a Comando/Controle</td><td>+1 Camada por falha consecutiva</td></tr>
+        <tr><td>Alvo usa cura em Camada 8+</td><td>+1 Camada adicional</td></tr>
+        <tr><td>Turno completo em Podridão Ambiental</td><td>+1 Camada</td></tr>
+      </tbody>
+    </table>
+
+    <div class="b" style="margin-top:18px;font-size:.82rem;color:var(--ash)">Camadas não regridem durante o combate. Fora de combate: descanso curto remove Camadas 1–4. Camadas 5–7 requerem descanso longo. Camadas 8+ requerem Energia Positiva especializada (10 EA por Camada removida). Em múltiplos alvos, cada um tem seu contador independente.</div>
+  </div>
+</div>
+
+<!-- TÉCNICA INATA -->
+<div class="sh reveal"><div class="sl"></div><div class="st">Técnica Inata · Iluminada · Maestria Iluminada</div><div class="sl r"></div></div>
+<div class="b reveal"><strong style="font-size:1.1rem;color:var(--char)">腐食術 — Fushoku-jutsu</strong><br><span style="color:var(--ash);font-size:.88rem;font-style:italic">Arte da Deterioração · Técnica Amaldiçoada de Desgaste Contínuo e Controle Neurológico</span></div>
+<div class="b reveal">O Projeto não criou esse processo — aprendeu a extraí-lo, concentrá-lo e instalá-lo como função metabólica primária. A Fushoku é o que o corpo de Sousuke produz naturalmente. Ele não gasta energia criando-a — gasta energia direcionando-a. A diferença de custo é a diferença entre respirar e soprar.</div>
+<div class="b reveal"><strong>PODE:</strong> Deteriorar qualquer estrutura orgânica ou energética. Acumular até 10 Camadas por alvo, com contadores independentes por alvo. Tag à distância ou contato direto. Controle mental de alvos em Camada 7+. Detonação biológica em Camada 10 gerando onda de área e Resíduos.<br><br>
+<strong>NÃO PODE:</strong> Curar, defender ou suportar aliados — zero. Deteriorar conceitos abstratos. Remover Camadas próprias uma vez instaladas. Funcionar instantaneamente em pico — sempre precisa de acúmulo antes de controle ou detonação.</div>
+
+<!-- APLICAÇÕES -->
+<div class="sh reveal"><div class="sl"></div><div class="st">Aplicações Descobertas</div><div class="sl r"></div></div>
+
+<div class="tech core reveal">
+  <div class="th" onclick="T(this)"><div><div class="tjp">腐食印 — Fushoku-in</div><div class="tn">Tag de Podridão</div></div><div style="display:flex;gap:10px;align-items:center"><div class="tc g">0 EA (1ª do combate) · 1 EA depois</div><div class="hint">[+]</div></div></div>
+  <div class="tbody">
+    <div class="b">Fragmento de EA deteriorada projetado à distância — invisível, sem impacto, sem dano direto. O alvo não sente nada no momento da aplicação. O único indicador visível é o ponto de contato parecendo levemente mais velho dez segundos depois.</div>
+    <div class="mech">MECÂNICA: Ação bônus ou padrão. Custo: 0 EA (1ª do combate) · 1 EA demais.<br>
+    Alcance: linha de visão. +1d20 no teste (Maestria).<br>
+    Ao acertar: +1 Camada. Re-Tag em alvo com 1+ Camada: +1 Camada E dano base (8d6+2d4+5).<br>
+    1 Tag por ação declarada. Múltiplos alvos no mesmo turno com múltiplas ações.</div>
+    <div class="rotbox">Alvo em Camada 5+: Tag aciona o pulso de turno imediatamente além do normal — o sistema instável amplifica qualquer input.</div>
+    <div class="tags"><div class="tag g">0–1 EA</div><div class="tag g">Ação Bônus</div><div class="tag p">Silenciosa</div><div class="tag">+1 Camada</div></div>
+  </div>
+</div>
+
+<div class="tech core reveal">
+  <div class="th" onclick="T(this)"><div><div class="tjp">接触腐食 — Sesshoku Fushoku</div><div class="tn">Pulso de Contato</div></div><div style="display:flex;gap:10px;align-items:center"><div class="tc g">2 EA · Ataque Padrão</div><div class="hint">[+]</div></div></div>
+  <div class="tbody">
+    <div class="b">Sousuke avança e toca o alvo com qualquer superfície — palma, ombro, o que encontrar. A EA pulsa diretamente para dentro do alvo ignorando camada exterior. Não é um golpe. É uma transmissão cirúrgica feita com o próprio corpo como seringa. Em combate caótico, Sousuke avança para o centro do conflito, encosta em tudo que encontra, e continua andando.</div>
+    <div class="mech">MECÂNICA: Requer contato físico. Custo: 2 EA. Dano: 8d6+2d4+5. +1d20 (Maestria).<br>
+    Ao acertar: +2 Camadas. Ignora redução física exterior.<br>
+    Alvo em Camada 3+: +1d6 por Camada acima de 3.<br>
+    Alvo em Camada 7+: +3 Camadas em vez de +2 (controle neural amplifica receptividade).</div>
+    <div class="rotbox">Alvo em Camada 9: Pulso de Contato avança automaticamente para Camada 10 se o dano total ultrapassar 30. A pressão adicional colapsa o sistema.</div>
+    <div class="tags"><div class="tag g">2 EA</div><div class="tag g">+2 Camadas</div><div class="tag">Ignora Redução Exterior</div><div class="tag p">Contato Direto</div></div>
+  </div>
+</div>
+
+<div class="tech core reveal">
+  <div class="th" onclick="T(this)"><div><div class="tjp">腐食展延 — Fushoku Ten'en</div><div class="tn">Distensão de Podridão</div></div><div style="display:flex;gap:10px;align-items:center"><div class="tc g">2 EA · Ação Padrão</div><div class="hint">[+]</div></div></div>
+  <div class="tbody">
+    <div class="b">Sousuke força a Podridão instalada num alvo a se expandir lateralmente — usando o alvo original como vetor de transmissão. A EA já dentro dele serve de ponte. Um alvo em Camada 5 vira um risco biológico ambulante para tudo a 2 metros. Em Camada 9 sob controle, o alvo controlado contamina os próprios aliados simplesmente por estar próximo deles enquanto luta.</div>
+    <div class="mech">MECÂNICA: Requer alvo com 2+ Camadas. Custo: 2 EA. Dano no alvo original: 8d6+2d4+5.<br>
+    Transmissão: alvos em até 2m recebem Camadas = metade das do original (arredonda para baixo).<br>
+    Camada 4 → +2 nos adjacentes. Camada 8 → +4. Camada 10 → Detonação imediata (sem ação bônus separada).<br>
+    Nenhum teste de resistência na transmissão — não é lançada, é espalhada.</div>
+    <div class="rotbox">Alvo Camada 9 controlado + Distensão: os aliados recebem Camadas como vindas de um ataque do próprio companheiro. Mecanicamente idêntico. O companheiro ouve enquanto infecta.</div>
+    <div class="tags"><div class="tag g">2 EA</div><div class="tag p">Transmissão em Área</div><div class="tag">Req. 2+ Camadas</div><div class="tag">Sem Resistência</div></div>
+  </div>
+</div>
+
+<div class="tech core reveal">
+  <div class="th" onclick="T(this)"><div><div class="tjp">腐食促進 — Fushoku Sokushin</div><div class="tn">Aceleração de Deterioração</div></div><div style="display:flex;gap:10px;align-items:center"><div class="tc g">1 EA · Ação Bônus</div><div class="hint">[+]</div></div></div>
+  <div class="tbody">
+    <div class="b">Sousuke empurra o relógio da deterioração num alvo tagueado — o dano passivo do próximo turno ocorre agora, neste momento. As Camadas não são consumidas. O processo continua. É apenas adiantado. Com múltiplos alvos em fases diferentes, Sousuke pode usar Aceleração em três alvos no mesmo turno se tiver ações suficientes.</div>
+    <div class="mech">MECÂNICA: Ação bônus. Custo: 1 EA. Requer alvo com 3+ Camadas.<br>
+    Efeito: o dano passivo por turno do alvo ocorre imediatamente (além do que ocorrerá nos turnos seguintes normalmente).<br>
+    Camada 3: 1d8 imediato. C4: 1d10. C5: 2d6. C6: 2d8. C7: 2d10. C8: 3d8. C9: 3d10 + Comando do turno executa simultaneamente.<br>
+    Não remove Camadas. Não reinicia contador.</div>
+    <div class="rotbox">Aceleração em alvo Camada 6 + falha em Disciplina: dano E perda de ação de movimento no mesmo turno — a alucinação e o dano simultâneos são demais para processar.</div>
+    <div class="tags"><div class="tag g">1 EA</div><div class="tag g">Ação Bônus</div><div class="tag p">Req. 3+ Camadas</div><div class="tag">Não Remove Camadas</div></div>
+  </div>
+</div>
+<div class="sh reveal"><div class="sl"></div><div class="st">Passivas Defensivas</div><div class="sl r"></div></div>
+
+<!-- PASSIVA I — REDUÇÃO DE DANO -->
+<div class="tech core reveal">
+  <div class="th" onclick="T(this)">
+    <div>
+      <div class="tjp">腐食返し — Fushoku Gaeshi</div>
+      <div class="tn">Retorno da Podridão</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="tc g">Passiva · Sem Custo · Sempre Ativa</div>
+      <div class="hint">[+]</div>
+    </div>
+  </div>
+  <div class="tbody">
+    <div class="b">A EA deteriorada que Sousuke inoculou em alguém continua sendo sua EA — parte dela ainda reconhece o originador. Quando um alvo infectado tenta atacar Sousuke, a Fushoku dentro do alvo oferece resistência ao próprio portador: o impulso nervoso que comanda o golpe passa pela mesma rede neural que está sendo corroída, e chega atenuado. Não é um escudo. É o veneno trabalhando contra quem o carrega no momento errado.</div>
+    <div class="b">Quanto mais infectado o atacante, menos o golpe chega inteiro. Quanto mais inteligente Sousuke — quanto mais preciso o controle da Fushoku instalada — maior a interferência.</div>
+    <div class="mech">
+      MECÂNICA: Passiva permanente. Sem ativação. Sem custo.<br><br>
+
+      Quando Sousuke recebe dano de um alvo com 1+ Camadas instaladas:<br>
+      Redução = (Camadas do atacante × 2) + Mod de Inteligência de Sousuke<br><br>
+
+      Tabela de referência (INT 4 = Mod +2 base, +1 livre = considere Mod conforme sistema):<br>
+      — Atacante Camada 1: reduz 2 + Mod INT<br>
+      — Atacante Camada 3: reduz 6 + Mod INT<br>
+      — Atacante Camada 5: reduz 10 + Mod INT<br>
+      — Atacante Camada 7: reduz 14 + Mod INT<br>
+      — Atacante Camada 9: reduz 18 + Mod INT<br><br>
+
+      Contra alvos sem Camada: nenhuma redução — a passiva depende da Fushoku instalada.<br>
+      Contra múltiplos atacantes no mesmo turno: usa as Camadas de cada atacante individualmente.<br>
+      A redução se aplica após todos os outros modificadores de dano do atacante.
+    </div>
+    <div class="rotbox">
+      Atacante em Camada 7+ usando Pulso de Contato em Sousuke: a Fushoku dentro do atacante reconhece o originador e a resistência é máxima — redução dobra contra ataques de contato direto de alvos em Camada 5+. O corpo infectado sabota o próprio esforço.
+    </div>
+    <div class="tags">
+      <div class="tag g">Passiva Permanente</div>
+      <div class="tag g">Camadas × 2 + Mod INT</div>
+      <div class="tag p">Requer Camada no Atacante</div>
+      <div class="tag">Escala com Infestação</div>
+    </div>
+  </div>
+</div>
+
+<!-- PASSIVA II — CURA PASSIVA -->
+<div class="tech core reveal">
+  <div class="th" onclick="T(this)">
+    <div>
+      <div class="tjp">腐食循環 — Fushoku Junkan</div>
+      <div class="tn">Ciclo da Podridão</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="tc g">Passiva · Sem Custo · Por Round</div>
+      <div class="hint">[+]</div>
+    </div>
+  </div>
+  <div class="tbody">
+    <div class="b">A deterioração que Sousuke instala nos outros não desaparece no vácuo — ela libera EA como subproduto do processo de decomposição. Uma fração disso retorna ao originador: o metabolismo de Sousuke foi projetado para absorver EA deteriorada como nutriente, e a Fushoku ativa em outros corpos gera exatamente isso em fluxo contínuo. Quanto mais alvos infectados, maior o retorno. Quanto mais avançada a deterioração, mais rico o subproduto.</div>
+    <div class="b">Não é cura ativa. É o equivalente de ter a própria toxina sendo metabolizada em combustível — o corpo de Sousuke é o único sistema onde a Fushoku tem sinal positivo. Narrativamente: ele fica mais estável quanto mais o campo de batalha se deteriora ao redor dele.</div>
+    <div class="mech">
+      MECÂNICA: Passiva permanente. No início do turno de Sousuke:<br><br>
+
+      Para cada alvo com Camadas ativas no campo:<br>
+      — Camadas 1–3: recupera 1 HP e 1 EA por alvo<br>
+      — Camadas 4–6: recupera 2 HP e 2 EA por alvo<br>
+      — Camadas 7–9: recupera 3 HP e 2 EA por alvo<br>
+      — Camada 10 (pré-detonação): recupera 5 HP e 5 EA (o sistema está no pico)<br><br>
+
+      Exemplo: 3 alvos ativos (Camada 2, Camada 5, Camada 8) →<br>
+      1 HP/EA + 2 HP/EA + 3 HP/EA = 6 HP e 5 EA recuperados no início do turno.<br><br>
+
+      Resíduos de Deterioração ativos também contam como "alvo com Camada ativa"
+      para fins do Ciclo — enquanto eles existem, o subproduto continua fluindo.
+    </div>
+    <div class="rotbox">
+      Domínio ativo + 4 alvos em Camada 5+: o Ciclo da Podridão recupera o teto máximo todo turno enquanto o Campo da Entropia mantém a infestação crescente. Sousuke se torna progressivamente mais difícil de matar quanto mais tempo o combate dura — a deterioração ao redor dele é literalmente o que o sustenta.
+    </div>
+    <div class="tags">
+      <div class="tag g">Passiva Permanente</div>
+      <div class="tag g">HP + EA por Turno</div>
+      <div class="tag p">Escala com Alvos Infectados</div>
+      <div class="tag">Teto: Mod INT × 3</div>
+    </div>
+  </div>
+</div>
+
+<div class="tech core reveal">
+  <div class="th" onclick="T(this)"><div><div class="tjp">魔力侵食 — Maryoku Shinshoku</div><div class="tn">Erosão Mágica</div></div><div style="display:flex;gap:10px;align-items:center"><div class="tc g">2 EA · Padrão / Reação</div><div class="hint">[+]</div></div></div>
+  <div class="tbody">
+    <div class="b">Sousuke direciona a Fushoku contra a estrutura de uma técnica ativa — a barreira, o shikigami, o domínio em formação. A deterioração não distingue entre carne e feitiço: se tem estrutura, apodrece. Barreiras racham internamente. Domínios apresentam zonas cegas onde a EA simplesmente não sustenta mais. Como Reação, pode desfazer uma técnica antes de chegar ao efeito.</div>
+    <div class="mech">MECÂNICA: Alvo = técnica ativa, barreira, shikigami ou estrutura mágica. Custo: 2 EA.<br>
+    Dano estrutural: 8d6+2d4+5 (ignora resistência mágica comum). Dano dobrado contra barreiras e domínios.<br>
+    +1 Camada no criador da estrutura.<br>
+    Shikigami deteriorado: 3 Camadas → –1d20 em tudo. 5 Camadas → para de funcionar.<br>
+    Como Reação: custo 0 EA adicional, +1d20 no teste de Feitiçaria para interromper antes do efeito.</div>
+    <div class="rotbox">Contra alvo em Camada 5+: técnicas que ele cria nascem com –20% HP estrutural — o corpo comprometido não sustenta estrutura mágica plena.</div>
+    <div class="tags"><div class="tag g">2 EA</div><div class="tag p">Anti-Estrutura</div><div class="tag">+1 Camada no Criador</div><div class="tag">Reação (0 EA extra)</div></div>
+  </div>
+</div>
+
+<div class="tech core reveal">
+  <div class="th" onclick="T(this)"><div><div class="tjp">環境腐食 — Kankyō Fushoku</div><div class="tn">Podridão Ambiental</div></div><div style="display:flex;gap:10px;align-items:center"><div class="tc g">2 EA ativ. · 1 EA/round</div><div class="hint">[+]</div></div></div>
+  <div class="tbody">
+    <div class="b">Sousuke satura uma área de 10m com EA deteriorada dispersa no ar — invisível, inodora nas primeiras rodadas. Em combate caótico com múltiplos corpos em movimento, isso converte o ambiente inteiro em veículo de infestação. Cada corpo que passa pelo raio está sendo inoculado. A confusão trabalha para Sousuke: quanto mais movimento, mais exposição, mais Camadas instaladas antes de qualquer ataque direto ser visível.</div>
+    <div class="mech">MECÂNICA: Ação padrão para ativar. Custo: 2 EA ativ. · 1 EA/round para manter.<br>
+    Raio: 10m centrado em Sousuke (move com ele).<br>
+    Efeito passivo: alvo hostil que termine o turno dentro da área → +1 Camada (sem teste).<br>
+    Sousuke imune (origem confere imunidade total).<br>
+    Aliados: Disciplina DT 11 por rodada ou +1 Camada (colateral — não discrimina).<br>
+    Objetos e estruturas mágicas: –5 HP por rodada.</div>
+    <div class="rotbox">Ambiental ativa + alvo Camada 5 sob Distensão: adjacentes já ganhando Camadas do Ambiente recebem transmissão em cima. Em 2 turnos na área com Sousuke ativo, alvos sem resistência atingem Camada 7.</div>
+    <div class="tags"><div class="tag g">2 EA ativ.</div><div class="tag p">+1 Camada/turno</div><div class="tag">Raio 10m</div><div class="tag w">Colateral em Aliados</div></div>
+  </div>
+</div>
+
+<!-- SHIKIGAMIS -->
+<div class="sh reveal"><div class="sl"></div><div class="st n">Shikigamis de Podridão · Os Restos que Continuam</div><div class="sl r"></div></div>
+<div class="b reveal">Quando um alvo atinge Camada 10 e é detonado, o corpo não desaparece. A EA deteriorada que saturou cada célula não se dissipa com a morte — ela persiste, procura a forma mais eficiente de continuar o processo. O que sobra é o <strong>Resíduo de Deterioração</strong>: matéria orgânica reanimada pela Fushoku, sem personalidade, sem memória, sem objetivos além de propagar a infestação do originador.<br><br>
+Não são invocados. São uma consequência. Sousuke não os chama — eles acontecem quando o processo que ele iniciou completa o ciclo. A EA ainda é a dele, então responde a comando simples. Sem comando: avançam para o alvo mais próximo e tentam instalar Camadas por contato.</div>
+<div class="shikicard reveal">
+  <div class="sname">Resíduo de Deterioração</div>
+  <div class="sjp">腐食残渣 — Fushoku Zansa · O Que Sobrou do Que Foi</div>
+  <div class="b" style="font-size:.88rem">Massa orgânica de coloração entre preto e verde-musgo escuro, textura que oscila entre viscosa e semi-sólida dependendo do movimento. Parado, parece um charco de necrose no chão — quase invisível em ambientes escuros. Em movimento, levanta como torso sem membros inferiores definidos, locomoção por deslizamento. Partes reconhecíveis do alvo original emergem e afundam na massa conforme ela avança: uma mão, parte de um rosto, um fragmento de roupa. A voz do original às vezes sai da massa — fragmentos de frases, sem sentido, sem controle.</div>
+  <div class="sstats">
+    <div class="ss"><div class="ssl">HP</div><div class="ssv" style="font-size:.85rem">= 50% DO HP ORIGINAL DO ALVO</div></div>
+    <div class="ss"><div class="ssl">Defesa</div><div class="ssv">8</div></div>
+    <div class="ss"><div class="ssl">Ataque</div><div class="ssv" style="font-size:.85rem">2d6+2 por turno</div></div>
+    <div class="ss"><div class="ssl">Iniciativa</div><div class="ssv" style="font-size:.85rem">Após Sousuke</div></div>
+    <div class="ss"><div class="ssl">Duração</div><div class="ssv" style="font-size:.85rem">1d4+1 rodadas</div></div>
+    <div class="ss"><div class="ssl">Máximo</div><div class="ssv">3 simultâneos</div></div>
+  </div>
+  <div class="b" style="font-size:.87rem"><strong>Contato de Podridão:</strong> cada acerto do Resíduo instala +1 Camada no alvo atingido (sem resistência — o corpo é feito de Fushoku pura, não há teste para o que é, essencialmente, contato direto com a fonte).<br><br>
+  <strong>Dissolução:</strong> quando o HP chega a 0 ou a duração termina, o Resíduo colapsa numa poça de EA deteriorada de raio 1m. Qualquer alvo pisando na poça no turno seguinte: +2 Camadas automáticas.<br><br>
+  <strong>Comando de Sousuke:</strong> ação livre — Sousuke dá 1 comando de movimento ou alvo. Sem comando: avança para o inimigo mais próximo. O Resíduo não distingue aliados — obedece à proximidade, não à afiliação.</div>
+  <div class="tags"><div class="tag n">Nasce de Detonação</div><div class="tag n">+1 Camada/Hit</div><div class="tag p">Dissolução +2 Camadas</div><div class="tag">3 Simultâneos Máx.</div></div>
+</div>
+
+<!-- DOMÍNIO -->
+<div class="sh reveal"><div class="sl"></div><div class="st">Expansão de Domínio · Bloqueada</div><div class="sl r"></div></div>
+<div class="domain reveal">
+  <div class="dname">Campo da Entropia</div>
+  <div class="djp">エントロピー場 — Entropī-ba · O Fim Antecipado de Tudo</div>
+  <div class="b">O Domínio de Sousuke não cria um espaço diferente. Ele remove o futuro do espaço que existe. Tudo dentro do raio existe num estado onde a deterioração final já chegou e o presente está apenas correndo para alcançar essa conclusão — madeira apodrecida em segundos, metal coberto de oxidação, o ar pesado com odor de decomposição desde o primeiro segundo. Sousuke no centro parece completamente inalterado. A deterioração ao redor é como gravidade: ele é o ponto fixo, tudo mais está caindo em direção a ele.</div>
+  <div class="mech" style="border-left-color:var(--bile-lit);color:var(--pus)">
+    CUSTO: 25% EA máx + 5d10. Exaustão pós: 1d4 rodadas.<br><br>
+    [1] PODRIDÃO AMBIENTAL MÁXIMA — automática, sem custo de manutenção.
+    Raio 30m. Todo alvo hostil ganha +1 Camada a cada turno (não rodada — cada turno
+    de qualquer combatente). Sem teste. A velocidade de infestação é multiplicada pelo
+    número de participantes no combate.<br><br>
+    [2] ESCALADA TEMPORAL — cada rodada completa dentro do Domínio:
+    DT de todas as resistências contra Fushoku +1. Começa em Mod+9. Round 3: Mod+12.
+    Round 6: Mod+15. Round 9: Mod+18. O Domínio fica mais espesso com o tempo.<br><br>
+    [3] SUPREMACIA ORGÂNICA — cura regenera HP mas não bloqueia progressão
+    de Camadas. Domínio Simples bloqueia acerto garantido mas não bloqueia acúmulo
+    passivo da Ambiental (não é um ataque — é o ambiente). Dentro do Campo,
+    a deterioração ignora qualquer forma de escudo ou proteção que não seja
+    Energia Positiva direcionada especificamente.<br><br>
+    [4] COLAPSO ACUMULADO — alvos que entram no Domínio com Camadas
+    já instaladas: cada Camada vale por 2 para os thresholds de dano passivo,
+    penalidades e progressão neural. Camada 4 ao entrar → trata como Camada 8
+    para todos os fins de fase.<br><br>
+    [5] DETONAÇÃO EM CASCATA — Camada 10 dentro do Domínio: a onda de área
+    da Detonação instala Camada 5 nos adjacentes (em vez de Camada 4).
+    Resíduos criados dentro do Domínio duram 2d4+2 rodadas e têm HP dobrado.
+    Poças de dissolução têm raio 2m e instalam +3 Camadas.<br><br>
+    VIDA DO NÚCLEO: 5d100
+  </div>
+</div>
+
+<!-- SEM VOTO -->
+<div class="sh reveal"><div class="sl"></div><div class="st d">Voto Vinculativo</div><div class="sl r"></div></div>
+<div class="oblock reveal" style="border-color:rgba(255,255,255,.04)">
+  <div class="b" style="color:var(--ash);font-style:italic">
+    Sousuke não faz pactos.<br>
+    Não impõe regras a si mesmo por princípio ou por troca.<br>
+    Não há nada que ele queira o suficiente para aceitar restrição como pagamento.<br><br>
+    <span style="font-family:'Inconsolata',monospace;font-size:.7rem;letter-spacing:.15em;color:var(--grit)">// CAMPO VAZIO — SEM REGISTRO //</span>
+  </div>
+</div>
+
+<!-- HISTÓRIA -->
+<div class="sh reveal"><div class="sl"></div><div class="st">Fragmento de História</div><div class="sl r"></div></div>
+<div class="oblock reveal">
+  <div class="b" style="font-style:italic;color:var(--ash)">
+    O arquivo de admissão de Sousuke foi enviado por uma organização sem nome registrado usando um protocolo de comunicação que a administração não reconheceu e não conseguiu rastrear.<br><br>
+
+    Continha: duas fotos. Uma lista de capacidades em linguagem técnica — nunca usaram a palavra "técnica inata", usaram <em>"função primária"</em>. E uma nota de uma linha: <em>"Produto requer contenção educacional antes de nova avaliação de utilidade."</em><br><br>
+
+    Não havia nome. A administração preencheu um à mão, baseada na única marca identificável: uma cicatriz no antebraço esquerdo em formato que parecia uma parede de tijolos em miniatura, milimétrica, com precisão cirúrgica. Quem fez, por quê e quando não consta em nenhum documento acessível.<br><br>
+
+    Sousuke chegou sozinho. Apareceu na recepção numa terça-feira às 6h17 — antes de qualquer funcionário — sentado numa cadeira de espera, olhando para a porta. O primeiro funcionário que chegou perguntou como ele havia entrado. Sousuke disse: <em>"A porta estava fechada."</em> O funcionário verificou. Estava fechada. Com cadeado. Por fora.<br><br>
+
+    Na primeira semana, três eventos foram registrados sem solução: a planta no corredor perto do alojamento dele estava morta — raízes negras, sem explicação botânica. Um aluno reportou coceira persistente no braço depois de encostar em Sousuke no refeitório. O coceiro durou quatro dias e deixou uma marca que um médico descreveu como <em>"desgaste tecidual localizado sem causa aparente"</em>. Um instrutor notou que a madeira do treino com o qual Sousuke trabalhou por dez minutos estava ressecada de uma forma que levaria semanas em condições normais.<br><br>
+
+    Na primeira simulação de combate, o alvo designado — um shikigami de Grau 3 construído especificamente para avaliar feiticeiros novos — foi neutralizado em 6 minutos e 8 segundos. O supervisor anotou que Sousuke não demonstrou esforço perceptível. Ficou aproximadamente parado, movendo-se em linha direta quando necessário, enquanto o shikigami progressivamente parava de funcionar.<br><br>
+
+    O comentário final do supervisor, adicionado à mão na margem do relatório:<br>
+    <em>"Parece menos um combate e mais um processo. Como observar algo apodrecer com muita pressa."</em><br><br>
+
+    <span style="color:rgba(58,110,42,.3);font-style:normal;font-family:'Inconsolata',monospace;font-size:.67rem;">
+    — adendo ao arquivo, semana 4, assinado por três instâncias diferentes:<br>
+    "Incidente não reportado formalmente: aluno do 3º ano teve confronto físico com Sousuke no corredor — contexto não esclarecido. O aluno reportou sintomas de deterioração leve no braço direito por 11 dias. Sousuke, quando questionado, disse apenas: 'Ele encostou primeiro.' Investigação encerrada por falta de evidências de dolo. Arquivo mantido aberto por precaução."
+    </span>
+  </div>
+</div>
+
+<div class="footnote reveal">
+  "Não é que ele quer que tudo apodreça.<br>
+  É que tudo apodrece<br>
+  quando ele decide que deveria.<br>
+  E ele decide com muito mais frequência do que parece."<br><br>
+  <span style="font-family:'Inconsolata',monospace;font-size:.6rem;letter-spacing:.35em;color:var(--ash)">⛩️ GOLDEN ERA · Sousuke · A ARMA QUE SOBROU ⛩️</span>
+</div>
+
+</div>
+
+<script>
+function T(h){
+  const b=h.nextElementSibling,hint=h.querySelector('.hint');
+  b.classList.toggle('open');
+  hint.textContent=b.classList.contains('open')?'[−]':'[+]';
+}
+
+const PH={1:'ph1',2:'ph1',3:'ph1',4:'ph2',5:'ph2',6:'ph2',7:'ph3',8:'ph3',9:'ph3',10:'ph4'};
+const PC={1:'c1',2:'c1',3:'c1',4:'c2',5:'c2',6:'c2',7:'c3',8:'c3',9:'c3',10:'c4'};
+let al=null;
+function SL(n){
+  for(let i=1;i<=10;i++){
+    document.getElementById('ln'+i).className='ln';
+    document.getElementById('lp'+i).className='lpanel '+PC[i];
+  }
+  if(al===n){al=null;return;}
+  al=n;
+  for(let i=1;i<=n;i++) document.getElementById('ln'+i).className='ln '+PH[n];
+  document.getElementById('lp'+n).className='lpanel '+PC[n]+' show';
+}
+
+const obs=new IntersectionObserver(es=>{
+  es.forEach((e,i)=>{
+    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*45);obs.unobserve(e.target)}
+  });
+},{threshold:.07});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+</script>
+</body>
+</html>
