@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⛩️ Golden Era — Fichas</title>
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Bebas+Neue&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inconsolata:wght@300;400;700&family=Noto+Serif+JP:wght@300;700&display=swap" rel="stylesheet">
+<style>
+
+/* ─────────────────────────────────────────
+   PARA ADICIONAR UM NOVO PERSONAGEM:
+   1. Crie sheets/seunome.html
+   2. Adicione um objeto no array ROSTER (no script abaixo)
+   3. Pronto.
+───────────────────────────────────────── */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: #030200;
+  color: #ccc8b0;
+  font-family: 'Libre Baskerville', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND ── */
+.bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 60% at 50% 100%, rgba(8,6,0,.98) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 50% at 20% 50%, rgba(40,20,0,.12) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 50% at 80% 50%, rgba(20,40,8,.1) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 30% at 50% 0%, rgba(15,10,0,.8) 0%, transparent 55%);
+}
+.bg-grain {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative; z-index: 2;
+  text-align: center;
+  padding: 72px 24px 48px;
+}
+.header-label {
+  font-family: 'Inconsolata', monospace;
+  font-size: .52rem; letter-spacing: .65em; text-transform: uppercase;
+  color: rgba(180,155,70,.3);
+  margin-bottom: 18px;
+}
+.header-title {
+  font-family: 'Rye', serif;
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  letter-spacing: .2em;
+  color: rgba(220,190,100,.18);
+  line-height: 1;
+}
+.header-rule {
+  width: 240px; height: 1px; margin: 28px auto 0;
+  background: linear-gradient(90deg, transparent, rgba(140,110,40,.2), transparent);
+}
+
+/* ── ROSTER GRID ── */
+main {
+  position: relative; z-index: 2;
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 28px 100px;
+}
+
+.roster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1px;
+  background: rgba(60,45,10,.12);
+  border: 1px solid rgba(60,45,10,.15);
+}
+
+/* ── CARD ── */
+.char-card {
+  position: relative; overflow: hidden;
+  padding: 40px 36px 36px;
+  background: #060500;
+  cursor: pointer;
+  text-decoration: none; color: inherit;
+  display: block;
+  transition: background .35s;
+  border: 1px solid transparent;
+  min-height: 280px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.char-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--card-glow, transparent);
+  opacity: 0; transition: opacity .4s;
+  pointer-events: none;
+}
+.char-card:hover { background: #080700; }
+.char-card:hover::before { opacity: 1; }
+.char-card:hover .card-enter { opacity: 1; transform: none; }
+.char-card:hover .card-accent { opacity: .9; }
+
+/* accent bar top */
+.card-accent {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--card-color, rgba(180,160,80,.3));
+  opacity: .35; transition: opacity .35s;
+}
+
+/* big kanji watermark */
+.card-kanji {
+  position: absolute; bottom: -16px; right: -8px;
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(90px, 14vw, 140px);
+  color: var(--card-color, rgba(180,160,80,.08));
+  opacity: .07; user-select: none; pointer-events: none;
+  line-height: 1; transition: opacity .4s;
+}
+.char-card:hover .card-kanji { opacity: .13; }
+
+.card-num {
+  font-family: 'Inconsolata', monospace;
+  font-size: .48rem; letter-spacing: .45em; text-transform: uppercase;
+  color: rgba(140,120,50,.35);
+  margin-bottom: 14px;
+  position: relative; z-index: 1;
+}
+.card-name {
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  letter-spacing: .12em; line-height: 1;
+  color: var(--card-color, rgba(220,200,120,.5));
+  position: relative; z-index: 1;
+  margin-bottom: 6px;
+}
+.card-name.rye    { font-family: 'Rye', serif; }
+.card-name.bebas  { font-family: 'Bebas Neue', sans-serif; }
+
+.card-jp {
+  font-family: 'Noto Serif JP', serif;
+  font-size: .65rem;
+  color: rgba(140,120,50,.28);
+  margin-bottom: 18px;
+  position: relative; z-index: 1;
+}
+.card-tags {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  margin-bottom: 22px;
+  position: relative; z-index: 1;
+}
+.card-tag {
+  font-family: 'Inconsolata', monospace;
+  font-size: .46rem; letter-spacing: .12em; text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid rgba(100,80,30,.2);
+  color: rgba(130,110,50,.4);
+}
+.card-epithet {
+  font-style: italic; font-size: .8rem; line-height: 1.9;
+  color: rgba(140,120,60,.3);
+  position: relative; z-index: 1;
+  margin-bottom: 24px;
+}
+.card-enter {
+  font-family: 'Inconsolata', monospace;
+  font-size: .48rem; letter-spacing: .4em; text-transform: uppercase;
+  color: var(--card-color, rgba(180,160,80,.5));
+  opacity: 0; transform: translateY(6px);
+  transition: opacity .3s, transform .3s;
+  position: relative; z-index: 1;
+}
+
+/* ── ADD CARD (template para novo personagem) ── */
+.char-card.add-card {
+  --card-color: rgba(80,80,80,.3);
+  border: 1px dashed rgba(60,60,40,.2);
+  background: transparent;
+  align-items: center; justify-content: center;
+  min-height: 280px;
+  cursor: default;
+}
+.add-card-inner {
+  text-align: center;
+  font-family: 'Inconsolata', monospace;
+}
+.add-card-plus {
+  font-size: 2rem; color: rgba(100,90,50,.2); line-height: 1;
+  margin-bottom: 14px;
+}
+.add-card-label {
+  font-size: .5rem; letter-spacing: .4em; text-transform: uppercase;
+  color: rgba(100,90,50,.2); line-height: 2.2;
+}
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 2;
+  text-align: center; padding: 24px;
+  font-family: 'Inconsolata', monospace;
+  font-size: .48rem; letter-spacing: .35em; text-transform: uppercase;
+  color: rgba(100,80,30,.2);
+  border-top: 1px solid rgba(60,45,10,.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="bg-grain"></div>
+
+<header>
+  <div class="header-label">⛩ Sistema de Fichas</div>
+  <div class="header-title">Golden Era</div>
+  <div class="header-rule"></div>
+</header>
+
+<main>
+  <div class="roster-grid" id="roster-grid">
+    <!-- Cards gerados pelo script abaixo -->
+  </div>
+</main>
+
+<footer>⛩ Golden Era · Fichas de Personagem · github.com/seuusuario/golden-era</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   ROSTER — adicione novos personagens aqui.
+
+   Campos:
+     id       → nome do arquivo em sheets/ (sem .html)
+     name     → nome exibido no card
+     font     → 'rye' ou 'bebas'
+     jp       → texto em japonês (opcional)
+     num      → número da ficha (ex: "Ficha Nº003")
+     tags     → array de strings (ex: ["Feiticeiro", "Grau 4"])
+     epithet  → frase curta de apresentação
+     kanji    → kanji grande de fundo (decorativo)
+     color    → cor principal em rgba ou hex
+     glow     → gradiente de glow no hover (CSS string)
+═══════════════════════════════════════════════════════════ */
+const ROSTER = [
+  {
+    id:      'foo',
+    name:    'FOO',
+    font:    'rye',
+    jp:      '植付術 · Uetsuke · O Campo Que Já Estava Plantado',
+    num:     'Ficha Nº003 · Feiticeiro · Iluminado',
+    tags:    ['Feiticeiro', 'Grau 4', 'Nível 1', 'Kyoto', 'Maestria Iluminada'],
+    epithet: '"Qualquer idiota planta batata.\nEle planta tempo."',
+    kanji:   '植',
+    color:   'rgba(248,168,48,.65)',
+    glow:    'radial-gradient(ellipse at 50% 70%, rgba(232,112,16,.09) 0%, transparent 65%)',
+  },
+  {
+    id:      'sousuke',
+    name:    'SOUSUKE',
+    font:    'bebas',
+    jp:      '腐食術 · Fushoku-jutsu · O Ambiente Que Já Decidiu',
+    num:     'Ficha Nº005 · Feiticeiro · Nv.1',
+    tags:    ['Feiticeiro', 'Grau 4', 'Nível 1', 'Kyoto', 'Arma Biológica'],
+    epithet: '"Não é veneno. Veneno mata rápido.\nIsso é outra coisa."',
+    kanji:   '腐',
+    color:   'rgba(106,170,72,.65)',
+    glow:    'radial-gradient(ellipse at 50% 70%, rgba(58,110,42,.09) 0%, transparent 65%)',
+  },
+
+  /* ── TEMPLATE — descomente e edite para adicionar um personagem ──
+  {
+    id:      'seupersonagem',
+    name:    'NOME',
+    font:    'rye',           // 'rye' ou 'bebas'
+    jp:      '術 · Nome JP',
+    num:     'Ficha NºXXX · Classe · Nv.X',
+    tags:    ['Classe', 'Grau X', 'Nível X', 'Colégio'],
+    epithet: '"Frase de efeito."',
+    kanji:   '字',
+    color:   'rgba(180,100,60,.65)',
+    glow:    'radial-gradient(ellipse at 50% 70%, rgba(180,100,60,.09) 0%, transparent 65%)',
+  },
+  ── */
+];
+
+/* ── RENDER ── */
+function renderRoster() {
+  const grid = document.getElementById('roster-grid');
+  grid.innerHTML = '';
+
+  ROSTER.forEach(char => {
+    const a = document.createElement('a');
+    a.href = 'sheets/' + char.id + '.html';
+    a.className = 'char-card';
+    a.style.setProperty('--card-color', char.color);
+    a.style.setProperty('--card-glow', char.glow);
+
+    a.innerHTML = `
+      <div class="card-accent"></div>
+      <div class="card-kanji">${char.kanji}</div>
+      <div class="card-num">${char.num}</div>
+      <div class="card-name ${char.font}">${char.name}</div>
+      <div class="card-jp">${char.jp}</div>
+      <div class="card-tags">
+        ${char.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}
+      </div>
+      <div class="card-epithet">${char.epithet.replace(/\n/g, '<br>')}</div>
+      <div class="card-enter">▶ Abrir Ficha</div>
+    `;
+    grid.appendChild(a);
+  });
+
+  /* Card "adicionar" */
+  const add = document.createElement('div');
+  add.className = 'char-card add-card';
+  add.innerHTML = `
+    <div class="add-card-inner">
+      <div class="add-card-plus">+</div>
+      <div class="add-card-label">
+        Crie sheets/seupersonagem.html<br>
+        e adicione uma entrada no ROSTER<br>
+        no index.html
+      </div>
+    </div>
+  `;
+  grid.appendChild(add);
+}
+
+renderRoster();
+</script>
+</body>
+</html>

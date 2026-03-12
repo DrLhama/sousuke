@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-char="foo">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛩️ FOO — A Ficha</title>
+<title>⛩️ FOO — A Ficha · Golden Era</title>
 <link href="https://fonts.googleapis.com/css2?family=Rye&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inconsolata:wght@300;400;700&family=Noto+Serif+JP:wght@300;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -366,8 +366,12 @@ body::before{
 ::-webkit-scrollbar-track{background:var(--void)}
 ::-webkit-scrollbar-thumb{background:var(--o1);border-radius:2px}
 </style>
-</head>
+
+/* extra bottom padding for edit bar */
+body { padding-bottom: 52px; }
+</style>
 <body>
+
 
 <!-- LEAF CANVAS -->
 <canvas id="leafCanvas"></canvas>
@@ -883,104 +887,97 @@ body::before{
  
 </div>
 
+
+
+<script src="../engine.js"></script>
 <script>
-/* ── CANVAS LEAVES ── */
-(function(){
-  const C=document.getElementById('leafCanvas');
-  const ctx=C.getContext('2d');
-  function resize(){C.width=window.innerWidth;C.height=window.innerHeight;}
-  resize();window.addEventListener('resize',resize);
+/* ══════════════════════════════════════
+   FOO — lógica específica da ficha
+══════════════════════════════════════ */
 
-  const COLORS=['#50b812','#82dc30','#e87010','#f8a830','#2e8a08','#b4f060','#ffd050'];
-  const leaves=[];
-  for(let i=0;i<28;i++){
-    leaves.push({
-      x:Math.random()*window.innerWidth,
-      y:-Math.random()*window.innerHeight,
-      w:6+Math.random()*12,
-      h:8+Math.random()*14,
-      rot:Math.random()*Math.PI*2,
-      rotSpd:(Math.random()-.5)*.04,
-      vx:(Math.random()-.5)*1.2,
-      vy:.6+Math.random()*1.4,
-      color:COLORS[Math.floor(Math.random()*COLORS.length)],
-      alpha:.15+Math.random()*.35,
-      shape:Math.floor(Math.random()*3)
-    });
+/* Canvas folhas caindo */
+function initLeafCanvas() {
+  const C = document.getElementById('leafCanvas');
+  if (!C) return;
+  const ctx = C.getContext('2d');
+  function resize() { C.width = window.innerWidth; C.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  const COLORS = ['#50b812','#82dc30','#e87010','#f8a830','#2e8a08','#b4f060','#ffd050'];
+  const leaves = Array.from({length: 28}, () => ({
+    x: Math.random() * window.innerWidth,
+    y: -Math.random() * window.innerHeight,
+    w: 6 + Math.random() * 12,
+    h: 8 + Math.random() * 14,
+    rot: Math.random() * Math.PI * 2,
+    rotSpd: (Math.random() - .5) * .04,
+    vx: (Math.random() - .5) * 1.2,
+    vy: .6 + Math.random() * 1.4,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    alpha: .15 + Math.random() * .35,
+    shape: Math.floor(Math.random() * 3)
+  }));
+
+  function drawLeaf(l) {
+    ctx.save(); ctx.translate(l.x, l.y); ctx.rotate(l.rot);
+    ctx.globalAlpha = l.alpha; ctx.fillStyle = l.color; ctx.beginPath();
+    if      (l.shape === 0) { ctx.ellipse(0, 0, l.w/2, l.h/2, 0, 0, Math.PI*2); }
+    else if (l.shape === 1) { ctx.moveTo(0,-l.h/2);ctx.lineTo(l.w/2,0);ctx.lineTo(0,l.h/2);ctx.lineTo(-l.w/2,0);ctx.closePath(); }
+    else                    { ctx.moveTo(0,-l.h/2);ctx.bezierCurveTo(l.w/2,-l.h/4,l.w/2,l.h/4,0,l.h/2);ctx.bezierCurveTo(-l.w/2,l.h/4,-l.w/2,-l.h/4,0,-l.h/2); }
+    ctx.fill(); ctx.restore();
   }
 
-  function drawLeaf(l){
-    ctx.save();
-    ctx.translate(l.x,l.y);
-    ctx.rotate(l.rot);
-    ctx.globalAlpha=l.alpha;
-    ctx.fillStyle=l.color;
-    ctx.beginPath();
-    if(l.shape===0){
-      // oval leaf
-      ctx.ellipse(0,0,l.w/2,l.h/2,0,0,Math.PI*2);
-    } else if(l.shape===1){
-      // diamond
-      ctx.moveTo(0,-l.h/2);ctx.lineTo(l.w/2,0);ctx.lineTo(0,l.h/2);ctx.lineTo(-l.w/2,0);ctx.closePath();
-    } else {
-      // teardrop
-      ctx.moveTo(0,-l.h/2);
-      ctx.bezierCurveTo(l.w/2,-l.h/4, l.w/2,l.h/4, 0,l.h/2);
-      ctx.bezierCurveTo(-l.w/2,l.h/4, -l.w/2,-l.h/4, 0,-l.h/2);
-    }
-    ctx.fill();
-    ctx.restore();
-  }
-
-  function tick(){
-    ctx.clearRect(0,0,C.width,C.height);
-    leaves.forEach(l=>{
-      l.x+=l.vx+Math.sin(l.y*.012)*.5;
-      l.y+=l.vy;
-      l.rot+=l.rotSpd;
-      if(l.y>C.height+30){
-        l.y=-20;l.x=Math.random()*C.width;
-        l.color=COLORS[Math.floor(Math.random()*COLORS.length)];
+  function tick() {
+    ctx.clearRect(0, 0, C.width, C.height);
+    leaves.forEach(l => {
+      l.x += l.vx + Math.sin(l.y * .012) * .5;
+      l.y += l.vy; l.rot += l.rotSpd;
+      if (l.y > C.height + 30) {
+        l.y = -20; l.x = Math.random() * C.width;
+        l.color = COLORS[Math.floor(Math.random() * COLORS.length)];
       }
       drawLeaf(l);
     });
     requestAnimationFrame(tick);
   }
   tick();
-})();
-
-/* ── TECHNIQUE TOGGLE ── */
-function T(h){
-  const b=h.nextElementSibling,hint=h.querySelector('.hint');
-  b.classList.toggle('open');
-  hint.textContent=b.classList.contains('open')?'[−]':'[+]';
 }
 
-/* ── TURNO NAVIGATOR ── */
-const TC={1:'c1',2:'c2',3:'c3',4:'c4',5:'c4'};
-const TA={1:'act',2:'act2',3:'act3',4:'act4',5:'act4'};
-let activeT=null;
-function TN(n){
-  for(let i=1;i<=5;i++){
-    document.getElementById('tp'+i).style.display='none';
-    document.querySelectorAll('.tn2')[i-1].className='tn2';
+/* Turno navigator */
+const TC = {1:'c1', 2:'c2', 3:'c3', 4:'c4', 5:'c4'};
+const TA = {1:'act', 2:'act2', 3:'act3', 4:'act4', 5:'act4'};
+let activeT = null;
+
+function TN(n) {
+  for (let i = 1; i <= 5; i++) {
+    const p = document.getElementById('tp' + i);
+    if (p) p.style.display = 'none';
+    const btn = document.querySelectorAll('.tn2')[i - 1];
+    if (btn) btn.className = 'tn2';
   }
-  if(activeT===n){activeT=null;return;}
-  activeT=n;
-  const panel=document.getElementById('tp'+n);
-  panel.style.display='block';
-  if(n===5){panel.className='tpanel show';panel.style.borderLeft='3px solid var(--o5)';panel.style.color='var(--o5)';}
-  else{panel.className='tpanel '+TC[n]+' show';}
-  for(let i=1;i<=n;i++) document.querySelectorAll('.tn2')[i-1].className='tn2 '+TA[n];
+  if (activeT === n) { activeT = null; return; }
+  activeT = n;
+  const panel = document.getElementById('tp' + n);
+  if (!panel) return;
+  panel.style.display = 'block';
+  if (n === 5) {
+    panel.className = 'tpanel show';
+    panel.style.cssText += ';border-left:3px solid var(--o5);color:var(--o5)';
+  } else {
+    panel.className = 'tpanel ' + TC[n] + ' show';
+    panel.style.borderLeft = panel.style.color = '';
+  }
+  for (let i = 1; i <= n; i++) {
+    const btn = document.querySelectorAll('.tn2')[i - 1];
+    if (btn) btn.className = 'tn2 ' + TA[n];
+  }
 }
 
-/* ── REVEAL ON SCROLL ── */
-const obs=new IntersectionObserver(es=>{
-  es.forEach((e,i)=>{
-    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*45);obs.unobserve(e.target)}
-  });
-},{threshold:.07});
-document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+/* Boot */
+document.addEventListener('DOMContentLoaded', () => {
+  engine.init();
+  initLeafCanvas();
+});
 </script>
 </body>
 </html>

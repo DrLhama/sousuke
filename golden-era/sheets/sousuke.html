@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-char="sousuke">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⛩️ Sousuke — A Ficha</title>
+<title>⛩️ Sousuke — A Ficha · Golden Era</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inconsolata:wght@300;400;700&family=Noto+Serif+JP:wght@300;700&display=swap" rel="stylesheet">
 <style>
+
 :root {
   --void:     #020303;
   --deep:     #050807;
@@ -229,9 +230,12 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:var(--void)}
 ::-webkit-scrollbar-thumb{background:var(--seam);border-radius:2px}
+
+/* extra bottom padding for edit bar */
+body { padding-bottom: 52px; }
 </style>
-</head>
 <body>
+
 
 <div class="cover">
   <div class="drips">
@@ -935,16 +939,7 @@ A vibe não é hostilidade. É metodologia. Quando Sousuke olha para alguém com
   </div>
 </div>
 
-<script>
-function AM(n){
-  for(let i=1;i<=2;i++){
-    document.getElementById('amp'+i).style.display='none';
-    document.getElementById('am'+i).style.background='var(--slab)';
-  }
-  document.getElementById('amp'+n).style.display='block';
-  document.getElementById('am'+n).style.background='var(--deep)';
-}
-</script>
+
 
 <!-- SHIKIGAMIS -->
 <div class="sh reveal"><div class="sl"></div><div class="st n">Shikigamis de Podridão · Os Restos que Continuam</div><div class="sl r"></div></div>
@@ -1082,17 +1077,7 @@ function AM(n){
   <div class="b" style="font-size:.8rem;margin-top:18px;color:var(--ash)">Todos respondem a comando simples de Sousuke (ação livre). Sem comando: avançam para o alvo mais próximo. Não distinguem aliados. Duração conta a partir da esporulação que os gerou.</div>
 </div>
 
-<script>
-function SP(n){
-  for(let i=1;i<=5;i++){
-    document.getElementById('spage'+i).style.display='none';
-    document.getElementById('sp'+i).style.background='var(--slab)';
-  }
-  document.getElementById('spage'+n).style.display='block';
-  document.getElementById('sp'+n).style.background='var(--deep)';
-}
-SP(1);
-</script>
+
 
 <!-- DOMÍNIO -->
 <div class="sh reveal"><div class="sl"></div><div class="st">Expansão de Domínio · Bloqueada</div><div class="sl r"></div></div>
@@ -1164,33 +1149,69 @@ SP(1);
 
 </div>
 
+
+
+<script src="../engine.js"></script>
 <script>
-function T(h){
-  const b=h.nextElementSibling,hint=h.querySelector('.hint');
-  b.classList.toggle('open');
-  hint.textContent=b.classList.contains('open')?'[−]':'[+]';
-}
+/* ══════════════════════════════════════
+   SOUSUKE — lógica específica da ficha
+══════════════════════════════════════ */
 
-const PH={1:'ph1',2:'ph1',3:'ph1',4:'ph2',5:'ph2',6:'ph2',7:'ph3',8:'ph3',9:'ph3',10:'ph4'};
-const PC={1:'c1',2:'c1',3:'c1',4:'c2',5:'c2',6:'c2',7:'c3',8:'c3',9:'c3',10:'c4'};
-let al=null;
-function SL(n){
-  for(let i=1;i<=10;i++){
-    document.getElementById('ln'+i).className='ln';
-    document.getElementById('lp'+i).className='lpanel '+PC[i];
+/* Layer navigator (Sistema de Podridão) */
+const PH = {1:'ph1',2:'ph1',3:'ph1',4:'ph2',5:'ph2',6:'ph2',7:'ph3',8:'ph3',9:'ph3',10:'ph4'};
+const PC = {1:'c1',2:'c1',3:'c1',4:'c2',5:'c2',6:'c2',7:'c3',8:'c3',9:'c3',10:'c4'};
+let activeLayer = null;
+
+function SL(n) {
+  for (let i = 1; i <= 10; i++) {
+    const ln = document.getElementById('ln' + i);
+    const lp = document.getElementById('lp' + i);
+    if (ln) ln.className = 'ln';
+    if (lp) lp.className = 'lpanel ' + PC[i];
   }
-  if(al===n){al=null;return;}
-  al=n;
-  for(let i=1;i<=n;i++) document.getElementById('ln'+i).className='ln '+PH[n];
-  document.getElementById('lp'+n).className='lpanel '+PC[n]+' show';
+  if (activeLayer === n) { activeLayer = null; return; }
+  activeLayer = n;
+  for (let i = 1; i <= n; i++) {
+    const ln = document.getElementById('ln' + i);
+    if (ln) ln.className = 'ln ' + PH[n];
+  }
+  const lp = document.getElementById('lp' + n);
+  if (lp) lp.className = 'lpanel ' + PC[n] + ' show';
 }
 
-const obs=new IntersectionObserver(es=>{
-  es.forEach((e,i)=>{
-    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*45);obs.unobserve(e.target)}
-  });
-},{threshold:.07});
-document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+/* Shikigami type navigator */
+function SP(n) {
+  for (let i = 1; i <= 5; i++) {
+    const p = document.getElementById('spage' + i);
+    const b = document.getElementById('sp' + i);
+    if (p) p.style.display = 'none';
+    if (b) b.style.background = 'var(--slab)';
+  }
+  const p = document.getElementById('spage' + n);
+  const b = document.getElementById('sp' + n);
+  if (p) p.style.display = 'block';
+  if (b) b.style.background = 'var(--deep)';
+}
+
+/* Adaptação Micelial sub-nav */
+function AM(n) {
+  for (let i = 1; i <= 2; i++) {
+    const p = document.getElementById('amp' + i);
+    const b = document.getElementById('am' + i);
+    if (p) p.style.display = 'none';
+    if (b) b.style.background = 'var(--slab)';
+  }
+  const p = document.getElementById('amp' + n);
+  const b = document.getElementById('am' + n);
+  if (p) p.style.display = 'block';
+  if (b) b.style.background = 'var(--deep)';
+}
+
+/* Boot */
+document.addEventListener('DOMContentLoaded', () => {
+  engine.init();
+  SP(1); // abre shiki padrão
+});
 </script>
 </body>
 </html>
