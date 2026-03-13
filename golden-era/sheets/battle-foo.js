@@ -1,582 +1,736 @@
 /* ═══════════════════════════════════════════════════════════
-   FOO — Calculadora de Batalha
-   Janela flutuante: arrastável, redimensionável
-   HP/EA · Campo de sementes com juros · Kakashi · Log
+   FOO — Calculadora de Batalha v3
+   Campos nomeáveis como janelas filhas independentes
 ═══════════════════════════════════════════════════════════ */
 
-/* ── TRANSIÇÃO DE SAÍDA: folhas douradas cobrindo a tela ── */
 window.GE_TRANSITION = function(canvas, done) {
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
-
   const COLORS = ['#f8a830','#e87010','#82dc30','#50b812','#ffd050','#b4f060','#c86010'];
-  const leaves = Array.from({length: 120}, () => ({
-    x: Math.random() * W * 1.4 - W * 0.2,
-    y: -20 - Math.random() * H * 0.5,
-    w: 8 + Math.random() * 18,
-    h: 10 + Math.random() * 22,
-    rot: Math.random() * Math.PI * 2,
-    rotSpd: (Math.random() - .5) * .12,
-    vx: (Math.random() - .4) * 3,
-    vy: 4 + Math.random() * 7,
+  const leaves = Array.from({length: 90}, () => ({
+    x: Math.random() * W * 1.3 - W * .15,
+    y: -20 - Math.random() * H * .4,
+    w: 8 + Math.random() * 16, h: 10 + Math.random() * 20,
+    rot: Math.random() * Math.PI * 2, rotSpd: (Math.random() - .5) * .1,
+    vx: (Math.random() - .4) * 2.5, vy: 5 + Math.random() * 6,
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
-    alpha: .7 + Math.random() * .3,
-    shape: Math.floor(Math.random() * 3),
-    landed: false, landY: H * (.3 + Math.random() * .8)
+    alpha: .65 + Math.random() * .35, shape: Math.floor(Math.random() * 3)
   }));
 
-  let bgAlpha = 0;
-  let frame = 0;
-  let navigated = false;
+  let phase = 0, bgAlpha = 0, slideY = 0, navigated = false;
+  const fallback = setTimeout(() => { if (!navigated) { navigated = true; done(); } }, 2500);
 
   function drawLeaf(l) {
-    ctx.save();
-    ctx.translate(l.x, l.y); ctx.rotate(l.rot);
-    ctx.globalAlpha = l.alpha * Math.min(1, frame / 8);
-    ctx.fillStyle = l.color; ctx.beginPath();
-    if (l.shape === 0) {
-      ctx.ellipse(0, 0, l.w/2, l.h/2, 0, 0, Math.PI*2);
-    } else if (l.shape === 1) {
-      ctx.moveTo(0,-l.h/2);ctx.lineTo(l.w/2,0);ctx.lineTo(0,l.h/2);ctx.lineTo(-l.w/2,0);ctx.closePath();
-    } else {
-      ctx.moveTo(0,-l.h/2);
-      ctx.bezierCurveTo(l.w/2,-l.h/4,l.w/2,l.h/4,0,l.h/2);
-      ctx.bezierCurveTo(-l.w/2,l.h/4,-l.w/2,-l.h/4,0,-l.h/2);
-    }
+    ctx.save(); ctx.translate(l.x, l.y); ctx.rotate(l.rot);
+    ctx.globalAlpha = l.alpha; ctx.fillStyle = l.color; ctx.beginPath();
+    if (l.shape === 0) ctx.ellipse(0,0,l.w/2,l.h/2,0,0,Math.PI*2);
+    else if (l.shape === 1) { ctx.moveTo(0,-l.h/2);ctx.lineTo(l.w/2,0);ctx.lineTo(0,l.h/2);ctx.lineTo(-l.w/2,0);ctx.closePath(); }
+    else { ctx.moveTo(0,-l.h/2);ctx.bezierCurveTo(l.w/2,-l.h/4,l.w/2,l.h/4,0,l.h/2);ctx.bezierCurveTo(-l.w/2,l.h/4,-l.w/2,-l.h/4,0,-l.h/2); }
     ctx.fill(); ctx.restore();
   }
 
   function tick() {
-    frame++;
-    ctx.clearRect(0, 0, W, H);
+    if (navigated) return;
+    ctx.clearRect(0,0,W,H);
 
-    // dark bg grows in
-    bgAlpha = Math.min(1, bgAlpha + 0.025);
-    ctx.fillStyle = `rgba(6,4,0,${bgAlpha})`;
-    ctx.fillRect(0, 0, W, H);
-
-    let allLanded = true;
-    leaves.forEach(l => {
-      if (!l.landed) {
-        l.x += l.vx + Math.sin(l.y * .015) * 1.2;
-        l.y += l.vy; l.rot += l.rotSpd;
-        l.vy *= .995;
-        if (l.y >= l.landY) { l.landed = true; l.y = l.landY; }
-        else allLanded = false;
-      }
-      drawLeaf(l);
-    });
-
-    if (!navigated && bgAlpha >= 1 && allLanded) {
-      navigated = true; done(); return;
+    if (phase === 0) {
+      bgAlpha = Math.min(1, bgAlpha + 0.03);
+      ctx.fillStyle = `rgba(6,4,0,${bgAlpha})`; ctx.fillRect(0,0,W,H);
+      leaves.forEach(l => {
+        l.x += l.vx + Math.sin(l.y*.012)*.8; l.y += l.vy; l.rot += l.rotSpd;
+        if (l.y > H + 20) { l.y = -20; l.x = Math.random() * W; }
+        drawLeaf(l);
+      });
+      if (bgAlpha >= 1) phase = 1;
     }
-    if (!navigated) requestAnimationFrame(tick);
+
+    if (phase === 1) {
+      slideY += H * 0.048;
+      const curtainH = Math.max(0, H - slideY);
+      ctx.fillStyle = 'rgba(6,4,0,1)';
+      ctx.fillRect(0, 0, W, curtainH);
+      // leaves still swirling near curtain edge
+      const edgeY = curtainH;
+      leaves.forEach(l => {
+        l.x += l.vx * 0.5; l.y += l.vy * 0.4; l.rot += l.rotSpd;
+        if (Math.abs(l.y - edgeY) < 60) {
+          ctx.globalAlpha = Math.max(0, (1 - Math.abs(l.y - edgeY) / 60)) * l.alpha * 0.6;
+          drawLeaf(l); ctx.globalAlpha = 1;
+        }
+      });
+      if (curtainH <= 0) {
+        ctx.clearRect(0,0,W,H);
+        clearTimeout(fallback);
+        navigated = true; done(); return;
+      }
+    }
+
+    requestAnimationFrame(tick);
   }
   tick();
 };
 
-/* ═══════════════════════════════════════════════════════════
-   BATTLE CALCULATOR
-═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════ */
 (function() {
 
-  /* ── STATE ── */
-  const S = {
-    hp: 15, hpMax: 15,
-    ea: 20, eaMax: 20,
-    field: [],        // [{id, turno, juros}]
-    kakashiActive: false,
-    kakashiHp: 0,
-    log: [],
-    nextSeedId: 1
+  // Lê HP/EA máximo da ficha em tempo real
+  function readSheetStats() {
+    // Procura na ficha pelos valores de HP/EA nas células .sv
+    const cells = document.querySelectorAll('.sc');
+    let hp = 15, ea = 20;
+    cells.forEach(cell => {
+      const lbl = cell.querySelector('.sl2');
+      const val = cell.querySelector('.sv');
+      if (!lbl || !val) return;
+      const txt = lbl.textContent.trim().toLowerCase();
+      const num = parseInt(val.textContent);
+      if (txt === 'vida' && !isNaN(num)) hp = num;
+      if (txt === 'ea inicial' && !isNaN(num)) ea = num;
+    });
+    return { hp, ea };
+  }
+
+  const sheetStats = readSheetStats();
+  const S = { hp: sheetStats.hp, hpMax: sheetStats.hp, ea: sheetStats.ea, eaMax: sheetStats.ea, log: [],
+    // EA armazenada na Ecobag (juros pausados)
+    storedEa: [], nextStoredId: 1
   };
+  let nextFieldId = 1;
+  let fieldWindows = [];
 
-  /* juros table: turno → valor base acumulado */
-  const JUROS = [0, 8, 12, 18, 26, 32, 40, 48];
-  function jurosValue(t) { return JUROS[Math.min(t, JUROS.length-1)]; }
+  // Juros escalam infinitamente: T0-T7 tabela base, T8+ +8/turno
+  function jurosValue(t) {
+    const BASE = [0, 8, 12, 18, 26, 32, 40, 48];
+    if (t <= 7) return BASE[t];
+    return 48 + (t - 7) * 8;
+  }
 
-  /* ── LOG ── */
   function log(msg, type='info') {
     S.log.unshift({ msg, type, ts: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) });
-    if (S.log.length > 60) S.log.pop();
+    if (S.log.length > 80) S.log.pop();
     renderLog();
   }
 
-  /* ── STYLES ── */
+  /* ── SHARED STYLES ── */
   const style = document.createElement('style');
   style.textContent = `
-    #foo-calc {
+    .foo-win {
       position: fixed; z-index: 9000;
-      bottom: 80px; right: 24px;
-      width: 360px; min-width: 280px; max-width: 600px;
-      min-height: 200px;
-      background: rgba(10,7,0,.97);
-      border: 1px solid rgba(184,72,0,.4);
+      background: rgba(22,16,4,.98);
+      border: 1px solid rgba(200,90,10,.5);
       font-family: 'Inconsolata', monospace;
       display: flex; flex-direction: column;
-      box-shadow: 0 0 40px rgba(232,112,16,.12), 0 8px 32px rgba(0,0,0,.8);
+      box-shadow: 0 0 32px rgba(232,112,16,.1), 0 8px 28px rgba(0,0,0,.85);
       resize: both; overflow: hidden;
+      min-width: 260px; min-height: 120px;
     }
-    #foo-calc.minimized .calc-body { display: none; }
+    .foo-win.minimized .fw-body { display: none; }
 
-    .calc-titlebar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 12px;
-      background: rgba(110,34,0,.35);
-      border-bottom: 1px solid rgba(184,72,0,.3);
+    .fw-titlebar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px;
+      background: rgba(140,50,5,.45);
+      border-bottom: 1px solid rgba(200,90,10,.35);
       cursor: grab; user-select: none; flex-shrink: 0;
     }
-    .calc-titlebar:active { cursor: grabbing; }
-    .calc-title {
-      font-size: .5rem; letter-spacing: .35em; text-transform: uppercase;
-      color: rgba(248,168,48,.6);
+    .fw-titlebar:active { cursor: grabbing; }
+    .fw-drag-hint { font-size:.7rem; color:rgba(200,140,50,.3); margin-right:2px; flex-shrink:0; user-select:none; }
+    .fw-title-input {
+      flex: 1; background: transparent; border: none; outline: none;
+      font-family: 'Inconsolata', monospace; font-size: .52rem;
+      letter-spacing: .25em; text-transform: uppercase;
+      color: rgba(255,185,65,.85); cursor: text;
     }
-    .calc-win-btns { display: flex; gap: 6px; }
-    .calc-win-btn {
-      width: 14px; height: 14px; border-radius: 50%;
-      border: none; cursor: pointer; font-size: 9px;
-      display: flex; align-items: center; justify-content: center;
-      transition: filter .15s;
+    .fw-title-input::placeholder { color: rgba(180,100,30,.3); }
+    .fw-winbtns { display: flex; gap: 5px; margin-left: auto; flex-shrink: 0; }
+    .fw-wbtn {
+      width: 13px; height: 13px; border-radius: 50%; border: none;
+      cursor: pointer; font-size: 8px; display: flex; align-items: center; justify-content: center; transition: filter .15s;
     }
-    .calc-win-btn:hover { filter: brightness(1.4); }
-    .calc-win-btn.min { background: rgba(232,112,16,.5); color: rgba(6,4,0,.8); }
-    .calc-win-btn.close { background: rgba(180,40,40,.5); color: rgba(6,4,0,.8); }
+    .fw-wbtn:hover { filter: brightness(1.5); }
+    .fw-wbtn.min   { background: rgba(232,112,16,.5); color: rgba(4,2,0,.9); }
+    .fw-wbtn.close { background: rgba(180,40,40,.5);  color: rgba(4,2,0,.9); }
 
-    .calc-body {
-      flex: 1; overflow-y: auto; padding: 14px;
-      display: flex; flex-direction: column; gap: 12px;
+    .fw-body {
+      flex: 1; overflow-y: auto; padding: 12px;
+      display: flex; flex-direction: column; gap: 10px;
     }
-    .calc-body::-webkit-scrollbar { width: 3px; }
-    .calc-body::-webkit-scrollbar-track { background: rgba(0,0,0,.3); }
-    .calc-body::-webkit-scrollbar-thumb { background: rgba(184,72,0,.3); }
+    .fw-body::-webkit-scrollbar { width: 3px; }
+    .fw-body::-webkit-scrollbar-thumb { background: rgba(184,72,0,.3); }
 
-    /* ── SECTION ── */
-    .cs { border: 1px solid rgba(46,34,0,.6); background: rgba(0,0,0,.3); }
-    .cs-head {
-      padding: 6px 10px;
-      border-bottom: 1px solid rgba(46,34,0,.5);
-      font-size: .46rem; letter-spacing: .3em; text-transform: uppercase;
-      color: rgba(232,112,16,.5);
+    /* ── SECTIONS ── */
+    .fs { border: 1px solid rgba(120,80,20,.3); background: rgba(255,255,255,.03); }
+    .fs-head {
+      padding: 5px 9px; border-bottom: 1px solid rgba(120,80,20,.25);
+      font-size: .44rem; letter-spacing: .3em; text-transform: uppercase;
+      color: rgba(232,140,40,.7); display: flex; align-items: center; justify-content: space-between;
     }
-    .cs-body { padding: 10px; }
+    .fs-body { padding: 9px; }
 
-    /* ── RESOURCE BAR ── */
-    .res-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .res-label { font-size: .44rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(180,140,60,.45); width: 28px; }
-    .res-track {
-      flex: 1; height: 8px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(80,60,20,.2);
-      position: relative; overflow: hidden;
-    }
-    .res-fill {
-      position: absolute; left: 0; top: 0; bottom: 0;
-      transition: width .3s;
-    }
-    .res-fill.hp  { background: linear-gradient(90deg, #50b812, #82dc30); }
-    .res-fill.ea  { background: linear-gradient(90deg, #e87010, #f8a830); }
-    .res-val {
-      font-size: .7rem; min-width: 60px; text-align: right;
-      color: rgba(220,180,80,.7);
-    }
-    .res-val span { color: rgba(130,110,50,.4); font-size: .55rem; }
+    /* ── RESOURCE ROWS ── */
+    .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .res-block { display: flex; flex-direction: column; gap: 4px; }
+    .res-label { font-size: .42rem; letter-spacing: .25em; text-transform: uppercase; color: rgba(210,170,80,.65); }
+    .res-bar { height: 6px; background: rgba(255,255,255,.05); border: 1px solid rgba(60,40,10,.25); position: relative; overflow: hidden; }
+    .res-bar-fill { position: absolute; left:0;top:0;bottom:0; transition: width .3s; }
+    .res-bar-fill.hp { background: linear-gradient(90deg,#50b812,#82dc30); }
+    .res-bar-fill.ea { background: linear-gradient(90deg,#c86010,#f8a830); }
+    .res-num { font-size: .75rem; color: rgba(248,210,100,.9); }
+    .res-num em { color: rgba(180,140,60,.6); font-style: normal; font-size: .55rem; }
+    .res-controls { display: flex; gap: 4px; align-items: center; margin-top: 2px; }
 
     /* ── BUTTONS ── */
-    .btn-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
-    .cbtn {
-      flex: 1; min-width: 40px; padding: 5px 4px;
-      background: transparent;
-      border: 1px solid rgba(80,60,20,.3);
-      color: rgba(180,150,60,.5);
-      font-family: 'Inconsolata', monospace;
-      font-size: .48rem; letter-spacing: .1em; text-transform: uppercase;
+    .fb {
+      padding: 5px 8px; background: transparent;
+      border: 1px solid rgba(150,100,25,.4); color: rgba(210,175,80,.75);
+      font-family: 'Inconsolata', monospace; font-size: .46rem;
+      letter-spacing: .1em; text-transform: uppercase;
       cursor: pointer; transition: all .15s; white-space: nowrap;
     }
-    .cbtn:hover { border-color: rgba(232,112,16,.5); color: rgba(248,168,48,.9); background: rgba(232,112,16,.06); }
-    .cbtn.danger:hover { border-color: rgba(200,60,60,.5); color: rgba(220,100,100,.9); background: rgba(200,60,60,.05); }
-    .cbtn.heal:hover   { border-color: rgba(80,184,18,.5); color: rgba(120,220,50,.9); background: rgba(46,138,8,.06); }
-    .cbtn.primary { border-color: rgba(232,112,16,.4); color: rgba(248,168,48,.7); }
+    .fb:hover        { border-color: rgba(232,112,16,.5); color: rgba(248,168,48,.9); background: rgba(232,112,16,.05); }
+    .fb.danger:hover { border-color: rgba(200,60,60,.5);  color: rgba(220,100,100,.9); background: rgba(180,40,40,.05); }
+    .fb.heal:hover   { border-color: rgba(80,184,18,.5);  color: rgba(120,220,50,.9);  background: rgba(46,138,8,.05); }
+    .fb.pri          { border-color: rgba(232,112,16,.4); color: rgba(255,185,65,.85); }
+    .fb.sm           { padding: 3px 6px; font-size: .42rem; }
 
-    /* ── INPUT ── */
-    .cinput {
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(80,60,20,.3);
-      color: rgba(220,190,100,.8);
-      font-family: 'Inconsolata', monospace; font-size: .7rem;
-      padding: 4px 8px; outline: none; width: 60px; text-align: center;
-      transition: border-color .15s;
+    .fi {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(70,50,10,.3);
+      color: rgba(220,185,90,.8); font-family: 'Inconsolata', monospace;
+      font-size: .68rem; padding: 4px 6px; outline: none; text-align: center;
+      transition: border-color .15s; width: 52px;
     }
-    .cinput:focus { border-color: rgba(232,112,16,.5); }
+    .fi:focus { border-color: rgba(232,112,16,.5); }
+    .fi.wide { width: 100%; text-align: left; }
 
-    /* ── SEEDS ── */
-    .seed-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; min-height: 20px; }
-    .seed-row {
-      display: flex; align-items: center; gap: 6px;
-      padding: 5px 8px;
-      background: rgba(232,112,16,.04);
-      border: 1px solid rgba(184,72,0,.2);
+    /* ── FIELD WINDOW ── */
+    .fw-turno-badge {
+      font-size: .9rem; color: rgba(255,195,70,.9); font-weight: bold;
+      min-width: 20px; text-align: center;
     }
-    .seed-id { font-size: .44rem; color: rgba(180,130,50,.4); width: 18px; }
-    .seed-turno { font-size: .6rem; color: rgba(248,168,48,.7); }
-    .seed-juros { font-size: .55rem; color: rgba(80,184,18,.6); flex: 1; }
-    .seed-det {
-      font-size: .44rem; letter-spacing: .1em; text-transform: uppercase;
-      padding: 3px 7px; border: 1px solid rgba(232,112,16,.3);
-      color: rgba(232,112,16,.6); cursor: pointer; background: transparent;
-      transition: all .15s; font-family: 'Inconsolata', monospace;
-    }
-    .seed-det:hover { border-color: rgba(248,168,48,.6); color: rgba(248,168,48,.9); background: rgba(232,112,16,.08); }
-    .seed-rem {
-      font-size: .44rem; padding: 3px 6px;
-      border: 1px solid rgba(140,40,40,.25); color: rgba(180,80,80,.4);
-      cursor: pointer; background: transparent; transition: all .15s;
-      font-family: 'Inconsolata', monospace;
-    }
-    .seed-rem:hover { border-color: rgba(200,80,80,.5); color: rgba(220,110,110,.8); }
+    .fw-turno-label { font-size: .44rem; color: rgba(190,150,65,.6); letter-spacing: .15em; }
 
-    /* ── KAKASHI ── */
-    .kakashi-row {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px;
-      background: rgba(110,34,0,.12);
-      border: 1px solid rgba(184,72,0,.2);
+    /* item rows */
+    .item-list { display: flex; flex-direction: column; gap: 3px; margin-bottom: 6px; min-height: 16px; }
+    .item-row {
+      display: grid; grid-template-columns: 1fr 44px 52px auto;
+      gap: 4px; align-items: center;
+      padding: 4px 6px; background: rgba(232,112,16,.07);
+      border: 1px solid rgba(160,90,20,.28);
     }
-    .kakashi-status {
-      font-size: .44rem; letter-spacing: .2em; text-transform: uppercase;
-      flex: 1;
+    .item-name {
+      background: transparent; border: none; outline: none;
+      font-family: 'Inconsolata', monospace; font-size: .55rem;
+      color: rgba(240,210,120,.9); letter-spacing: .1em;
     }
-    .kakashi-status.active { color: rgba(248,168,48,.8); }
-    .kakashi-status.inactive { color: rgba(100,80,30,.35); }
+    .item-name::placeholder { color: rgba(120,80,20,.3); }
+    .item-qty, .item-ea {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(70,50,10,.22);
+      color: rgba(230,200,100,.9); font-family: 'Inconsolata', monospace;
+      font-size: .55rem; padding: 2px 4px; outline: none; text-align: center;
+      width: 100%;
+    }
+    .item-qty:focus, .item-ea:focus { border-color: rgba(232,112,16,.4); }
+    .item-rem {
+      padding: 2px 5px; background: transparent;
+      border: 1px solid rgba(120,40,40,.2); color: rgba(180,70,70,.4);
+      font-size: .42rem; cursor: pointer; font-family: 'Inconsolata', monospace;
+      transition: all .15s;
+    }
+    .item-rem:hover { border-color: rgba(200,80,80,.5); color: rgba(220,110,110,.8); }
+
+    .item-header {
+      display: grid; grid-template-columns: 1fr 44px 52px auto;
+      gap: 4px; padding: 2px 6px; margin-bottom: 2px;
+    }
+    .item-header span { font-size: .4rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(180,130,55,.55); }
 
     /* ── LOG ── */
-    .log-list {
-      max-height: 120px; overflow-y: auto;
-      display: flex; flex-direction: column; gap: 3px;
-    }
+    .log-list { max-height: 100px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
     .log-list::-webkit-scrollbar { width: 2px; }
     .log-list::-webkit-scrollbar-thumb { background: rgba(184,72,0,.2); }
-    .log-entry {
-      font-size: .5rem; line-height: 1.6; padding: 2px 0;
-      border-bottom: 1px solid rgba(80,60,20,.08);
-      display: flex; gap: 8px;
-    }
-    .log-ts { color: rgba(100,80,30,.35); flex-shrink: 0; }
-    .log-msg { flex: 1; }
-    .log-entry.damage .log-msg { color: rgba(220,100,80,.8); }
-    .log-entry.heal   .log-msg { color: rgba(100,200,60,.8); }
-    .log-entry.seed   .log-msg { color: rgba(248,168,48,.75); }
-    .log-entry.ea     .log-msg { color: rgba(232,112,16,.8); }
-    .log-entry.info   .log-msg { color: rgba(150,130,70,.5); }
+    .log-e { font-size: .48rem; line-height: 1.55; padding: 2px 0; border-bottom: 1px solid rgba(140,90,20,.12); display: flex; gap: 7px; }
+    .log-e .ts  { color: rgba(100,70,20,.32); flex-shrink: 0; }
+    .log-e .msg { flex: 1; }
+    .log-e.damage .msg { color: rgba(220,100,80,.8); }
+    .log-e.heal   .msg { color: rgba(100,200,60,.8); }
+    .log-e.field  .msg { color: rgba(255,195,70,.9); }
+    .log-e.ea     .msg { color: rgba(232,112,16,.8); }
+    .log-e.info   .msg { color: rgba(180,150,80,.65); }
   `;
   document.head.appendChild(style);
 
-  /* ── BUILD DOM ── */
-  const win = document.createElement('div');
-  win.id = 'foo-calc';
-  win.innerHTML = `
-    <div class="calc-titlebar" id="foo-calc-bar">
-      <span class="calc-title">⚔ Foo · Batalha</span>
-      <div class="calc-win-btns">
-        <button class="calc-win-btn min" title="Minimizar">─</button>
-        <button class="calc-win-btn close" title="Fechar">✕</button>
+  /* ── DRAGGABLE FACTORY ── */
+  function makeDraggable(win, bar) {
+    let drag = false, ox = 0, oy = 0;
+    bar.addEventListener('mousedown', e => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+      drag = true;
+      const r = win.getBoundingClientRect();
+      win.style.left = r.left + 'px'; win.style.top = r.top + 'px';
+      win.style.bottom = 'auto'; win.style.right = 'auto';
+      ox = e.clientX - r.left; oy = e.clientY - r.top;
+      win.style.zIndex = '9200';
+    });
+    document.addEventListener('mousemove', e => {
+      if (!drag) return;
+      const x = Math.max(-win.offsetWidth + 80, Math.min(window.innerWidth - 60, e.clientX - ox));
+      const y = Math.max(0, Math.min(window.innerHeight - 30, e.clientY - oy));
+      win.style.left = x + 'px'; win.style.top = y + 'px';
+    });
+    document.addEventListener('mouseup', () => { if (drag) { drag = false; win.style.zIndex = '9000'; } });
+  }
+
+  function recenter(win) {
+    win.style.left = Math.max(0, (window.innerWidth - win.offsetWidth) / 2) + 'px';
+    win.style.top  = Math.max(0, (window.innerHeight - win.offsetHeight) / 2) + 'px';
+    win.style.bottom = 'auto'; win.style.right = 'auto';
+    win.classList.remove('minimized');
+  }
+
+  /* ── MAIN WINDOW ── */
+  const main = document.createElement('div');
+  main.className = 'foo-win';
+  main.style.cssText = 'width:440px;bottom:80px;right:24px;';
+  main.innerHTML = `
+    <div class="fw-titlebar" id="foo-main-bar">
+      <span class="fw-drag-hint">⠿</span>
+      <span style="font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,185,65,.85)">⚔ FOO · Batalha</span>
+      <div class="fw-winbtns">
+        <button class="fw-wbtn" id="foo-recenter-btn" title="Recentrar" style="background:rgba(180,120,40,.35);color:rgba(255,200,80,.8);border-radius:3px;width:auto;padding:0 6px;font-size:10px;">⊙</button>
+        <button class="fw-wbtn min">─</button>
+        <button class="fw-wbtn close">✕</button>
       </div>
     </div>
-    <div class="calc-body">
+    <div class="fw-body">
 
-      <!-- HP / EA -->
-      <div class="cs">
-        <div class="cs-head">Recursos</div>
-        <div class="cs-body">
-          <div class="res-row">
-            <div class="res-label">HP</div>
-            <div class="res-track"><div class="res-fill hp" id="hp-fill"></div></div>
-            <div class="res-val" id="hp-val">15 <span>/ 15</span></div>
-          </div>
-          <div class="btn-row">
-            <input class="cinput" id="hp-amt" value="1" type="number" min="1" max="999">
-            <button class="cbtn danger" onclick="fooBattle.dmg()">− Dano</button>
-            <button class="cbtn heal"   onclick="fooBattle.heal()">+ Cura</button>
-            <button class="cbtn"        onclick="fooBattle.setMaxHp()">Def. Máx</button>
-          </div>
-          <div class="res-row" style="margin-top:10px">
-            <div class="res-label">EA</div>
-            <div class="res-track"><div class="res-fill ea" id="ea-fill"></div></div>
-            <div class="res-val" id="ea-val">20 <span>/ 20</span></div>
-          </div>
-          <div class="btn-row">
-            <input class="cinput" id="ea-amt" value="1" type="number" min="1" max="999">
-            <button class="cbtn danger" onclick="fooBattle.useEa()">− Gastar</button>
-            <button class="cbtn heal"   onclick="fooBattle.gainEa()">+ Ganhar</button>
-            <button class="cbtn"        onclick="fooBattle.setMaxEa()">Def. Máx</button>
+      <!-- HP / EA em grid 2col -->
+      <div class="fs">
+        <div class="fs-head">Recursos</div>
+        <div class="fs-body">
+          <div class="res-grid">
+            <div class="res-block">
+              <div class="res-label">HP</div>
+              <div class="res-bar"><div class="res-bar-fill hp" id="foo-hp-fill"></div></div>
+              <div class="res-num" id="foo-hp-num">— <em>/ —</em></div>
+              <div class="res-controls">
+                <input class="fi" id="foo-hp-amt" value="1" type="number" min="1"
+                  onkeydown="if(event.key==='Enter'){const n=parseFloat(this.value)||1;if(n<0)fooB.heal(-n);else fooB.dmg(n);}">
+                <span style="font-size:.4rem;color:rgba(180,130,50,.45);letter-spacing:.1em">ENTER −HP / ENTER +HP (neg)</span>
+              </div>
+            </div>
+            <div class="res-block">
+              <div class="res-label">EA</div>
+              <div class="res-bar"><div class="res-bar-fill ea" id="foo-ea-fill"></div></div>
+              <div class="res-num" id="foo-ea-num">— <em>/ —</em></div>
+              <div class="res-controls">
+                <input class="fi" id="foo-ea-amt" value="1" type="number" min="1"
+                  onkeydown="if(event.key==='Enter'){const n=parseFloat(this.value)||1;if(n<0)fooB.gainEa(-n);else fooB.useEa(n);}">
+                <span style="font-size:.4rem;color:rgba(180,130,50,.45);letter-spacing:.1em">ENTER −EA / ENTER +EA (neg)</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- CAMPO -->
-      <div class="cs">
-        <div class="cs-head">Campo · Sementes</div>
-        <div class="cs-body">
-          <div class="seed-list" id="seed-list"></div>
-          <div class="btn-row">
-            <button class="cbtn primary" onclick="fooBattle.addSeed()">+ Plantar Semente</button>
-            <button class="cbtn" onclick="fooBattle.advTurn()">▶ Turno (+juros)</button>
-          </div>
-          <div class="btn-row" style="margin-top:4px">
-            <button class="cbtn" onclick="fooBattle.detonateAll()">💥 Detonar Todas</button>
-            <button class="cbtn danger" onclick="fooBattle.clearField()">✕ Limpar Campo</button>
-          </div>
+      <!-- CAMPOS -->
+      <div class="fs">
+        <div class="fs-head">
+          <span>Campos Germinados</span>
+          <button class="fb pri sm" onclick="fooB.newField()">+ Novo Campo</button>
+        </div>
+        <div class="fs-body" id="foo-field-list" style="font-size:.48rem;color:rgba(120,90,35,.35);text-align:center;padding:8px 0">
+          Nenhum campo ativo — clique em + Novo Campo
         </div>
       </div>
 
-      <!-- KAKASHI -->
-      <div class="cs">
-        <div class="cs-head">Kakashi · 案山子</div>
-        <div class="cs-body">
-          <div class="kakashi-row">
-            <div class="kakashi-status inactive" id="kakashi-status">● Não invocado</div>
-            <div class="res-val" id="kakashi-hp-val" style="display:none">HP: 0</div>
+      <!-- EA ARMAZENADA — Ecobag -->
+      <div class="fs" style="border-color:rgba(130,220,50,.2)">
+        <div class="fs-head" style="color:rgba(130,220,50,.75);border-bottom-color:rgba(130,220,50,.18)">
+          <span>📦 EA Armazenada · Ecobag</span>
+          <button class="fb pri sm" onclick="fooB.storeEa()" style="border-color:rgba(100,200,40,.3);color:rgba(130,220,50,.8)">+ Guardar</button>
+        </div>
+        <div class="fs-body" style="padding:6px 9px">
+          <div style="font-size:.42rem;color:rgba(140,200,70,.5);margin-bottom:6px;letter-spacing:.08em">
+            EA guardada tem juros PAUSADOS — retomam ao plantar. Use pra chegar ao combate já carregado ou guardar EA de sementes detonadas.
           </div>
-          <div class="btn-row" style="margin-top:8px">
-            <button class="cbtn primary" onclick="fooBattle.kakashiSummon()">Invocar</button>
-            <button class="cbtn danger"  onclick="fooBattle.kakashiDmg()">− Dano</button>
-            <button class="cbtn heal"    onclick="fooBattle.kakashiHeal()">+ HP</button>
-            <button class="cbtn"         onclick="fooBattle.kakashiDismiss()">Dispensar</button>
+          <div class="res-controls" style="margin-bottom:6px">
+            <input class="fi" id="foo-store-amt" value="8" type="number" min="1" title="Quantidade de EA" style="width:44px">
+            <input class="fi wide" id="foo-store-lbl" placeholder="rótulo (ex: T+2 batata)" style="flex:1;width:auto"
+              onkeydown="if(event.key==='Enter') fooB.storeEa()">
           </div>
-          <div class="btn-row">
-            <input class="cinput" id="kk-amt" value="1" type="number" min="1" max="999">
-            <span style="font-size:.44rem;color:rgba(130,100,40,.35);letter-spacing:.15em"> ← quantidade</span>
-          </div>
+          <div id="foo-stored-list" style="display:flex;flex-direction:column;gap:3px;min-height:10px"></div>
+          <div style="margin-top:5px;font-size:.42rem;color:rgba(180,140,60,.4)" id="foo-stored-total">Total armazenado: 0 EA</div>
         </div>
       </div>
 
       <!-- LOG -->
-      <div class="cs">
-        <div class="cs-head" style="display:flex;justify-content:space-between;align-items:center">
-          <span>Log de Ações</span>
-          <button class="cbtn" style="flex:0;padding:2px 8px;font-size:.4rem" onclick="fooBattle.clearLog()">Limpar</button>
+      <div class="fs">
+        <div class="fs-head">
+          Log de Ações
+          <button class="fb sm" onclick="fooB.clearLog()">Limpar</button>
         </div>
-        <div class="cs-body">
-          <div class="log-list" id="foo-log"></div>
-        </div>
+        <div class="fs-body"><div class="log-list" id="foo-log"></div></div>
       </div>
 
     </div>
   `;
-  document.body.appendChild(win);
-
-  /* ── DRAG ── */
-  const bar = win.querySelector('#foo-calc-bar');
-  let dragging = false, ox = 0, oy = 0;
-  bar.addEventListener('mousedown', e => {
-    dragging = true;
-    ox = e.clientX - win.offsetLeft;
-    oy = e.clientY - win.offsetTop;
-    win.style.bottom = 'auto';
-    win.style.right  = 'auto';
+  document.body.appendChild(main);
+  makeDraggable(main, main.querySelector('#foo-main-bar'));
+  main.querySelector('.fw-wbtn.min').addEventListener('click', () => main.classList.toggle('minimized'));
+  main.querySelector('#foo-recenter-btn').addEventListener('click', () => recenter(main));
+  main.querySelector('.fw-wbtn.close').addEventListener('click', () => {
+    main.style.display = 'none';
+    // Don't remove main, just hide — toggle still works
   });
-  document.addEventListener('mousemove', e => {
-    if (!dragging) return;
-    win.style.left = (e.clientX - ox) + 'px';
-    win.style.top  = (e.clientY - oy) + 'px';
-  });
-  document.addEventListener('mouseup', () => { dragging = false; });
 
-  /* ── MIN / CLOSE ── */
-  win.querySelector('.calc-win-btn.min').addEventListener('click', () => win.classList.toggle('minimized'));
-  win.querySelector('.calc-win-btn.close').addEventListener('click', () => win.remove());
-
-  /* ── RENDER ── */
-  function render() {
-    // HP bar
-    const hpPct = Math.max(0, S.hp / S.hpMax * 100);
-    document.getElementById('hp-fill').style.width = hpPct + '%';
-    document.getElementById('hp-val').innerHTML = `${S.hp} <span>/ ${S.hpMax}</span>`;
-
-    // EA bar
-    const eaPct = Math.max(0, S.ea / S.eaMax * 100);
-    document.getElementById('ea-fill').style.width = eaPct + '%';
-    document.getElementById('ea-val').innerHTML = `${S.ea} <span>/ ${S.eaMax}</span>`;
-
-    // Seeds
-    const list = document.getElementById('seed-list');
-    if (S.field.length === 0) {
-      list.innerHTML = '<div style="font-size:.48rem;color:rgba(100,80,30,.3);padding:4px 0;text-align:center">— campo vazio —</div>';
-    } else {
-      list.innerHTML = S.field.map(s => `
-        <div class="seed-row">
-          <span class="seed-id">#${s.id}</span>
-          <span class="seed-turno">T+${s.turno}</span>
-          <span class="seed-juros">→ ${jurosValue(s.turno)} base</span>
-          ${s.turno >= 4 ? '<span style="font-size:.42rem;color:rgba(248,168,48,.6);letter-spacing:.1em">AUTO</span>' : ''}
-          <button class="seed-det" onclick="fooBattle.detonate(${s.id})">Detonar</button>
-          <button class="seed-rem" onclick="fooBattle.removeSeed(${s.id})">✕</button>
-        </div>`).join('');
-    }
-
-    // Kakashi
-    const ks = document.getElementById('kakashi-status');
-    const khv = document.getElementById('kakashi-hp-val');
-    if (S.kakashiActive) {
-      ks.textContent = '● Ativo';
-      ks.className = 'kakashi-status active';
-      khv.style.display = 'block';
-      khv.textContent = `HP: ${S.kakashiHp}`;
-    } else {
-      ks.textContent = '● Não invocado';
-      ks.className = 'kakashi-status inactive';
-      khv.style.display = 'none';
-    }
+  /* ── RENDER RESOURCES ── */
+  function renderRes() {
+    // sync max from sheet on every render
+    const fresh = readSheetStats();
+    if (fresh.hp !== S.hpMax) { S.hpMax = fresh.hp; S.hp = Math.min(S.hp, S.hpMax); }
+    if (fresh.ea !== S.eaMax) { S.eaMax = fresh.ea; S.ea = Math.min(S.ea, S.eaMax); }
+    document.getElementById('foo-hp-fill').style.width = Math.max(0, S.hp/S.hpMax*100)+'%';
+    document.getElementById('foo-hp-num').innerHTML = `${S.hp} <em>/ ${S.hpMax}</em>`;
+    document.getElementById('foo-ea-fill').style.width = Math.max(0, S.ea/S.eaMax*100)+'%';
+    document.getElementById('foo-ea-num').innerHTML = `${S.ea} <em>/ ${S.eaMax}</em>`;
+    if (window._fooUpdateToggle) window._fooUpdateToggle();
   }
 
   function renderLog() {
     const el = document.getElementById('foo-log');
-    el.innerHTML = S.log.map(e =>
-      `<div class="log-entry ${e.type}"><span class="log-ts">${e.ts}</span><span class="log-msg">${e.msg}</span></div>`
-    ).join('');
+    if (!el) return;
+    el.innerHTML = S.log.map(e => `<div class="log-e ${e.type}"><span class="ts">${e.ts}</span><span class="msg">${e.msg}</span></div>`).join('');
   }
 
-  /* ── ACTIONS ── */
-  function getAmt(id) { return Math.max(1, parseInt(document.getElementById(id)?.value) || 1); }
+  function renderStoredEa() {
+    const el = document.getElementById('foo-stored-list');
+    const tot = document.getElementById('foo-stored-total');
+    if (!el) return;
+    if (S.storedEa.length === 0) {
+      el.innerHTML = '<div style="font-size:.44rem;color:rgba(100,80,20,.3);text-align:center;padding:4px 0">— ecobag vazia —</div>';
+    } else {
+      el.innerHTML = S.storedEa.map(it => `
+        <div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(100,180,40,.1)">
+          <span style="font-size:.52rem;color:rgba(160,230,80,.8);flex:1">${it.lbl}</span>
+          <span style="font-size:.6rem;color:rgba(180,230,100,.9);min-width:28px;text-align:right">${it.amt}</span>
+          <span style="font-size:.4rem;color:rgba(120,170,50,.5)">EA</span>
+          <button class="fb sm heal" onclick="fooB.releaseEa(${it.id})" title="Adicionar à EA atual">↑ EA</button>
+          <button class="fb sm" onclick="fooB.plantStored(${it.id})" title="Plantar (juros retomam)" style="border-color:rgba(80,180,18,.3);color:rgba(100,210,40,.7)">🌱</button>
+          <button class="fb sm danger" onclick="fooB.removeStored(${it.id})">✕</button>
+        </div>`).join('');
+    }
+    const total = S.storedEa.reduce((s,x)=>s+x.amt,0);
+    if (tot) tot.textContent = `Total armazenado: ${total} EA`;
+  }
 
-  window.fooBattle = {
-    dmg() {
-      const v = getAmt('hp-amt');
-      S.hp = Math.max(0, S.hp - v);
-      log(`Tomou ${v} de dano · HP ${S.hp}/${S.hpMax}`, 'damage');
-      render();
+  /* ── FIELD WINDOWS ── */
+  function renderFieldList() {
+    const el = document.getElementById('foo-field-list');
+    if (!el) return;
+    if (fieldWindows.length === 0) {
+      el.innerHTML = '<span style="font-size:.48rem;color:rgba(120,90,35,.35)">Nenhum campo ativo — clique em + Novo Campo</span>';
+      return;
+    }
+    el.innerHTML = fieldWindows.map(f => `
+      <div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid rgba(60,40,10,.15)">
+        <span style="font-size:.55rem;color:rgba(220,180,80,.6);flex:1">${f.name || 'Campo sem nome'}</span>
+        <span style="font-size:.48rem;color:rgba(180,130,50,.4)">T+${f.turno} · ${f.items.length} item(s)</span>
+        <button class="fb sm" onclick="fooB.focusField(${f.id})">Focar</button>
+        <button class="fb sm danger" onclick="fooB.closeField(${f.id})">✕</button>
+      </div>`).join('');
+  }
+
+  function createFieldWindow(id) {
+    const f = { id, name: `Campo ${id}`, turno: 0, items: [], win: null };
+    fieldWindows.push(f);
+
+    const offsetX = 460 + (fieldWindows.length - 1) * 20;
+    const offsetY = 80  + (fieldWindows.length - 1) * 28;
+
+    const fw = document.createElement('div');
+    fw.className = 'foo-win';
+    fw.id = `foo-field-${id}`;
+    fw.style.cssText = `width:380px;top:${offsetY}px;right:${offsetX}px;`;
+    fw.innerHTML = `
+      <div class="fw-titlebar" id="foo-fbar-${id}">
+        <input class="fw-title-input" value="${f.name}" placeholder="Nome do campo"
+          oninput="fooB.renameField(${id},this.value)">
+        <div class="fw-winbtns">
+          <span class="fw-turno-label">T+</span>
+          <span class="fw-turno-badge" id="ft-badge-${id}">0</span>
+          <button class="fw-wbtn" onclick="fooB.recenterField(${id})" title="Recentrar" style="background:rgba(180,120,40,.35);color:rgba(255,200,80,.8);border-radius:3px;width:auto;padding:0 6px;font-size:10px;">⊙</button>
+          <button class="fw-wbtn min">─</button>
+          <button class="fw-wbtn close">✕</button>
+        </div>
+      </div>
+      <div class="fw-body">
+
+        <!-- turno controls -->
+        <div class="fs">
+          <div class="fs-head">Turno do Campo</div>
+          <div class="fs-body" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <button class="fb pri" onclick="fooB.advFieldTurn(${id})">▶ Avançar Turno</button>
+            <button class="fb"     onclick="fooB.resetFieldTurn(${id})">↺ Zerar</button>
+            <span id="ft-info-${id}" style="font-size:.48rem;color:rgba(200,155,70,.5);flex:1"></span>
+          </div>
+        </div>
+
+        <!-- itens -->
+        <div class="fs">
+          <div class="fs-head">
+            Itens Plantados
+            <button class="fb sm pri" onclick="fooB.addItem(${id})">+ Item</button>
+          </div>
+          <div class="fs-body">
+            <div class="item-header">
+              <span>Nome</span><span style="text-align:center">Qtd</span><span style="text-align:center">EA</span><span></span>
+            </div>
+            <div class="item-list" id="fitems-${id}"></div>
+          </div>
+        </div>
+
+        <!-- detonar -->
+        <div class="fs">
+          <div class="fs-head">Detonação</div>
+          <div class="fs-body" style="display:flex;gap:5px;flex-wrap:wrap">
+            <button class="fb pri" style="flex:1" onclick="fooB.detonate(${id})">💥 Detonar</button>
+            <button class="fb heal" onclick="fooB.eaRecuperavel(${id})" title="EA total × turno">💚 EA Recup.</button>
+            <button class="fb danger" onclick="fooB.clearItems(${id})">✕ Limpar</button>
+          </div>
+          <div style="font-size:.42rem;color:rgba(190,150,65,.5);padding:5px 0 0;letter-spacing:.08em">EA recuperável = EA investida total × turno atual</div>
+        </div>
+
+      </div>
+    `;
+    document.body.appendChild(fw);
+    f.win = fw;
+
+    makeDraggable(fw, fw.querySelector(`#foo-fbar-${id}`));
+    fw.querySelector('.fw-wbtn.min').addEventListener('click', () => fw.classList.toggle('minimized'));
+    fw.querySelector('.fw-wbtn.close').addEventListener('click', () => fooB.closeField(id));
+
+    renderFieldItems(id);
+    renderFieldList();
+    updateFieldInfo(id);
+    return f;
+  }
+
+  function renderFieldItems(id) {
+    const f = fieldWindows.find(x => x.id === id);
+    if (!f) return;
+    const el = document.getElementById(`fitems-${id}`);
+    if (!el) return;
+    if (f.items.length === 0) {
+      el.innerHTML = '<div style="font-size:.46rem;color:rgba(100,75,25,.3);padding:4px 0;text-align:center">— vazio —</div>';
+      return;
+    }
+    el.innerHTML = f.items.map((it, i) => `
+      <div class="item-row">
+        <input class="item-name" value="${it.name}" placeholder="item..."
+          oninput="fooB.editItem(${id},${i},'name',this.value)">
+        <input class="item-qty" type="number" min="0" value="${it.qty}"
+          oninput="fooB.editItem(${id},${i},'qty',this.value)" title="Quantidade">
+        <input class="item-ea" type="number" min="0" value="${it.ea}"
+          oninput="fooB.editItem(${id},${i},'ea',this.value)" title="EA investida">
+        <button class="item-rem" onclick="fooB.removeItem(${id},${i})">✕</button>
+      </div>`).join('');
+  }
+
+  const JUROS_LABEL = ['—','T+1: 8','T+2: 12','T+3: 18','T+4: 26','T+5: 32','T+6: 40','T+7+: 48'];
+  function updateFieldInfo(id) {
+    const f = fieldWindows.find(x => x.id === id);
+    if (!f) return;
+    const badge = document.getElementById(`ft-badge-${id}`);
+    const info  = document.getElementById(`ft-info-${id}`);
+    if (badge) badge.textContent = f.turno;
+    if (info) {
+      const juros = jurosValue(f.turno);
+      const totalEa = f.items.reduce((s,i)=>s+(parseInt(i.ea)||0),0);
+      const totalQty = f.items.reduce((s,i)=>s+(parseInt(i.qty)||0),0);
+      info.textContent = `+${juros} base · ${totalQty} plantas · ${totalEa} EA inv · recup: ${totalEa * f.turno} EA`;
+    }
+  }
+
+  function getAmt(id) { return Math.max(1, parseInt(document.getElementById(id)?.value)||1); }
+
+  /* ── PUBLIC API ── */
+  window.fooB = {
+    dmg(v)  { v=v||getAmt('foo-hp-amt'); S.hp=Math.max(0,S.hp-v); log(`Tomou ${v} dano · HP ${S.hp}/${S.hpMax}`,'damage'); renderRes(); },
+    heal(v) { v=v||getAmt('foo-hp-amt'); S.hp=Math.min(S.hpMax,S.hp+v); log(`Curou ${v} · HP ${S.hp}/${S.hpMax}`,'heal'); renderRes(); },
+    useEa(v){ v=v||getAmt('foo-ea-amt'); if(S.ea<v){log(`EA insuficiente (${S.ea})`,'info');return;} S.ea-=v; log(`−${v} EA · ${S.ea}/${S.eaMax}`,'ea'); renderRes(); },
+    gainEa(v){ v=v||getAmt('foo-ea-amt'); S.ea=Math.min(S.eaMax,S.ea+v); log(`+${v} EA · ${S.ea}/${S.eaMax}`,'heal'); renderRes(); },
+
+    storeEa() {
+      const amt = parseInt(document.getElementById('foo-store-amt')?.value)||0;
+      const lbl = document.getElementById('foo-store-lbl')?.value||'EA';
+      if (amt <= 0) return;
+      S.storedEa.push({ id: S.nextStoredId++, amt, lbl });
+      log(`📦 Guardou ${amt} EA na Ecobag: "${lbl}"`, 'field');
+      renderStoredEa();
     },
-    heal() {
-      const v = getAmt('hp-amt');
-      S.hp = Math.min(S.hpMax, S.hp + v);
-      log(`Curou ${v} · HP ${S.hp}/${S.hpMax}`, 'heal');
-      render();
+    releaseEa(id) {
+      const item = S.storedEa.find(x=>x.id===id);
+      if (!item) return;
+      S.storedEa = S.storedEa.filter(x=>x.id!==id);
+      S.ea = Math.min(S.eaMax, S.ea + item.amt);
+      log(`📦 Retirou ${item.amt} EA da Ecobag: "${item.lbl}" · EA ${S.ea}/${S.eaMax}`, 'heal');
+      renderRes(); renderStoredEa();
     },
-    setMaxHp() {
-      const v = getAmt('hp-amt');
-      S.hpMax = v; S.hp = Math.min(S.hp, v);
-      log(`HP máximo definido: ${v}`, 'info');
-      render();
+    plantStored(id) {
+      const item = S.storedEa.find(x=>x.id===id);
+      if (!item) return;
+      S.storedEa = S.storedEa.filter(x=>x.id!==id);
+      log(`🌱 Plantou EA da Ecobag: "${item.lbl}" (${item.amt} EA) — juros retomam do ponto pausado`, 'field');
+      renderStoredEa();
     },
-    useEa() {
-      const v = getAmt('ea-amt');
-      if (S.ea < v) { log(`EA insuficiente (${S.ea} disponível)`, 'info'); return; }
-      S.ea -= v;
-      log(`Gastou ${v} EA · EA ${S.ea}/${S.eaMax}`, 'ea');
-      render();
+
+    newField() { const f = createFieldWindow(nextFieldId++); log(`Campo "${f.name}" criado`,'field'); },
+    closeField(id) {
+      const f = fieldWindows.find(x=>x.id===id);
+      if (f?.win) f.win.remove();
+      fieldWindows = fieldWindows.filter(x=>x.id!==id);
+      log(`Campo #${id} fechado`,'info');
+      renderFieldList();
     },
-    gainEa() {
-      const v = getAmt('ea-amt');
-      S.ea = Math.min(S.eaMax, S.ea + v);
-      log(`Recuperou ${v} EA · EA ${S.ea}/${S.eaMax}`, 'heal');
-      render();
+    focusField(id) {
+      const f = fieldWindows.find(x=>x.id===id);
+      if (!f?.win) return;
+      f.win.style.zIndex = '9100';
+      f.win.classList.remove('minimized');
+      setTimeout(()=>{ f.win.style.zIndex='9000'; },800);
     },
-    setMaxEa() {
-      const v = getAmt('ea-amt');
-      S.eaMax = v; S.ea = Math.min(S.ea, v);
-      log(`EA máxima definida: ${v}`, 'info');
-      render();
+    renameField(id, nome) {
+      const f = fieldWindows.find(x=>x.id===id);
+      if (f) { f.name = nome; renderFieldList(); }
     },
-    addSeed() {
-      const id = S.nextSeedId++;
-      S.field.push({ id, turno: 0 });
-      log(`Semente #${id} plantada (T+0)`, 'seed');
-      render();
+    advFieldTurn(id) {
+      const f = fieldWindows.find(x=>x.id===id);
+      if (!f) return;
+      f.turno = f.turno + 1;
+      const juros = jurosValue(f.turno);
+      log(`"${f.name||'Campo '+id}" T+${f.turno} · bônus base +${juros}`,'field');
+      updateFieldInfo(id);
     },
-    advTurn() {
-      if (S.field.length === 0) { log('Campo vazio — nenhuma semente para avançar', 'info'); return; }
-      const auto = [];
-      S.field.forEach(s => {
-        s.turno = Math.min(s.turno + 1, 7);
-        if (s.turno >= 4) auto.push(s.id);
-      });
-      log(`Turno avançado · ${S.field.length} semente(s)` + (auto.length ? ` · #${auto.join(',')} prontas para detonação auto` : ''), 'seed');
-      render();
+    resetFieldTurn(id) {
+      const f = fieldWindows.find(x=>x.id===id);
+      if (f) { f.turno=0; updateFieldInfo(id); log(`"${f.name||'Campo '+id}" turno zerado`,'info'); }
     },
     detonate(id) {
-      const idx = S.field.findIndex(s => s.id === id);
-      if (idx === -1) return;
-      const s = S.field[idx];
-      const v = jurosValue(s.turno);
-      log(`💥 Semente #${id} detonada (T+${s.turno}) · ${v} base + 8d6 bônus`, 'seed');
-      S.field.splice(idx, 1);
-      render();
+      const f = fieldWindows.find(x=>x.id===id);
+      if (!f) return;
+      const juros = jurosValue(f.turno);
+      const totalQty = f.items.reduce((s,i)=>s+(parseInt(i.qty)||0),0);
+      const totalEa  = f.items.reduce((s,i)=>s+(parseInt(i.ea)||0),0);
+      log(`💥 "${f.name||'Campo '+id}" detonado · T+${f.turno} · +${juros} base · ${totalQty} plantas · ${totalEa} EA · 8d6+2d4+5 dano`,'field');
+      f.items=[]; f.turno=0;
+      renderFieldItems(id); updateFieldInfo(id);
     },
-    detonateAll() {
-      if (S.field.length === 0) { log('Campo vazio', 'info'); return; }
-      const total = S.field.reduce((a, s) => a + jurosValue(s.turno), 0);
-      log(`💥💥 Detonação total · ${S.field.length} sementes · ${total} base total + 8d6 cada`, 'seed');
-      S.field = [];
-      S.nextSeedId = 1;
-      render();
+    clearItems(id) {
+      const f = fieldWindows.find(x=>x.id===id);
+      if (f) { f.items=[]; renderFieldItems(id); updateFieldInfo(id); log(`Itens de "${f.name||'Campo '+id}" limpos`,'info'); }
     },
-    removeSeed(id) {
-      S.field = S.field.filter(s => s.id !== id);
-      log(`Semente #${id} removida do campo`, 'info');
-      render();
+    addItem(id) {
+      const f = fieldWindows.find(x=>x.id===id);
+      if (!f) return;
+      f.items.push({ name:'', qty:1, ea:0 });
+      renderFieldItems(id); updateFieldInfo(id);
     },
-    clearField() {
-      S.field = []; S.nextSeedId = 1;
-      log('Campo limpo', 'info');
-      render();
+    editItem(id,i,key,val) {
+      const f = fieldWindows.find(x=>x.id===id);
+      if (f?.items[i] !== undefined) {
+        f.items[i][key] = (key === 'name') ? val : (parseFloat(val) || 0);
+        updateFieldInfo(id); // only update the summary, don't re-render the list
+      }
     },
-    kakashiSummon() {
-      S.kakashiActive = true;
-      S.kakashiHp = parseInt(document.getElementById('kk-amt')?.value) || 30;
-      log(`🪆 Kakashi invocado · HP ${S.kakashiHp}`, 'heal');
-      render();
+    removeItem(id,i) {
+      const f = fieldWindows.find(x=>x.id===id);
+      if (f) { f.items.splice(i,1); renderFieldItems(id); updateFieldInfo(id); }
     },
-    kakashiDmg() {
-      if (!S.kakashiActive) { log('Kakashi não está ativo', 'info'); return; }
-      const v = getAmt('kk-amt');
-      S.kakashiHp = Math.max(0, S.kakashiHp - v);
-      log(`Kakashi tomou ${v} de dano · HP ${S.kakashiHp}`, 'damage');
-      if (S.kakashiHp <= 0) { S.kakashiActive = false; log('Kakashi foi derrotado', 'damage'); }
-      render();
+    clearLog() { S.log=[]; renderLog(); },
+    recenterField(id) { const f=fieldWindows.find(x=>x.id===id); if(f?.win) recenter(f.win); },
+    removeStored(id) {
+      S.storedEa = S.storedEa.filter(x=>x.id!==id);
+      renderStoredEa();
     },
-    kakashiHeal() {
-      if (!S.kakashiActive) { log('Kakashi não está ativo', 'info'); return; }
-      const v = getAmt('kk-amt');
-      S.kakashiHp += v;
-      log(`Kakashi curou ${v} · HP ${S.kakashiHp}`, 'heal');
-      render();
-    },
-    kakashiDismiss() {
-      S.kakashiActive = false; S.kakashiHp = 0;
-      log('Kakashi dispensado', 'info');
-      render();
-    },
-    clearLog() { S.log = []; renderLog(); }
+    eaRecuperavel(id) {
+      const f = fieldWindows.find(x => x.id === id); if (!f) return;
+      const totalEa = f.items.reduce((s,i) => s + (parseFloat(i.ea) || 0), 0);
+      const valor = totalEa * f.turno;
+      const nome = f.name || ('Campo ' + id);
+      log('💚 "' + nome + '" EA recuperável: ' + totalEa + ' × T' + f.turno + ' = ' + valor + ' EA', 'heal');
+    }
   };
 
-  render();
-  log('Calculadora iniciada · HP 15 · EA 20', 'info');
+  renderRes();
+  renderStoredEa();
+  log(`Calculadora iniciada · HP ${S.hpMax} · EA ${S.eaMax}`,'info');
 
-  /* ── TOGGLE BUTTON ── */
-  const toggleBtn = document.createElement('button');
-  toggleBtn.id = 'foo-calc-toggle';
   const ts = document.createElement('style');
   ts.textContent = `
     #foo-calc-toggle {
-      position: fixed; bottom: 24px; right: 24px; z-index: 8001;
-      font-family: 'Inconsolata', monospace; font-size: .48rem;
-      letter-spacing: .28em; text-transform: uppercase;
-      padding: 8px 16px; border: 1px solid rgba(184,72,0,.35);
-      color: rgba(232,112,16,.55); background: rgba(6,4,0,.9);
-      cursor: pointer; backdrop-filter: blur(8px); transition: all .2s;
+      position:fixed;bottom:64px;right:24px;z-index:8001;
+      font-family:'Inconsolata',monospace;
+      padding:0;border:1px solid rgba(184,72,0,.4);
+      background:rgba(6,4,0,.95);cursor:pointer;backdrop-filter:blur(8px);transition:all .25s;
+      display:flex;flex-direction:column;overflow:hidden;
+      box-shadow:0 0 20px rgba(232,112,16,.08),0 4px 16px rgba(0,0,0,.7);
     }
-    #foo-calc-toggle:hover {
-      border-color: rgba(248,168,48,.6); color: rgba(248,168,48,.9);
-      background: rgba(10,6,0,.95);
+    #foo-calc-toggle:hover { border-color:rgba(248,168,48,.65);box-shadow:0 0 30px rgba(232,112,16,.18),0 4px 18px rgba(0,0,0,.8); }
+    #foo-calc-toggle .ftb-main {
+      padding:8px 14px;font-size:.48rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(232,112,16,.6);
+      border-bottom:1px solid rgba(184,72,0,.25);display:flex;align-items:center;gap:8px;
+    }
+    #foo-calc-toggle:hover .ftb-main { color:rgba(248,168,48,.95); }
+    #foo-calc-toggle .ftb-stats {
+      display:grid;grid-template-columns:1fr 1fr;gap:0;
+    }
+    #foo-calc-toggle .ftb-stat {
+      padding:5px 10px;font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;
+      color:rgba(140,100,30,.55);border-right:1px solid rgba(80,50,5,.25);
+    }
+    #foo-calc-toggle .ftb-stat:last-child { border-right:none; }
+    #foo-calc-toggle .ftb-stat strong { display:block;font-size:.62rem;letter-spacing:0;font-family:'Inconsolata',monospace; }
+    #foo-calc-toggle .ftb-stat.hp-stat strong { color:rgba(80,184,18,.85); }
+    #foo-calc-toggle .ftb-stat.ea-stat strong { color:rgba(232,112,16,.85); }
+    #foo-calc-toggle .ftb-info {
+      padding:4px 10px;font-size:.4rem;letter-spacing:.08em;color:rgba(110,80,20,.5);
+      border-top:1px solid rgba(80,50,5,.2);text-align:center;
     }
   `;
   document.head.appendChild(ts);
-  toggleBtn.textContent = '⚔ Batalha';
-  toggleBtn.addEventListener('click', () => {
-    win.style.display = win.style.display === 'none' ? 'flex' : 'none';
+  const tb = document.createElement('button');
+  tb.id = 'foo-calc-toggle';
+  tb.innerHTML = `
+    <div class="ftb-main">⚔ FOO · Batalha</div>
+    <div class="ftb-stats">
+      <div class="ftb-stat hp-stat">HP<strong id="ftb-hp">—</strong></div>
+      <div class="ftb-stat ea-stat">EA<strong id="ftb-ea">—</strong></div>
+    </div>
+    <div class="ftb-info">8d6+2d4+5 · Def 13 · DT Mod+9</div>
+  `;
+
+  function updateToggleStats() {
+    const h = document.getElementById('ftb-hp');
+    const e = document.getElementById('ftb-ea');
+    if (h) h.textContent = `${S.hp}/${S.hpMax}`;
+    if (e) e.textContent = `${S.ea}/${S.eaMax}`;
+  }
+
+  // Patch renderRes to also update toggle
+  const _origRenderRes = renderRes;
+  // We'll call updateToggleStats from renderRes inline below by overriding
+  const _renderResOrig = renderRes;
+  window._fooUpdateToggle = updateToggleStats;
+
+  tb.addEventListener('click', () => {
+    main.style.display = main.style.display === 'none' ? 'flex' : 'none';
+    updateToggleStats();
   });
-  document.body.appendChild(toggleBtn);
-  win.style.display = 'none';
+  document.body.appendChild(tb);
+  main.style.display = 'none';
+  // Initial stats on toggle
+  setTimeout(updateToggleStats, 100);
 
 })();

@@ -359,6 +359,28 @@ body::before{
 .reveal{opacity:0;transform:translateY(12px);transition:opacity .6s,transform .6s}
 .reveal.visible{opacity:1;transform:none}
 
+/* ── FONT SCALING WITH BROWSER ZOOM ── */
+html { font-size: 16px; }
+@media (max-width: 600px) { html { font-size: 14px; } }
+
+/* ── APP TYPE BADGES ── */
+.app-type-header {
+  display:flex;align-items:center;gap:10px;margin:32px 0 8px;
+}
+.app-type-badge {
+  font-family:'Inconsolata',monospace;font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;
+  padding:3px 12px;border:1px solid;white-space:nowrap;
+}
+.app-type-badge.agressiva {
+  color:var(--o3);border-color:rgba(184,72,0,.4);background:rgba(232,112,16,.04);
+}
+.app-type-badge.neutra {
+  color:var(--g3);border-color:rgba(46,138,8,.4);background:rgba(46,138,8,.04);
+}
+.app-type-line { flex:1;height:1px; }
+.app-type-line.agg { background:linear-gradient(90deg,rgba(184,72,0,.3),transparent); }
+.app-type-line.neu { background:linear-gradient(90deg,rgba(46,138,8,.3),transparent); }
+
 /* ── FOOTNOTE ── */
 .footnote{margin-top:64px;padding-top:24px;border-top:1px solid var(--seam);font-style:italic;font-size:.78rem;color:var(--mute);text-align:center;line-height:2.4}
 
@@ -532,6 +554,12 @@ body::before{
 </div>
 <div class="sh reveal"><div class="sl"></div><div class="st">Aplicações Descobertas</div><div class="sl r"></div></div>
 
+<!-- TIPO: NEUTRAS / SUPORTE -->
+<div class="app-type-header reveal">
+  <div class="app-type-badge neutra">🌿 Neutras · Suporte</div>
+  <div class="app-type-line neu"></div>
+</div>
+
 <!-- PASSIVA: CICLO DO CAMPO -->
 <div class="tech reveal" style="border-color:rgba(80,184,18,.35);border-width:2px;">
   <div class="th" onclick="T(this)" style="background:rgba(80,184,18,.03);">
@@ -608,6 +636,12 @@ body::before{
       <div class="tag g">Ação Bônus</div><div class="tag gold">Juros Passivos Automáticos</div><div class="tag h">Qualquer Objeto</div><div class="tag s">Custo Variável</div>
     </div>
   </div>
+</div>
+
+<!-- TIPO: AGRESSIVAS -->
+<div class="app-type-header reveal">
+  <div class="app-type-badge agressiva">🔥 Agressivas · Ofensivas</div>
+  <div class="app-type-line agg"></div>
 </div>
 
 <!-- ══ 3. COLHEITA EXPLOSIVA ══ -->
@@ -698,6 +732,12 @@ body::before{
   </div>
 </div>
 
+<!-- ══ 6. BARREIRA DE RAÍZES ══ -->
+<!-- TIPO: NEUTRAS continua -->
+<div class="app-type-header reveal">
+  <div class="app-type-badge neutra">🌿 Neutras · Defesa / Utilidade</div>
+  <div class="app-type-line neu"></div>
+</div>
 <!-- ══ 6. BARREIRA DE RAÍZES ══ -->
 <div class="tech core reveal">
   <div class="th" onclick="T(this)">
@@ -888,6 +928,7 @@ body::before{
 
 
 <script src="../engine.js"></script>
+<script src="battle-foo.js"></script>
 <script>
 /* ══════════════════════════════════════
    FOO — lógica específica da ficha
@@ -975,7 +1016,133 @@ function TN(n) {
 document.addEventListener('DOMContentLoaded', () => {
   engine.init();
   initLeafCanvas();
+  initMusicPlayer();
 });
+
+/* ── AMBIENT MUSIC PLAYER ── */
+function initMusicPlayer() {
+  const style = document.createElement('style');
+  style.textContent = `
+    #foo-music {
+      position:fixed;bottom:130px;right:24px;z-index:8002;
+      display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+    }
+    #foo-music-bar {
+      display:flex;align-items:center;gap:8px;
+      background:rgba(6,4,0,.92);border:1px solid rgba(184,72,0,.3);
+      padding:6px 10px;backdrop-filter:blur(8px);
+      box-shadow:0 0 16px rgba(232,112,16,.06),0 4px 12px rgba(0,0,0,.6);
+    }
+    #foo-music-btn {
+      width:24px;height:24px;border-radius:50%;background:rgba(184,72,0,.2);
+      border:1px solid rgba(232,112,16,.3);color:rgba(248,168,48,.7);
+      font-size:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;
+    }
+    #foo-music-btn:hover{background:rgba(184,72,0,.4);border-color:rgba(248,168,48,.5);color:rgba(248,168,48,.95);}
+    #foo-music-label {
+      font-family:'Inconsolata',monospace;font-size:.42rem;letter-spacing:.18em;
+      text-transform:uppercase;color:rgba(180,130,50,.5);max-width:140px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    #foo-music-vol {
+      width:50px;height:2px;appearance:none;background:rgba(80,50,10,.3);
+      border:none;cursor:pointer;outline:none;
+    }
+    #foo-music-vol::-webkit-slider-thumb {
+      appearance:none;width:8px;height:8px;border-radius:50%;
+      background:rgba(232,112,16,.5);cursor:pointer;
+    }
+    #foo-music-tracks {
+      display:none;flex-direction:column;gap:2px;
+      background:rgba(6,4,0,.95);border:1px solid rgba(80,50,10,.3);
+      padding:6px;min-width:200px;
+    }
+    #foo-music-tracks.open { display:flex; }
+    .fmt {
+      font-family:'Inconsolata',monospace;font-size:.44rem;letter-spacing:.1em;
+      text-transform:uppercase;color:rgba(160,120,50,.6);padding:4px 8px;cursor:pointer;
+      border:1px solid transparent;transition:all .15s;text-align:left;background:transparent;
+    }
+    .fmt:hover { border-color:rgba(184,72,0,.3);color:rgba(248,168,48,.8);background:rgba(232,112,16,.04); }
+    .fmt.active { border-color:rgba(184,72,0,.4);color:rgba(248,168,48,.9);background:rgba(232,112,16,.07); }
+  `;
+  document.head.appendChild(style);
+
+  // Tracks temáticas — YouTube embeds via API ou links de música ambiente free
+  // Usando URLs de músicas de jogo/anime similares ao LoL via embed de YouTube (sem autoplay até interação)
+  const TRACKS = [
+    { name: 'Campo Vazio · Ambient', url: 'https://www.youtube.com/embed/sNKNOwGQXIY?autoplay=1&loop=1&playlist=sNKNOwGQXIY' },
+    { name: 'Harvest Theme · RPG', url: 'https://www.youtube.com/embed/CzFnvIGqQKM?autoplay=1&loop=1&playlist=CzFnvIGqQKM' },
+    { name: 'Forest Spirit · Lo-fi', url: 'https://www.youtube.com/embed/pEkzKCJI8WA?autoplay=1&loop=1&playlist=pEkzKCJI8WA' },
+    { name: 'Battle Field · Tense', url: 'https://www.youtube.com/embed/yaqeZ9RaXwY?autoplay=1&loop=1&playlist=yaqeZ9RaXwY' },
+  ];
+
+  let currentTrack = -1;
+  let iframe = null;
+  let isPlaying = false;
+
+  const wrap = document.createElement('div');
+  wrap.id = 'foo-music';
+  wrap.innerHTML = `
+    <div id="foo-music-tracks"></div>
+    <div id="foo-music-bar">
+      <button id="foo-music-btn" title="Play/Pause">▶</button>
+      <span id="foo-music-label">♪ Selecione trilha</span>
+      <input id="foo-music-vol" type="range" min="0" max="100" value="25" title="Volume">
+      <button id="foo-music-list-btn" style="background:transparent;border:1px solid rgba(80,50,10,.25);color:rgba(160,120,50,.5);font-size:9px;padding:2px 5px;cursor:pointer;font-family:'Inconsolata',monospace;transition:all .15s;" onmouseover="this.style.color='rgba(248,168,48,.7)'" onmouseout="this.style.color='rgba(160,120,50,.5)'">☰</button>
+    </div>
+  `;
+  document.body.appendChild(wrap);
+
+  const btn = document.getElementById('foo-music-btn');
+  const label = document.getElementById('foo-music-label');
+  const vol = document.getElementById('foo-music-vol');
+  const tracksEl = document.getElementById('foo-music-tracks');
+  const listBtn = document.getElementById('foo-music-list-btn');
+
+  function createIframe(url) {
+    if (iframe) iframe.remove();
+    iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.allow = 'autoplay';
+    iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;';
+    document.body.appendChild(iframe);
+  }
+
+  function playTrack(i) {
+    currentTrack = i;
+    isPlaying = true;
+    btn.textContent = '⏸';
+    label.textContent = TRACKS[i].name;
+    createIframe(TRACKS[i].url);
+    tracksEl.querySelectorAll('.fmt').forEach((el,j) => el.classList.toggle('active', j===i));
+  }
+
+  function renderTracks() {
+    tracksEl.innerHTML = TRACKS.map((t,i) => `
+      <button class="fmt ${i===currentTrack?'active':''}" onclick="void(0)">${t.name}</button>
+    `).join('');
+    tracksEl.querySelectorAll('.fmt').forEach((el,i) => {
+      el.addEventListener('click', () => { playTrack(i); tracksEl.classList.remove('open'); });
+    });
+  }
+
+  btn.addEventListener('click', () => {
+    if (currentTrack < 0) { playTrack(0); return; }
+    if (isPlaying) {
+      isPlaying = false; btn.textContent = '▶';
+      if (iframe) { iframe.src = ''; }
+    } else {
+      isPlaying = true; btn.textContent = '⏸';
+      createIframe(TRACKS[currentTrack].url);
+    }
+  });
+
+  listBtn.addEventListener('click', () => {
+    const open = tracksEl.classList.toggle('open');
+    if (open) renderTracks();
+  });
+}
 </script>
 </body>
 </html>
