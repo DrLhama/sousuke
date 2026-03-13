@@ -691,6 +691,7 @@ body { padding-bottom: 52px; }
   </div>
   
   <div class="veins-layer">
+    <canvas id="veins-static" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
     <canvas id="veins-canvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
   </div>
 
@@ -3829,118 +3830,226 @@ function PD2(n) {
 
 <script>
 (function () {
+  'use strict';
+
   function init() {
-    const canvas = document.getElementById('veins-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const sCanvas = document.getElementById('veins-static');
+    const aCanvas = document.getElementById('veins-canvas');
+    if (!sCanvas || !aCanvas) return;
 
-    const COLORS = [
-      'rgba(139,10,10,',
-      'rgba(192,48,48,',
-      'rgba(100,8,8,',
-      'rgba(160,28,28,',
+    const sCtx = sCanvas.getContext('2d');
+    const aCtx = aCanvas.getContext('2d');
+
+    const R  = (a, b) => a + Math.random() * (b - a);
+    const RI = (a, b) => Math.floor(R(a, b));
+
+    const PAL = [
+      [139,  8,  8],
+      [180, 25, 25],
+      [ 90,  4,  4],
+      [160, 18, 18],
+      [210, 45, 45],
     ];
+    function col(i, a) { const c = PAL[i % PAL.length]; return `rgba(${c[0]},${c[1]},${c[2]},${a.toFixed(3)})`; }
+    function rcol(a)   { return col(RI(0, PAL.length), a); }
 
-    function resize() {
-      canvas.width  = canvas.offsetWidth  || window.innerWidth;
-      canvas.height = canvas.offsetHeight || window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    function makeVein() {
-      const W = canvas.width, H = canvas.height;
-      const edge = Math.random();
-      let x0, y0;
-      if      (edge < .28) { x0 = 0;                 y0 = Math.random() * H; }
-      else if (edge < .56) { x0 = W;                 y0 = Math.random() * H; }
-      else if (edge < .72) { x0 = Math.random() * W; y0 = 0; }
-      else if (edge < .88) { x0 = Math.random() * W; y0 = H; }
-      else                 { x0 = Math.random() * W; y0 = Math.random() * H; }
-
-      const angle    = Math.random() * Math.PI * 2;
-      const length   = 180 + Math.random() * 420;
-      const segments = 6 + Math.floor(Math.random() * 8);
-      const wobble   = 18 + Math.random() * 55;
-      const thick    = .4 + Math.random() * 1.4;
-      const color    = COLORS[Math.floor(Math.random() * COLORS.length)];
-      const peakOp   = .18 + Math.random() * .48;
-
-      const pts = [];
+    function makePoly(x0, y0, angle, len, segs, wobDeg) {
+      const pts = [], step = len / segs;
       let cx = x0, cy = y0, dir = angle;
-      const step = length / segments;
-      for (let i = 0; i <= segments; i++) {
+      for (let i = 0; i <= segs; i++) {
         pts.push({ x: cx, y: cy });
-        dir += (Math.random() - .5) * (wobble * Math.PI / 180) * 2;
+        dir += (Math.random() - .5) * wobDeg * Math.PI / 90;
         cx  += Math.cos(dir) * step;
         cy  += Math.sin(dir) * step;
       }
-
-      const duration = (8 + Math.random() * 14) * 1000;
-      const delay    = Math.random() * duration;
-      const born     = performance.now() - delay;
-
-      return { pts, thick, color, peakOp, duration, born };
+      return pts;
     }
 
-    const COUNT = 300;
-    const veins = Array.from({ length: COUNT }, makeVein);
-
-    function tracePath(ctx2, pts, drawn) {
-      const full = Math.floor(drawn);
-      const frac = drawn - full;
-      ctx2.moveTo(pts[0].x, pts[0].y);
-      for (let i = 1; i <= full && i < pts.length; i++) {
-        const prev = pts[i - 1], curr = pts[i];
-        const mx = (prev.x + curr.x) / 2;
-        const my = (prev.y + curr.y) / 2;
-        ctx2.quadraticCurveTo(prev.x, prev.y, mx, my);
+    function drawFull(c, pts) {
+      c.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length - 1; i++) {
+        const mx = (pts[i].x + pts[i+1].x) / 2;
+        const my = (pts[i].y + pts[i+1].y) / 2;
+        c.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
       }
-      if (full < pts.length - 1 && frac > 0) {
-        const a = pts[full], b = pts[full + 1];
-        ctx2.quadraticCurveTo(a.x, a.y, a.x + (b.x - a.x) * frac, a.y + (b.y - a.y) * frac);
-      }
+      c.lineTo(pts[pts.length-1].x, pts[pts.length-1].y);
     }
 
-    function drawVein(v, now) {
-      const t = ((now - v.born) % v.duration) / v.duration;
+    function drawSeg(c, pts, from, to) {
+      if (to <= from || pts.length < 2) return;
+      const n = pts.length - 1;
+
+      // interpola ponto exato na polilinha dado índice float
+      function interp(idx) {
+        const i = Math.min(Math.floor(idx), n - 1);
+        const f = idx - i;
+        const a = pts[i], b = pts[Math.min(i + 1, n)];
+        return { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f };
+      }
+
+      const start = interp(from);
+      const end   = interp(to);
+
+      const iF = Math.min(Math.floor(from), n - 1);
+      const iT = Math.min(Math.floor(to),   n - 1);
+
+      c.moveTo(start.x, start.y);
+
+      // segmentos inteiros entre iF+1 e iT
+      for (let i = iF + 1; i <= iT && i < pts.length; i++) {
+        const p = pts[i - 1], q = pts[i];
+        c.quadraticCurveTo(p.x, p.y, (p.x + q.x) / 2, (p.y + q.y) / 2);
+      }
+
+      // ponta final — só lineTo, sem quadratic que desvia
+      c.lineTo(end.x, end.y);
+    }
+
+    /* ── ESTÁTICAS ── */
+    function buildStatic() {
+      const W = sCanvas.width, H = sCanvas.height;
+      sCtx.clearRect(0, 0, W, H);
+
+      function seeds(perSide) {
+        const out = [];
+        for (let i = 0; i < perSide; i++) {
+          const t = (i + R(.1, .9)) / perSide;
+          out.push({ x: 0,   y: t*H, a: R(-.4, .4) });
+          out.push({ x: W,   y: t*H, a: Math.PI   + R(-.4, .4) });
+          out.push({ x: t*W, y: 0,   a: Math.PI/2 + R(-.4, .4) });
+          out.push({ x: t*W, y: H,   a: -Math.PI/2 + R(-.4, .4) });
+        }
+        return out;
+      }
+
+      /* fundo — grossas, longas, semi-visíveis */
+      seeds(13).forEach(s => {
+        for (let k = RI(3,6); k--;) {
+          const pts = makePoly(s.x, s.y, s.a+R(-.3,.3), R(200,520), RI(8,16), 28);
+          const op  = R(.08, .18);   /* era .018–.055, agora bem mais visível */
+          sCtx.beginPath();
+          sCtx.lineWidth   = R(1.2, 3.0);
+          sCtx.strokeStyle = rcol(op);
+          sCtx.shadowColor = rcol(op * .8);
+          sCtx.shadowBlur  = 10;    /* shadowBlur só nas estáticas — custo único */
+          sCtx.lineJoin = sCtx.lineCap = 'round';
+          drawFull(sCtx, pts); sCtx.stroke();
+          sCtx.shadowBlur = 0;
+        }
+      });
+
+      /* meio */
+      seeds(10).forEach(s => {
+        for (let k = RI(2,5); k--;) {
+          const pts = makePoly(s.x, s.y, s.a+R(-.35,.35), R(100,320), RI(6,12), 38);
+          const op  = R(.18, .32);   /* era .07–.14 */
+          sCtx.beginPath();
+          sCtx.lineWidth   = R(.5, 1.4);
+          sCtx.strokeStyle = rcol(op);
+          sCtx.shadowColor = rcol(op * .5);
+          sCtx.shadowBlur  = 5;
+          sCtx.lineJoin = sCtx.lineCap = 'round';
+          drawFull(sCtx, pts); sCtx.stroke();
+          sCtx.shadowBlur = 0;
+        }
+      });
+
+      /* superfície — finas, vivas */
+      seeds(8).forEach(s => {
+        for (let k = RI(1,3); k--;) {
+          const pts = makePoly(s.x, s.y, s.a+R(-.2,.2), R(40,160), RI(4,8), 20);
+          const op  = R(.35, .60);   /* era .16–.30 */
+          sCtx.beginPath();
+          sCtx.lineWidth   = R(.3, .9);
+          sCtx.strokeStyle = rcol(op);
+          sCtx.lineJoin = sCtx.lineCap = 'round';
+          drawFull(sCtx, pts); sCtx.stroke();
+        }
+      });
+    }
+
+    /* ── MINHOCAS ── */
+    function spawn(now) {
+      const W = aCanvas.width, H = aCanvas.height;
+      const side = RI(0, 4);
+      let x0, y0, a;
+      if      (side===0) { x0=0; y0=R(0,H); a=R(-.5,.5); }
+      else if (side===1) { x0=W; y0=R(0,H); a=Math.PI+R(-.5,.5); }
+      else if (side===2) { x0=R(0,W); y0=0; a=Math.PI/2+R(-.5,.5); }
+      else               { x0=R(0,W); y0=H; a=-Math.PI/2+R(-.5,.5); }
+
+      const segs = RI(60, 1000);
+      const dur  = R(14, 26) * 1000;
+      const born = (now !== null) ? now : (performance.now() - R(0, dur));
+      return {
+        pts:      makePoly(x0, y0, a, R(260, 600), segs, R(4, 20)),
+        segs,
+        bodyFrac: R(.20, .42),
+        dur,
+        born,
+        thick:    R(.6, 2.2),
+        ci:       RI(0, PAL.length),
+        peakOp:   R(.40, .80),
+      };
+    }
+
+    /* Reduzido para 35 — 55 com shadowBlur era o gargalo */
+    const crawlers = Array.from({length: 105}, (_, i) => {
+      const dur = R(40, 80) * 1000;
+      const born = performance.now() - (i / 35) * dur;
+      const s = spawn(performance.now());
+      s.born = born;
+      s.dur  = dur;
+      return s;
+    });
+
+    function drawCrawler(v, now) {
+      const t    = ((now - v.born) % v.dur) / v.dur;
+      const tot  = v.segs;
+      const head = Math.min(t / .75, 1) * tot;
+      const tail = Math.max(0, head - v.bodyFrac * tot);
 
       let op;
-      if      (t < .12) op = (t / .12) * v.peakOp;
-      else if (t < .62) op = v.peakOp;
-      else if (t < .85) op = v.peakOp * (1 - (t - .62) / .23 * .3);
-      else              op = v.peakOp * .7 * (1 - (t - .85) / .15);
-      if (op <= 0) return;
+      if      (t < .07) op = (t / .07) * v.peakOp;
+      else if (t < .80) op = v.peakOp;
+      else              op = v.peakOp * (1 - (t - .80) / .20);
+      if (op < .01) return;
 
-      const progress = t < .65 ? t / .65 : 1;
-      const drawn    = progress * (v.pts.length - 1);
-
-      /* glow via shadowBlur — GPU, sem filter CSS */
-      ctx.beginPath();
-      ctx.lineWidth       = v.thick;
-      ctx.strokeStyle     = v.color + op + ')';
-      ctx.shadowColor     = v.color + (op * .9) + ')';
-      ctx.shadowBlur      = 6;
-      ctx.lineJoin        = 'round';
-      ctx.lineCap         = 'round';
-      tracePath(ctx, v.pts, drawn);
-      ctx.stroke();
-      ctx.shadowBlur      = 0;
+      /* SEM shadowBlur — principal causa do lag */
+      aCtx.beginPath();
+      aCtx.lineWidth   = v.thick;
+      aCtx.strokeStyle = col(v.ci, op);
+      aCtx.lineJoin    = aCtx.lineCap = 'round';
+      drawSeg(aCtx, v.pts, tail, head);
+      aCtx.stroke();
     }
 
     function tick(now) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      veins.forEach(function(v) { drawVein(v, now); });
+      aCtx.clearRect(0, 0, aCanvas.width, aCanvas.height);
+      for (let i = 0; i < crawlers.length; i++) {
+        const v = crawlers[i];
+        if (now - v.born > v.dur) { crawlers[i] = spawn(now); continue; }
+        drawCrawler(v, now);
+      }
       requestAnimationFrame(tick);
     }
+
+    function resize() {
+      const w = window.innerWidth, h = window.innerHeight;
+      sCanvas.width  = aCanvas.width  = w;
+      sCanvas.height = aCanvas.height = h;
+      buildStatic();
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
     requestAnimationFrame(tick);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', init)
+    : init();
+
 })();
 </script>
 </body>
