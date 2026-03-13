@@ -2908,77 +2908,129 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script>
-
-
-/* ── BGM PLAYER UNIVERSAL ────────────────────────────────────────── */
 (function() {
     const TRACK_URL = 'https://soundcloud.com/lightningsplash/doors-ost-dawn-of-the-doors';
-    // Usar apenas o nome do arquivo facilita a leitura em ambos ambientes
-    const SCRIPT_URL = 'soundcloud-api.js'; 
+    let currentVol = 25;
+    let isReady = false;
+    let frame = null;
+    let fadeInterval = null;
 
+    /* ── BOTÃO DE VOLUME ── */
+    const volBtn = document.createElement('div');
+    volBtn.id = 'bgm-vol';
+    volBtn.style.cssText = 'position:fixed;top:18px;left:18px;z-index:9998;display:flex;align-items:center;gap:8px;color:#b82020;cursor:pointer;opacity:0;transition:opacity .4s;font-family:monospace;font-size:13px;letter-spacing:2px;';
+    volBtn.textContent = 'VOL';
+
+    const slider = document.createElement('input');
+    slider.id = 'bgm-slider';
+    slider.type = 'range';
+    slider.min = 0;
+    slider.max = 100;
+    slider.value = currentVol;
+    slider.style.cssText = 'width:0;transition:width .3s;accent-color:#b82020;cursor:pointer;vertical-align:middle;';
+    volBtn.appendChild(slider);
+    document.body.appendChild(volBtn);
+
+    volBtn.addEventListener('mouseenter', () => slider.style.width = '80px');
+    volBtn.addEventListener('mouseleave', () => slider.style.width = '0');
+
+    /* ── FADE DE VOLUME ── */
+    function fadeTo(target, duration) {
+        if (!isReady || !frame || !frame.contentWindow) return;
+        if (fadeInterval) clearInterval(fadeInterval);
+        const steps = 40;
+        const delay = duration / steps;
+        let step = 0;
+        const start = currentVol;
+        const delta = (target - start) / steps;
+        fadeInterval = setInterval(function() {
+            step++;
+            const v = Math.round(start + delta * step);
+            const clamped = Math.max(0, Math.min(100, v));
+            frame.contentWindow.postMessage(JSON.stringify({method:'setVolume', value: clamped}), 'https://w.soundcloud.com');
+            if (step >= steps) {
+                clearInterval(fadeInterval);
+                fadeInterval = null;
+                if (target > 0) currentVol = target;
+            }
+        }, delay);
+    }
+
+    /* ── MODAL ── */
+    const modal = document.createElement('div');
+    modal.id = 'bgm-modal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;z-index:10000;font-family:monospace;color:#b82020;transition:opacity .6s;';
+
+    const box = document.createElement('div');
+    box.style.cssText = 'border:1px solid #b82020;padding:30px;text-align:center;';
+
+    const title = document.createElement('h2');
+    title.style.cssText = 'letter-spacing:5px;font-size:14px;margin-bottom:20px;';
+    title.textContent = 'INICIAR SISTEMA SONORO?';
+
+    const btnSim = document.createElement('button');
+    btnSim.style.cssText = 'background:#b82020;color:#fff;border:none;padding:10px 30px;cursor:pointer;font-family:monospace;margin-right:10px;letter-spacing:2px;';
+    btnSim.textContent = 'SIM';
+
+    const btnNao = document.createElement('button');
+    btnNao.style.cssText = 'background:transparent;color:#444;border:1px solid #222;padding:10px 30px;cursor:pointer;font-family:monospace;letter-spacing:2px;';
+    btnNao.textContent = 'NAO';
+
+    box.appendChild(title);
+    box.appendChild(btnSim);
+    box.appendChild(btnNao);
+    modal.appendChild(box);
+    document.body.appendChild(modal);
+
+    /* ── PLAYER ── */
     function initPlayer() {
-        console.log("BGM: Inicializando Player...");
-        
-        const EMBED = 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(TRACK_URL) 
-                    + '&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false';
-
-        const frame = document.createElement('iframe');
-        frame.id = 'bgm-frame';
-        // 1px por 1px para evitar que o navegador "suspenda" o iframe
-        frame.style.cssText = 'position:fixed;width:1px;height:1px;left:-10px;bottom:0;opacity:0.01;pointer-events:none;';
-        frame.allow = "autoplay";
-        frame.src = EMBED;
+        frame = document.createElement('iframe');
+        frame.id = 'sc-player';
+        frame.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;bottom:0;left:0;';
+        frame.src = 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(TRACK_URL) + '&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false';
         document.body.appendChild(frame);
 
-        // Aguardamos o iframe carregar o conteúdo antes de criar o Widget
-        frame.onload = () => {
-            const widget = SC.Widget(frame);
-            let started = false;
+        frame.addEventListener('load', function() {
+            isReady = true;
+            /* fade in suave ao iniciar */
+            frame.contentWindow.postMessage(JSON.stringify({method:'setVolume', value: 0}), 'https://w.soundcloud.com');
+            setTimeout(function() { fadeTo(currentVol, 2000); }, 300);
+            volBtn.style.opacity = '1';
 
-            widget.bind(SC.Widget.Events.READY, () => {
-                console.log("BGM: Widget pronto e conectado.");
-                widget.setVolume(25);
+            slider.addEventListener('input', function() {
+                currentVol = parseInt(this.value);
+                if (fadeInterval) return; /* não interrompe fade em curso */
+                frame.contentWindow.postMessage(JSON.stringify({method:'setVolume', value: currentVol}), 'https://w.soundcloud.com');
             });
+        });
 
-            const startBGM = () => {
-                if (started) return;
-                widget.play();
-                started = true;
-                console.log("BGM: Play enviado!");
-                // Removemos os ouvintes após o primeiro sucesso
-                document.removeEventListener('click', startBGM);
-                document.removeEventListener('keydown', startBGM);
-            };
+        /* ── FADE AO SAIR / VOLTAR ── */
+        document.addEventListener('visibilitychange', function() {
+            if (!isReady) return;
+            if (document.hidden) {
+                fadeTo(0, 1500);
+            } else {
+                fadeTo(currentVol, 1500);
+            }
+        });
 
-            document.addEventListener('click', startBGM);
-            document.addEventListener('keydown', startBGM);
-        };
+        window.addEventListener('pagehide', function() {
+            if (isReady && frame && frame.contentWindow) {
+                frame.contentWindow.postMessage(JSON.stringify({method:'setVolume', value: 0}), 'https://w.soundcloud.com');
+            }
+        });
     }
 
-    // Lógica de carregamento do Script Local
-    if (window.SC && window.SC.Widget) {
-        initPlayer();
-    } else {
-        const script = document.createElement('script');
-        script.src = SCRIPT_URL; // Carrega do mesmo diretório do seu HTML
-        script.async = true;
-        
-        script.onload = () => {
-            console.log("BGM: Script local carregado.");
-            initPlayer();
-        };
+    btnSim.onclick = function() {
+        modal.style.opacity = '0';
+        setTimeout(function() { modal.remove(); }, 600);
+        try { initPlayer(); } catch(e) { console.error('BGM ERRO:', e); }
+    };
 
-        script.onerror = () => {
-            console.error("BGM: Não achei o arquivo soundcloud-api.js na pasta!");
-            // Plano B: Tenta carregar do CDN se o local falhar (caso esqueça de subir o arquivo)
-            const backupScript = document.createElement('script');
-            backupScript.src = 'https://w.soundcloud.com/player/api.js';
-            backupScript.onload = initPlayer;
-            document.head.appendChild(backupScript);
-        };
-
-        document.head.appendChild(script);
-    }
+    btnNao.onclick = function() {
+        modal.style.opacity = '0';
+        setTimeout(function() { modal.remove(); }, 600);
+    };
 })();
 </script>
 </body>
