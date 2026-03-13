@@ -1072,7 +1072,7 @@ Em conversa, é completamente normal. Educado, às vezes até curioso. A tempera
 .vtabs-nav{display:flex;gap:0;position:relative;z-index:1}
 .vtab-btn{flex:1;padding:10px 6px 9px;background:rgba(6,2,2,.9);border:1px solid rgba(155,18,18,.18);
   border-right:none;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;
-  font-family:'Inconsolata',monospace;font-size:.48rem;letter-spacing:.28em;text-transform:uppercase;
+  font-family:'Inconsolata',monospace;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
   color:var(--ash);text-align:center;user-select:none}
 .vtab-btn:last-child{border-right:1px solid rgba(155,18,18,.18)}
 .vtab-btn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
@@ -1118,19 +1118,19 @@ Em conversa, é completamente normal. Educado, às vezes até curioso. A tempera
 .pnp-item{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;font-size:.7rem;color:var(--char-dim);line-height:1.65}
 .pnp-item::before{content:'·';flex-shrink:0;opacity:.4}
 .pnp-col.no-col .pnp-item{opacity:.65}
-.pnp-col.no-col .pnp-item::before{content:'✕';font-size:.5rem;color:rgba(100,100,110,.4)}
+.pnp-col.no-col .pnp-item::before{content:'✕';font-size:.10rem;color:rgba(100,100,110,.4)}
 </style>
 
 <div class="vtabs-wrap reveal" id="vtabs">
   <div class="vtabs-nav">
     <div class="vtab-btn vt-on" onclick="VT(0)" id="vtb0">
-      <span class="vt-icon">🧬</span>garantia biológica
+      <span class="vt-icon"></span>garantia biológica
     </div>
     <div class="vtab-btn" onclick="VT(1)" id="vtb1">
-      <span class="vt-icon">⏳</span>irreversibilidade
+      <span class="vt-icon"></span>irreversibilidade
     </div>
     <div class="vtab-btn" onclick="VT(2)" id="vtb2">
-      <span class="vt-icon">⚖</span>pode · não pode
+      <span class="vt-icon"></span>pode · não pode
     </div>
   </div>
   <div class="vtab-body">
@@ -1205,9 +1205,6 @@ function VT(n) {
   }
 }
 </script>
-
-<!-- APLICAÇÕES -->
-<div class="sh reveal"><div class="sl"></div><div class="st">Aplicações Descobertas</div><div class="sl r"></div></div>
 
 <!-- APLICAÇÕES -->
 <div class="sh reveal"><div class="sl"></div><div class="st">Aplicações de A Infecção</div><div class="sl r"></div></div>
@@ -1629,41 +1626,178 @@ function VT(n) {
   <div class="b" style="font-size:.8rem;margin-top:18px;color:var(--ash)">S = stat de Sousuke. Todos respondem a comando simples de Sousuke (ação livre). Sem comando: avançam para o alvo mais próximo. Não distinguem aliados. Zumbis duram indefinidamente até serem destruídos. Gashas e Tiranos são estáveis enquanto houver Estágios ativos no campo.</div>
 </div>
 
-
-
-<!-- DOMÍNIO -->
-<div class="sh reveal"><div class="sl"></div><div class="st">Expansão de Domínio · Bloqueada</div><div class="sl r"></div></div>
+<!-- PROGRESSÃO VIRAL -->
+<div class="sh reveal"><div class="sl"></div><div class="st">Progressão da Técnica · Ciclos de Mutação</div><div class="sl r"></div></div>
 <div class="domain reveal">
   <div class="domain-vein"></div>
-  <div class="dname">Campo da Entropia Viral</div>
-  <div class="djp">疫エントロピー場 — Eki Entropī-ba · O Ambiente Que Já Decidiu</div>
-  <div class="b">O Domínio de Sousuke não cria um espaço diferente. Ele satura o espaço que existe com a carga viral máxima — o ar dentro do raio é literalmente respirável mas letal, cada inspiração trazendo vírus que o sistema imunológico não consegue identificar porque não são patógenos normais, são EA corrompida em forma biológica. Carne exposta inflama em segundos. Feridas não fecham. O cheiro é absoluto: cobre, carne úmida, sangue quente. Sousuke no centro parece completamente inalterado. Tudo ao redor está sendo consumido pela mesma carga viral que o habita — e nele, tem sinal positivo.</div>
-  <div class="mech" style="border-left-color:var(--bile-lit);color:var(--pus)">
-    CUSTO: 25% EA máx + 5d10. Exaustão pós: 1d4 rodadas.<br><br>
-    [1] AMBIENTAL VIRAL MÁXIMA — automática, sem custo de manutenção.
-    Raio 30m. Todo alvo hostil ganha +1 Estágio a cada turno <strong>do próprio alvo</strong> (não a cada
-    turno de qualquer combatente). Fortitude DT 10 anula. O limite geral de 3 Estágios
-    por turno ainda se aplica dentro do Domínio.<br><br>
-    [2] ESCALADA TEMPORAL — cada rodada completa dentro do Domínio:
-    DT de todas as resistências contra o vírus +1. Começa em Mod+9. Round 3: Mod+12.
-    Round 6: Mod+15. Round 9: Mod+18. O Domínio fica mais espesso com o tempo.<br><br>
-    [3] SUPREMACIA ORGÂNICA — cura regenera HP mas não bloqueia progressão
-    de Camadas. Domínio Simples bloqueia acerto garantido mas não bloqueia acúmulo
-    passivo da Ambiental (não é um ataque — é o ambiente). Dentro do Campo,
-    a deterioração ignora qualquer forma de escudo ou proteção que não seja
-    Energia Positiva direcionada especificamente.<br><br>
-    [4] COLAPSO ACUMULADO — alvos que entram no Domínio com Camadas
-    já instaladas: cada Camada vale por 2 para os thresholds de dano passivo,
-    penalidades e progressão neural. Estágio 4 ao entrar → trata como Estágio 8
-    para todos os fins de fase.<br><br>
-    [5] DETONAÇÃO EM CASCATA — Estágio 10 dentro do Domínio: a onda de área
-    da Dispersão instala Estágio <strong>2</strong> nos adjacentes (a onda carrega a inoculação inicial,
-    não infestação pré-avançada).
-    Resíduos criados dentro do Domínio duram 2d4+2 rodadas e têm HP dobrado.
-    Poças de sangue viral têm raio 2m e instalam +3 Estágios.<br><br>
-    VIDA DO NÚCLEO: 5d100
+  <div class="dname">Ciclos de Infestação</div>
+  <div class="djp">感染サイクル — Kansen Saikuru · O Vírus Não Aprende. Ele Muta.</div>
+  <div class="b">A técnica de Sousuke não se expande para um domínio nem se inverte — ela <em>muta</em>. Cada ciclo de poder é uma geração viral nova: o que antes era instável se consolida, o que era lento se acelera, o que era doloroso se torna inevitável. Não existe reversão porque o vírus não tem origem para retornar. Não existe expansão de domínio porque o espaço já pertence a ele desde o começo — ele só demora para perceber.</div>
+
+  <!-- NAV DOS CICLOS -->
+  <div class="lnav" id="prog-nav">
+    <div class="ln ph1" id="pcn-1" onclick="PC(1)"><div class="lnum">I</div></div>
+    <div class="ln" id="pcn-2" onclick="PC(2)"><div class="lnum">II</div></div>
+    <div class="ln" id="pcn-3" onclick="PC(3)"><div class="lnum">III</div></div>
+    <div class="ln" id="pcn-4" onclick="PC(4)"><div class="lnum">IV</div></div>
+    <div class="ln" id="pcn-5" onclick="PC(5)"><div class="lnum">V</div></div>
+    <div class="ln" id="pcn-6" onclick="PC(6)"><div class="lnum">VI</div></div>
+    <div class="ln" id="pcn-7" onclick="PC(7)"><div class="lnum">VII</div></div>
+    <div class="ln" id="pcn-8" onclick="PC(8)"><div class="lnum">VIII</div></div>
+    <div class="ln" id="pcn-9" onclick="PC(9)"><div class="lnum">IX</div></div>
+    <div class="ln" id="pcn-10" onclick="PC(10)"><div class="lnum">X</div></div>
+  </div>
+
+  <!-- CICLO I -->
+  <div class="lpanel c1 show" id="pcp-1">
+    <span class="ltitle">Ciclo I — Inoculação Primária</span>
+    <span class="lphase" style="color:var(--bile-lit)">感染初期 · Primeiro Contato</span>
+    <div class="mech" style="border-left-color:var(--bile-lit);color:var(--pus)">
+      [CLASSE +1] O vírus reconhece o hospedeiro. Sousuke sobe um nível de classe — o corpo aprende a carregar mais carga sem colapsar.<br><br>
+      [SAÚDE] +1 dado de saúde (d8). A resistência não é força — é o organismo aceitando a infecção como parte de si.<br><br>
+      [TÉCNICA] <strong>Carga Viral Latente</strong> — os Estágios instalados por ataques diretos agora somam +1 automaticamente quando o alvo já possui ao menos 1 Estágio ativo. Nenhum custo adicional. O vírus já dentro potencializa o vírus chegando.
+    </div>
+    <div class="tags"><span class="tag g">Passivo</span><span class="tag p">Sempre Ativo</span><span class="tag">Acúmulo</span></div>
+  </div>
+
+  <!-- CICLO II -->
+  <div class="lpanel c1" id="pcp-2">
+    <span class="ltitle">Ciclo II — Propagação Nervosa</span>
+    <span class="lphase" style="color:var(--bile-lit)">神経感染 · O Vírus Aprende os Caminhos</span>
+    <div class="mech" style="border-left-color:var(--bile-lit);color:var(--pus)">
+      [PERÍCIA DE COMBATE +1] Reflexo cirúrgico — o sistema nervoso de Sousuke opera em frequência viral.<br><br>
+      [SAÚDE] +1 dado de saúde (d8).<br><br>
+      [TÉCNICA] <strong>Propagação Subcutânea</strong> — uma vez por combate, ao instalar qualquer Estágio em um alvo, Sousuke pode gastar 3 EA para propagar 1 Estágio a um segundo alvo adjacente ao primeiro (dentro de 4m). O alvo secundário não precisa ter sido atacado. O vírus viaja pelo ar entre corpos próximos.
+    </div>
+    <div class="tags"><span class="tag g">1x/Combate</span><span class="tag p">Custo: 3 EA</span><span class="tag">Contágio</span></div>
+  </div>
+
+  <!-- CICLO III -->
+  <div class="lpanel c2" id="pcp-3">
+    <span class="ltitle">Ciclo III — Memória Adaptativa</span>
+    <span class="lphase" style="color:var(--pus)">適応記憶 · O Vírus Lembra</span>
+    <div class="mech" style="border-left-color:var(--pus);color:var(--pus)">
+      [APRENDIZADO] Sousuke pode aprender ou refinar uma técnica viral durante a campanha (aprovação do GM).<br><br>
+      [SAÚDE] +1 dado de saúde (d8).<br><br>
+      [TÉCNICA] <strong>Resistência Cruzada Invertida</strong> — quando um alvo tenta resistir a qualquer efeito do vírus (Fortitude, Constituição, etc.), se ele já falhou numa resistência anteriormente nesse combate, a DT base da nova resistência aumenta em +2. O vírus registra as falhas do hospedeiro e as explora.
+    </div>
+    <div class="tags"><span class="tag g">Passivo</span><span class="tag p">Escalada de DT</span><span class="tag">Memória Viral</span></div>
+  </div>
+
+  <!-- CICLO IV -->
+  <div class="lpanel c2" id="pcp-4">
+    <span class="ltitle">Ciclo IV — Saturação Tissular</span>
+    <span class="lphase" style="color:var(--pus)">組織飽和 · A Carne Não Aguenta Mais</span>
+    <div class="mech" style="border-left-color:var(--pus);color:var(--pus)">
+      [PERÍCIA GERAL] Gire 1d6 — ganha esse número em perícias fora de combate. O vírus amplia percepção e leitura de ambiente.<br><br>
+      [SAÚDE] +1 dado de saúde (d8).<br><br>
+      [TÉCNICA] <strong>Necrose Acelerada</strong> — alvos em Estágio 5 ou superior sofrem dano passivo no início do turno deles (não de Sousuke): 1d6 por Estágio acima de 4. Estágio 6 = 1d6. Estágio 7 = 2d6. Estágio 8 = 3d6. Isso não é um ataque — é o tecido se desmontando. Não pode ser esquivado.<br><br>
+      [DEFESA] Barreira Tecidual — ação bônus, gasta 4 EA, reduz 6 de dano no round. Funciona usando tecido viral endurecido ao invés de EA pura.
+    </div>
+    <div class="tags"><span class="tag g">Passivo</span><span class="tag p">Dano por Estágio</span><span class="tag r">Não-Esquivável</span><span class="tag">Ataque Extra</span></div>
+  </div>
+
+  <!-- CICLO V -->
+  <div class="lpanel c2" id="pcp-5">
+    <span class="ltitle">Ciclo V — Simbiose Forçada</span>
+    <span class="lphase" style="color:var(--pus)">強制共生 · Sousuke e o Vírus São a Mesma Coisa</span>
+    <div class="mech" style="border-left-color:var(--pus);color:var(--pus)">
+      [ENERGIA +5] O vínculo com a carga viral se aprofunda — a reserva de EA cresce naturalmente.<br><br>
+      [SAÚDE] +1 dado de saúde (d8).<br><br>
+      [TÉCNICA] <strong>Metabolismo Parasita</strong> — sempre que um alvo infectado (1+ Estágio) sofre dano passivo de Necrose ou avança de Estágio espontaneamente, Sousuke recupera 2 EA. Recupera 1 EA por turno em combate enquanto há pelo menos um alvo com Estágio ativo no campo. A dor do outro o alimenta.
+    </div>
+    <div class="tags"><span class="tag g">Passivo</span><span class="tag p">Recuperação EA</span><span class="tag">Simbiose</span></div>
+  </div>
+
+  <!-- CICLO VI -->
+  <div class="lpanel c3" id="pcp-6">
+    <span class="ltitle">Ciclo VI — Cepas Assinatura</span>
+    <span class="lphase" style="color:var(--nec-lit)">署名株 · Esse Vírus Tem Autoria</span>
+    <div class="mech" style="border-left-color:var(--nec-lit);color:var(--nec-lit)">
+      [PERÍCIA GERAL] Gire 1d6 — ganha esse número em perícias fora de combate.<br><br>
+      [SAÚDE] +1 dado de saúde (d8).<br><br>
+      [TÉCNICA] <strong>Cepa Personalizada</strong> — Sousuke escolhe <strong>uma</strong> técnica de seu arsenal. Ela ganha +4d4 de dano e custa –1 EA permanentemente. Além disso, essa técnica agora instala Estágio <strong>mesmo em alvos que resistiram</strong> à inoculação naquele turno — instala 1 Estágio ao invés de 0 (resistência parcial, não imunidade).
+    </div>
+    <div class="tags"><span class="tag g">Permanente</span><span class="tag p">+4d4 Dano</span><span class="tag n">Resistência Parcial</span></div>
+  </div>
+
+  <!-- CICLO VII -->
+  <div class="lpanel c3" id="pcp-7">
+    <span class="ltitle">Ciclo VII — Amplificação Endógena</span>
+    <span class="lphase" style="color:var(--nec-lit)">内因性増幅 · O Vírus Grita</span>
+    <div class="mech" style="border-left-color:var(--nec-lit);color:var(--nec-lit)">
+      [ENERGIA +5] O corpo não só aceita — ele produz. EA base cresce.<br><br>
+      [SAÚDE] +1 dado de saúde (d8).<br><br>
+      [TÉCNICA] <strong>Surto Viral</strong> — pode gastar 5 EA extras num ataque ou teste para escolher UMA das opções:<br>
+      · +5 dados de dano naquele ataque<br>
+      · +2d20 no teste de acerto ou resistência<br>
+      · Forçar todos os alvos com Estágio ativo no campo a avançar +1 Estágio imediatamente (sem teste de resistência)<br><br>
+      A terceira opção só existe para Sousuke — é o custo de não ter domínio: o surto é indiscriminado, brutal e pessoal.
+    </div>
+    <div class="tags"><span class="tag g">Ativo</span><span class="tag p">Custo: 5 EA</span><span class="tag r">3 Opções</span></div>
+  </div>
+
+  <!-- CICLO VIII -->
+  <div class="lpanel c3" id="pcp-8">
+    <span class="ltitle">Ciclo VIII — Pele Como Armadura</span>
+    <span class="lphase" style="color:var(--nec-lit)">皮膚装甲 · Infectado Não É Frágil</span>
+    <div class="mech" style="border-left-color:var(--nec-lit);color:var(--nec-lit)">
+      [SAÚDE] +1 dado de saúde (d8) — duas vezes. O ciclo VIII é exclusivamente físico.<br><br>
+      [TÉCNICA] <strong>Casulo Patogênico</strong> — testes de esquiva e resistência contra magia e efeitos de energia amaldiçoada recebem +1d20. A carga viral dentro de Sousuke interfere com frequências de EA externas.<br><br>
+      <strong>Imunidade Cruzada</strong> — efeitos de veneno, doença e degeneração aplicados por outros têm suas DTs reduzidas em 4 contra Sousuke. O vírus reconhece os primos e os rejeita.<br><br>
+      +1 dado em qualquer teste que envolva resistir fisicamente (não é Feitiçaria — é biologia pura).
+    </div>
+    <div class="tags"><span class="tag g">Passivo</span><span class="tag p">+1d20 Esquiva Mágica</span><span class="tag">Imunidade Cruzada</span></div>
+  </div>
+
+  <!-- CICLO IX -->
+  <div class="lpanel c4" id="pcp-9">
+    <span class="ltitle">Ciclo IX — Portador Temido</span>
+    <span class="lphase" style="color:var(--blood-lit)">恐れられた保菌者 · Eles Sabem Quando Ele Chega</span>
+    <div class="mech" style="border-left-color:var(--blood-lit);color:#e07070">
+      [ENERGIA +5] A presença viral de Sousuke é tão densa que a EA transborda.<br><br>
+      [SAÚDE] +1 dado de saúde (d8).<br><br>
+      [TÉCNICA] <strong>Presença Infecciosa</strong> — inimigos que iniciam o turno a até 9m de Sousuke recebem automaticamente 1 Estágio se já possuírem qualquer Estágio ativo (o vírus no ar amplia o que está dentro). Fortitude DT Mod+8 anula.<br><br>
+      <strong>Aura de Decomposição</strong> — curas recebidas por alvos infectados dentro de 9m são reduzidas à metade. A presença de Sousuke corrói a recuperação do inimigo como um campo passivo.<br><br>
+      Inoculações de Sousuke ignoram resistência comum — apenas Energia Positiva direcionada conta como proteção real.
+    </div>
+    <div class="tags"><span class="tag g">Aura Passiva</span><span class="tag r">9m de Raio</span><span class="tag p">Ignora Resistência</span></div>
+  </div>
+
+  <!-- CICLO X -->
+  <div class="lpanel c4" id="pcp-10">
+    <span class="ltitle">Ciclo X — Vírus Inato Manifestado</span>
+    <span class="lphase" style="color:var(--blood-lit)">先天性ウイルス顕現 · A Origem Se Revela</span>
+    <div class="mech" style="border-left-color:var(--blood-lit);color:#e07070">
+      [HABILIDADE INATA / MARCO DE PODER] — O ciclo final não escolhe entre caminhos. Ele revela o que sempre foi.<br><br>
+      [SAÚDE] +1 dado de saúde (d8).<br><br>
+      Escolha <strong>UMA</strong> Manifestação Inata:<br><br>
+      <strong>· CEPA OMEGA</strong> — Destruição Biológica Pura: todos os ataques virais ganham +5d6 de dano base. Estágios aplicados por Sousuke avançam em 2 ao invés de 1 em qualquer ataque direto.<br><br>
+      <strong>· VÍRUS FANTASMA</strong> — Penetração Total: a técnica de Sousuke passa a ignorar Domínios Simples e barreiras de EA que não sejam Energia Positiva. Os Estágios não são bloqueados por escudos, armaduras ou proteções mágicas — o vírus não ataca a superfície.<br><br>
+      <strong>· HOSPEDEIRO ETERNO</strong> — Controle do Campo: uma vez por combate (sem custo), todos os alvos com Estágio ativo recebem um efeito específico escolhido por Sousuke no momento (lentidão, cegueira viral, falha muscular, etc.) que dura 1d4 rodadas. É como um debuff distribuído por rede biológica — o vírus como sistema nervoso externo.
+    </div>
+    <div class="tags"><span class="tag g">Marco Permanente</span><span class="tag r">Escolha Única</span><span class="tag p">Ciclo Final</span><span class="tag n">Inato</span></div>
   </div>
 </div>
+
+<script>
+function PC(n) {
+  for (let i = 1; i <= 10; i++) {
+    const p = document.getElementById('pcp-' + i);
+    const b = document.getElementById('pcn-' + i);
+    if (p) { p.classList.remove('show'); p.style.display = 'none'; }
+    if (b) {
+      b.classList.remove('ph1','ph2','ph3','ph4');
+    }
+  }
+  const colors = {1:'ph1',2:'ph1',3:'ph2',4:'ph2',5:'ph2',6:'ph3',7:'ph3',8:'ph3',9:'ph4',10:'ph4'};
+  const panel = document.getElementById('pcp-' + n);
+  const btn = document.getElementById('pcn-' + n);
+  if (panel) { panel.classList.add('show'); panel.style.display = 'block'; }
+  if (btn) btn.classList.add(colors[n] || 'ph1');
+}
+PC(1);
+</script>
 
 
 <!-- HISTÓRIA -->
