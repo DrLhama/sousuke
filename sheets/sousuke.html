@@ -333,11 +333,11 @@ body { padding-bottom: 52px; }
 }
 .arow::after{
   content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(155,18,18,.12),transparent)
+  background:linear-gradient(90deg,transparent,rgb(10, 136, 31),transparent)
 }
 .ac{
   background:transparent;
-  border-right:1px solid rgba(155,18,18,.06);
+  border-right:1px solid rgba(18, 155, 75, 0.06);
   padding:22px 8px;
   position:relative;
   transition:background .3s
@@ -696,7 +696,7 @@ body { padding-bottom: 52px; }
   </div>
 
   <div class="ckanji">染</div>
-  <div class="cid">⛩ GOLDEN ERA · FICHA Nº005 · FEITICEIRO · NV.1</div>
+  <div class="cid">⛩ GOLDEN ERA · FICHA Nº005 · FEITICEIRO · NV.<span class="val-nivel"></span></div>
   <div class="cname">SOUSUKE</div>
   <div class="csub">寄生術式 — O Parasita</div>
   <div class="crule"></div>
@@ -711,7 +711,6 @@ body { padding-bottom: 52px; }
 
 <div class="page">
 
-<!-- IDENTIDADE -->
 <div class="sh reveal"><div class="sl"></div><div class="st">Identidade</div><div class="sl r"></div></div>
 <div class="sgrid reveal" style="grid-template-columns:repeat(4,1fr)">
   <div class="sc"><div class="sl2">Nome</div><div class="sv">Sousuke</div></div>
@@ -721,7 +720,10 @@ body { padding-bottom: 52px; }
   <div class="sc"><div class="sl2">Colégio</div><div class="sv">Kyoto</div></div>
   <div class="sc"><div class="sl2">Grau Inicial</div><div class="sv g">Grau 4</div></div>
   <div class="sc"><div class="sl2">Classe</div><div class="sv">Feiticeiro</div></div>
-  <div class="sc"><div class="sl2">Nível / Experiência</div><div class="sv">1 / 0</div></div>
+  <div class="sc">
+    <div class="sl2">Nível / Experiência</div>
+    <div class="sv"><span class="val-nivel"></span> / <span id="val-xp"></span></div>
+  </div>
 </div>
 
 <!-- FOTO DO PERSONAGEM -->
@@ -742,95 +744,77 @@ Em conversa, é completamente normal. Educado, às vezes até curioso. A tempera
   <cite>— avaliação psicológica de admissão, encerrada sem conclusão</cite>
 </div>
 
-<!-- COMBATE -->
-<div class="sh reveal"><div class="sl"></div><div class="st">Combate · Nível 1</div><div class="sl r"></div></div>
-
+<div class="sh reveal"><div class="sl"></div><div class="st">Combate · Nível <span class="val-nivel"></span></div><div class="sl r"></div></div>
 <div class="reveal" style="border-left:2px solid rgba(155,18,18,.2);background:linear-gradient(135deg,rgba(6,2,2,.95),rgba(4,1,1,.9));overflow:hidden;margin-bottom:28px;position:relative">
-
-  <!-- glow de fundo -->
   <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(160,20,20,.07) 0%,transparent 70%)"></div>
-
-  <!-- linha superior — HP e EA -->
+  
   <div style="display:grid;grid-template-columns:1fr 1fr;position:relative;z-index:1">
-
     <div style="padding:24px 28px;border-right:1px solid rgba(155,18,18,.1)">
       <div style="font-family:'Inconsolata',monospace;font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ash);margin-bottom:10px">Pontos de Vida</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:3.2rem;color:var(--bile-lit);line-height:1;text-shadow:0 0 40px rgba(160,20,20,.55)">19 <span style="font-size:1.4rem;color:var(--grit)">/ 19</span></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:3.2rem;color:var(--bile-lit);line-height:1;text-shadow:0 0 40px rgba(160,20,20,.55)">
+        <span id="val-hp-atual"></span> <span style="font-size:1.4rem;color:var(--grit)">/ <span id="val-hp-max"></span></span>
+      </div>
       <div style="font-family:'Inconsolata',monospace;font-size:.6rem;color:var(--ash);margin-top:6px">Corpo Contaminado: +5 HP · +3 EA/turno · Não pode ser curado por terceiros</div>
     </div>
-
     <div style="padding:24px 28px">
       <div style="font-family:'Inconsolata',monospace;font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ash);margin-bottom:10px">Energia Amaldiçoada</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:3.2rem;color:var(--pus);line-height:1;text-shadow:0 0 40px rgba(168,196,96,.3)">26 <span style="font-size:1.4rem;color:var(--grit)">/ 26</span></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:3.2rem;color:var(--pus);line-height:1;text-shadow:0 0 40px rgba(168,196,96,.3)">
+        <span id="val-ea-atual"></span> <span style="font-size:1.4rem;color:var(--grit)">/ <span id="val-ea-max"></span></span>
+      </div>
       <div style="font-family:'Inconsolata',monospace;font-size:.6rem;color:var(--ash);margin-top:6px">EA Máxima desbloqueável: <span style="color:var(--pus)">300</span> · Regenera +3 EA/turno · Técnicas ativas custam ~8 EA base</div>
     </div>
-
   </div>
 
-  <!-- divisor orgânico -->
   <div style="height:1px;background:linear-gradient(90deg,transparent 0%,rgba(155,18,18,.12) 20%,rgba(155,18,18,.06) 80%,transparent 100%);position:relative;z-index:1"></div>
 
-  <!-- linha do meio — dano e defesa -->
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;position:relative;z-index:1">
-
     <div style="padding:20px 24px;border-right:1px solid rgba(155,18,18,.08)">
       <div style="font-family:'Inconsolata',monospace;font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ash);margin-bottom:8px">Dano Base</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--bile-lit);line-height:1;letter-spacing:.04em">8d6 + 2d4 + 5</div>
       <div style="font-family:'Inconsolata',monospace;font-size:.58rem;color:rgba(106,170,72,.45);margin-top:5px;line-height:1.7">Téc. Iluminada 6d6<br>Maestria +2d6 · Uniforme +2d4 · Prof. +5</div>
     </div>
-
     <div style="padding:20px 24px;border-right:1px solid rgba(155,18,18,.08)">
       <div style="font-family:'Inconsolata',monospace;font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ash);margin-bottom:8px">Defesa</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--char);line-height:1">13</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--char);line-height:1" id="val-defesa"></div>
       <div style="font-family:'Inconsolata',monospace;font-size:.58rem;color:var(--ash);margin-top:5px;line-height:1.7">Rede de Pressão: +1d20 Esquiva<br>Surpresa / Invisível: sem bônus</div>
     </div>
-
     <div style="padding:20px 24px">
       <div style="font-family:'Inconsolata',monospace;font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ash);margin-bottom:8px">Percepção Passiva</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--char);line-height:1">13</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--char);line-height:1" id="val-percepcao"></div>
       <div style="font-family:'Inconsolata',monospace;font-size:.58rem;color:var(--ash);margin-top:5px;line-height:1.7">Rede Parasitária amplia percepção<br>de pressão e deslocamento de ar</div>
     </div>
-
   </div>
 
-  <!-- divisor orgânico -->
   <div style="height:1px;background:linear-gradient(90deg,transparent 0%,rgba(155,18,18,.12) 20%,rgba(155,18,18,.06) 80%,transparent 100%);position:relative;z-index:1"></div>
 
-  <!-- linha inferior — custo, DT, maestria -->
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;position:relative;z-index:1">
-
     <div style="padding:18px 24px;border-right:1px solid rgba(155,18,18,.08)">
       <div style="font-family:'Inconsolata',monospace;font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ash);margin-bottom:8px">Custo Base / Técnica</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--bile-lit);line-height:1">5 – 8 EA</div>
       <div style="font-family:'Inconsolata',monospace;font-size:.58rem;color:rgba(106,170,72,.45);margin-top:5px">Padrão 5 EA · Técnicas ativas 8 EA · Origem potencializa</div>
     </div>
-
     <div style="padding:18px 24px;border-right:1px solid rgba(155,18,18,.08)">
       <div style="font-family:'Inconsolata',monospace;font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ash);margin-bottom:8px">DT de Resistência</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--nec-lit);line-height:1">Mod + 9</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--nec-lit);line-height:1" id="val-dt"></div>
       <div style="font-family:'Inconsolata',monospace;font-size:.58rem;color:rgba(192,144,48,.45);margin-top:5px">Base de todas as resistências da ficha</div>
     </div>
-
     <div style="padding:18px 24px">
       <div style="font-family:'Inconsolata',monospace;font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ash);margin-bottom:8px">Maestria Iluminada</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--bile-lit);line-height:1">+1d20</div>
       <div style="font-family:'Inconsolata',monospace;font-size:.58rem;color:rgba(106,170,72,.45);margin-top:5px">Em todos os testes · Modificação em tempo real</div>
     </div>
-
   </div>
-
 </div>
-
-<div class="b reveal"><span class="note">// DANO BASE —</span> Técnica Iluminada (6d6) + Maestria Iluminada (+2d6) = 8d6. Uniforme (+2d4). Proficiência Feiticeiro (+5). Total: <strong>8d6 + 2d4 + 5</strong>. Maestria Iluminada: +1d20 nos testes, modificação em tempo real. <em>Origem:</em> com ao menos um hospedeiro em Estágio 3+ no campo, +5 Feitiçaria e +1d20 adicional em Feitiçaria. Técnicas passivas 5 EA · ativas 8 EA. DT resistência = Mod Sousuke + 9.</div>
+<div class="b reveal"><span class="note">// DANO BASE —</span> Técnica Iluminada (6d6) + Maestria Iluminada (+2d6) = 8d6. Uniforme (+2d4). Proficiência Feiticeiro (+5). Total: <strong>8d6 + 2d4 + 5</strong>. Maestria Iluminada: +1d20 nos testes, modificação em tempo real. <em>Origem:</em> +10 Enganação. Técnicas passivas 5 EA · ativas 8 EA. DT resistência = Mod Sousuke + 9.</div>
 
 <!-- ATRIBUTOS -->
 <div class="sh reveal"><div class="sl"></div><div class="st">Atributos</div><div class="sl r"></div></div>
 <div class="arow reveal">
-  <div class="ac"><div class="an">Força</div><div class="av zero">1</div><div class="anote">Base</div></div>
-  <div class="ac"><div class="an">Agilidade</div><div class="av peak">3</div><div class="anote">+Def/Esq</div></div>
-  <div class="ac"><div class="an">Constituição</div><div class="av zero">1</div><div class="anote">Base</div></div>
-  <div class="ac" style="background:rgba(58,110,42,.04)"><div class="an">Inteligência</div><div class="av peak">4</div><div class="anote" style="color:var(--bile-lit)">+1 livre</div></div>
-  <div class="ac"><div class="an">Presença</div><div class="av zero">1</div><div class="anote">Ausente</div></div>
+  <div class="ac"><div class="an">Força</div><div class="av zero" id="val-for"></div><div class="anote">Base</div></div>
+  <div class="ac"><div class="an">Agilidade</div><div class="av zero" id="val-agi"></div><div class="anote">Base</div></div>
+  <div class="ac"><div class="an">Constituição</div><div class="av zero" id="val-con"></div><div class="anote">Base</div></div>
+  <div class="ac" style="background:rgba(1, 255, 56, 0.04)"><div class="an">Inteligência</div><div class="av peak" id="val-int" style="color:var(--bile-lit)"></div><div class="anote" style="color:var(--bile-lit)">Base</div></div>
+  <div class="ac" style="background:rgba(1, 255, 56, 0.04)"><div class="an">Presença</div><div class="av peak" id="val-pre"></div><div class="anote">+1 livre</div></div>
 </div>
 
 <!-- ORIGEM HOMEBREW -->
@@ -850,11 +834,11 @@ Em conversa, é completamente normal. Educado, às vezes até curioso. A tempera
     <div class="bonus-grid">
       <div class="bc">
         <div class="bc-l">Benefício Mecânico — Potencialização Retroativa</div>
-        <div class="bc-v">A Origem se alimenta dos alvos parasitados. Enquanto houver ao menos um alvo parasitado em campo, Sousuke ganha <strong>+5 em Feitiçaria</strong> e <strong>+1d20 adicional em testes de Feitiçaria</strong>. Não é treinamento — é o parasita devolvendo o que colheu.</div>
+        <div class="bc-v">A Origem se alimenta da essência ao redor. Sousuke ganha <strong>+10 em Enganação</strong>. Não é treinamento — é o parasita devolvendo o que colheu.</div>
       </div>
       <div class="bc">
         <div class="bc-l">Custo de Técnicas</div>
-        <div class="bc-v">Técnicas passivas e de aplicação: <strong>5 EA</strong>. Técnicas ativas ofensivas: <strong>8 EA</strong>. A regeneração de 3 EA/turno sustenta o ciclo sem exaurir o usuário em combates normais.</div>
+        <div class="bc-v">Técnicas passivas e de aplicação: <strong>5 EA</strong>. Técnicas ativas ofensivas: <strong>8 EA</strong>. A regeneração de 3 EA/turno é o limite do equilíbrio; o parasita exige eficiência absoluta sob risco de exaustão precoce.</div>
       </div>
     </div>
 
@@ -868,26 +852,25 @@ Em conversa, é completamente normal. Educado, às vezes até curioso. A tempera
 <div class="sh reveal"><div class="sl"></div><div class="st">Perícias</div><div class="sl r"></div></div>
 
 <div class="b reveal">
-Feiticeiro nível 1: <strong>Feitiçaria</strong> e <strong>Iniciativa</strong> automáticas. 7 + Int(4) = <strong>11 adicionais</strong>. Total 23.
+<strong>Feitiçaria</strong> e <strong>Iniciativa</strong> automáticas. 7 + Int(2) = <strong>9 adicionais</strong>. Total 23.
 </div>
 
 <div class="pgrid reveal">
 
+<div class="ps"><span class="psn">⚡Enganação</span><span class="psv">+15</span></div>
 <div class="ps"><span class="psn">⚡Feitiçaria</span><span class="psv">+5 (auto)</span></div>
 <div class="ps"><span class="psn">⚡Iniciativa</span><span class="psv">+5 (auto)</span></div>
 
 <div class="ps"><span class="psn">Esquiva</span><span class="psv">+5</span></div>
 <div class="ps"><span class="psn">Rastreamento</span><span class="psv">+5</span></div>
 <div class="ps"><span class="psn">Furtividade</span><span class="psv">+5</span></div>
-
 <div class="ps"><span class="psn">Investigação</span><span class="psv">+5</span></div>
-<div class="ps"><span class="psn">Enganação</span><span class="psv">+5</span></div>
 <div class="ps"><span class="psn">Aprendizado</span><span class="psv">+5</span></div>
 <div class="ps"><span class="psn">Ocultismo</span><span class="psv">+5</span></div>
 <div class="ps"><span class="psn">Medicina</span><span class="psv">+5</span></div>
-<div class="ps"><span class="psn">Disciplina</span><span class="psv">+5</span></div>
 <div class="ps"><span class="psn">Persuasão</span><span class="psv">+5</span></div>
-<div class="ps"><span class="psn">Intuição</span><span class="psv">+5</span></div>
+<div class="ps"><span class="psn">Disciplina</span><span class="psv b2">— sem bônus</span></div>
+<div class="ps"><span class="psn">Intuição</span><span class="psv b2">— sem bônus</span></div>
 <div class="ps"><span class="psn">Sobrevivência</span><span class="psv b2">— sem bônus</span></div>
 <div class="ps"><span class="psn">Fortitude</span><span class="psv b2">— sem bônus</span></div>
 <div class="ps"><span class="psn">Luta</span><span class="psv b2">— sem bônus</span></div>
@@ -903,8 +886,150 @@ Feiticeiro nível 1: <strong>Feitiçaria</strong> e <strong>Iniciativa</strong> 
 
 </div>
 
+<div class="sh reveal"><div class="sl"></div><div class="st">Técnica Inata · Iluminada · Maestria Iluminada</div><div class="sl r"></div></div>
+<div class="b reveal"><strong style="font-size:1.1rem;color:var(--char)">寄生術式 — Kisei Jutsu</strong> &nbsp;·&nbsp; <em style="color:var(--bile-lit);font-size:.9rem">O Parasita</em><br><span style="color:var(--ash);font-size:.88rem;font-style:italic">Arte do Parasitismo · Técnica Amaldiçoada de Infestação Contínua e Controle Neurológico</span></div>
+<div class="b reveal">Diferente das técnicas que moldam a energia em fenômenos externos, a Kisei Jutsu é uma função metabólica. O organismo não é criado, mas cultivado no sangue de Sousuke. O gasto de Energia Amaldiçoada não ocorre na geração da vida, mas no direcionamento de sua fome. É a diferença entre o esforço de criar e a eficiência de liberar.</div>
+
+<style>
+.vtabs-wrap{position:relative;margin-bottom:28px}
+.vtabs-wrap::before{content:'';position:absolute;left:-1px;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--bile-lit),var(--blood),transparent);opacity:.4;pointer-events:none}
+
+.vtabs-nav{display:flex;gap:0;position:relative;z-index:1}
+.vtab-btn{flex:1;padding:10px 6px 9px;background:rgba(6,2,2,.9);border:1px solid rgba(155,18,18,.18);
+  border-right:none;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;
+  font-family:'Inconsolata',monospace;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--ash);text-align:center;user-select:none}
+.vtab-btn:last-child{border-right:1px solid rgba(155,18,18,.18)}
+.vtab-btn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:var(--bile-lit);transform:scaleX(0);transition:transform .2s;transform-origin:left}
+.vtab-btn:hover{background:rgba(14,3,3,.95);color:var(--char-dim)}
+.vtab-btn.vt-on{background:rgba(18,4,4,.98);color:var(--bile-lit);border-bottom-color:rgba(18,4,4,.98)}
+.vtab-btn.vt-on::after{transform:scaleX(1)}
+.vtab-btn .vt-icon{display:block;font-size:.9rem;margin-bottom:3px;opacity:.7}
+.vtab-btn.vt-on .vt-icon{opacity:1}
+
+.vtab-body{border:1px solid rgba(155,18,18,.18);border-top:none;position:relative;overflow:hidden}
+.vtab-body::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 20% 80%,rgba(160,20,20,.07) 0%,transparent 65%)}
+
+.vtab-panel{display:none;padding:22px 26px;font-family:'Inconsolata',monospace;font-size:.74rem;
+  color:var(--char-dim);line-height:2;animation:vtp-in .22s ease both}
+.vtab-panel.vt-show{display:block}
+@keyframes vtp-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* panel A — Garantia Biológica: linhas de scan */
+.vtab-panel.vtp-a{background:linear-gradient(180deg,rgba(10,2,2,.97) 0%,rgba(6,1,1,.95) 100%)}
+.vtab-panel.vtp-a::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(160,20,20,.025) 28px,rgba(160,20,20,.025) 29px)}
+
+/* panel B — Irreversibilidade: grade de relógio */
+.vtab-panel.vtp-b{background:linear-gradient(135deg,rgba(8,2,2,.98),rgba(12,3,3,.95))}
+.irrev-tiers{display:grid;grid-template-columns:1fr;gap:5px;margin:14px 0}
+.irrev-tier{display:flex;align-items:stretch;gap:0;border:1px solid rgba(155,18,18,.12);overflow:hidden}
+.irrev-tier-range{padding:8px 12px;background:rgba(155,18,18,.07);border-right:1px solid rgba(155,18,18,.12);
+  font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--bile-lit);min-width:78px;
+  display:flex;align-items:center;justify-content:center;letter-spacing:.06em;line-height:1}
+.irrev-tier-range.t2{color:var(--pus)}
+.irrev-tier-range.t3{color:var(--nec-lit)}
+.irrev-tier-desc{padding:8px 14px;font-size:.68rem;color:var(--char-dim);line-height:1.75;display:flex;align-items:center}
+
+/* panel C — Pode / Não Pode: dois blocos lado a lado */
+.vtab-panel.vtp-c{background:rgba(6,2,2,.97)}
+.pnp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(155,18,18,.1);margin-top:10px}
+.pnp-col{padding:16px 18px;background:rgba(8,2,2,.96)}
+.pnp-head{font-size:.48rem;letter-spacing:.4em;text-transform:uppercase;margin-bottom:10px;padding-bottom:7px}
+.pnp-head.yes{color:var(--bile-lit);border-bottom:1px solid rgba(155,18,18,.22)}
+.pnp-head.no{color:rgba(100,100,110,.5);border-bottom:1px solid rgba(80,80,90,.12)}
+.pnp-item{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;font-size:.7rem;color:var(--char-dim);line-height:1.65}
+.pnp-item::before{content:'·';flex-shrink:0;opacity:.4}
+.pnp-col.no-col .pnp-item{opacity:.65}
+.pnp-col.no-col .pnp-item::before{content:'✕';font-size:.10rem;color:rgba(100,100,110,.4)}
+</style>
+
+<div class="vtabs-wrap reveal" id="vtabs">
+  <div class="vtabs-nav">
+    <div class="vtab-btn vt-on" onclick="VT(0)" id="vtb0">
+      <span class="vt-icon"></span>garantia biológica
+    </div>
+    <div class="vtab-btn" onclick="VT(1)" id="vtb1">
+      <span class="vt-icon"></span>irreversibilidade
+    </div>
+    <div class="vtab-btn" onclick="VT(2)" id="vtb2">
+      <span class="vt-icon"></span>pode · não pode
+    </div>
+  </div>
+  <div class="vtab-body">
+
+    <div class="vtab-panel vtp-a vt-show" id="vtp0">
+      <div style="font-size:.48rem;letter-spacing:.38em;text-transform:uppercase;color:rgba(210,50,50,.5);margin-bottom:14px">☣ Vetor Universal</div>
+      <div style="margin-bottom:12px"><strong style="color:var(--blood-lit)">A Kisei Jutsu ignora a dicotomia entre biologia e maldição.</strong> Se o alvo possui estrutura celular ou fluxo energético, ele é um hospedeiro viável. Blindagens externas são irrelevantes diante da invasão sistêmica.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(155,18,18,.1);margin-bottom:14px">
+        <div style="padding:10px 14px;background:rgba(8,2,2,.96)"><div style="font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:5px">Resistência a Maldições</div><div style="font-size:.7rem;color:var(--char-dim)">O Parasita ataca o substrato orgânico. A técnica é biológica primeiro.</div></div>
+        <div style="padding:10px 14px;background:rgba(8,2,2,.96)"><div style="font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:5px">Imunidade Biológica</div><div style="font-size:.7rem;color:var(--char-dim)">O Parasita transmuta-se em Energia Amaldiçoada pura para infectar.</div></div>
+        <div style="padding:10px 14px;background:rgba(8,2,2,.96)"><div style="font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:5px">Verdade Incontestável</div><div style="font-size:.7rem;color:var(--char-dim)">Progressão inevitável. <strong style="color:var(--blood-lit)">Estágio 1 Garantido</strong> no contato inicial.</div></div>
+        <div style="padding:10px 14px;background:rgba(8,2,2,.96)"><div style="font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:5px">Vetores Mundanos</div><div style="font-size:.7rem;color:var(--char-dim)">Animais e não-feiticeiros servem como combustível e pontes de transmissão.</div></div>
+      </div>
+      <div style="font-size:.7rem;color:var(--char-dim);line-height:1.85"><strong style="color:var(--blood-lit)">Infestação Passiva:</strong> A técnica pode ser imbuída em superfícies. O toque ativa a inoculação imediata. Em combates múltiplos, a dispersão age como uma reação em cadeia involuntária.</div>
+      <div style="margin-top:12px;font-size:.7rem;color:var(--char-dim)"><strong style="color:var(--char)">Soberania do Usuário:</strong> Até o Estágio 3, Sousuke detém controle clínico sobre a purgação. No <strong style="color:var(--char)">Estágio 4+</div>strong>, a autonomia pertence ao Parasita.</div>
+    </div>
+
+    <div class="vtab-panel vtp-b" id="vtp1">
+      <div style="font-size:.48rem;letter-spacing:.38em;text-transform:uppercase;color:rgba(210,50,50,.5);margin-bottom:6px">⏳ Lei do Tempo</div>
+      <div style="margin-bottom:16px;font-size:.74rem;color:var(--char-dim);line-height:1.85"><strong style="color:var(--blood-lit)">O Parasita respeita o fluxo cronológico da natureza.</strong> Através de um Voto Inato, a remoção instantânea é proibida. A purgação de qualquer Estágio exige um tributo de tempo fixo proporcional à sua gravidade.</div>
+      <div class="irrev-tiers">
+        <div class="irrev-tier">
+          <div class="irrev-tier-range">1–4</div>
+          <div class="irrev-tier-desc">Purgação superficial. Exige isolamento ou RCT por no mínimo 1 minuto ininterrupto.</div>
+        </div>
+        <div class="irrev-tier">
+          <div class="irrev-tier-range t2">5–7</div>
+          <div class="irrev-tier-desc">Infestação Sistêmica. Exige tratamento especializado de RCT por 10 minutos.</div>
+        </div>
+        <div class="irrev-tier">
+          <div class="irrev-tier-range t3">8–10</div>
+          <div class="irrev-tier-desc">Domínio Celular. Purgação quase impossível; processo narrativo de longa duração.</div>
+        </div>
+      </div>
+      <div style="border-left:2px solid rgba(155,18,18,.4);padding:10px 14px;background:rgba(155,18,18,.04);font-size:.68rem;color:rgba(190,80,80,.65);line-height:1.85;margin-top:4px">
+        A tentativa de remoção instantânea é interpretada como uma <strong style="color:var(--blood-lit)">Quebra de Voto Vinculativo.</strong> O executor sofre ricochete imediato da técnica inata.
+      </div>
+    </div>
+
+    <div class="vtab-panel vtp-c" id="vtp2">
+      <div style="font-size:.48rem;letter-spacing:.38em;text-transform:uppercase;color:rgba(210,50,50,.5);margin-bottom:10px">⚖ Escopo da Soberania</div>
+      <div class="pnp-grid">
+        <div class="pnp-col">
+          <div class="pnp-head yes">✓ funcionalidade</div>
+          <div class="pnp-item">Infectar qualquer estrutura biológica ou energética viável</div>
+          <div class="pnp-item">Acúmulo de até 10 Estágios com contadores independentes</div>
+          <div class="pnp-item">Subjugação neurológica no Estágio 7 ou superior</div>
+          <div class="pnp-item">Dispersão em massa e transmutação no Estágio 10</div>
+          <div class="pnp-item">Conversão de civis em vetores geográficos de infestação</div>
+        </div>
+        <div class="pnp-col no-col">
+          <div class="pnp-head no">✕ restrição</div>
+          <div class="pnp-item">Manifestar funções de suporte, cura ou proteção a aliados</div>
+          <div class="pnp-item">Afetar conceitos abstratos sem um hospedeiro físico</div>
+          <div class="pnp-item">Operar com velocidade instantânea (exige acúmulo)</div>
+          <div class="pnp-item">Ser purgado sem o tributo cronológico do Voto Inato</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script>
+function VT(n) {
+  for (let i = 0; i < 3; i++) {
+    document.getElementById('vtb'+i).classList.toggle('vt-on', i===n);
+    document.getElementById('vtp'+i).classList.toggle('vt-show', i===n);
+  }
+}
+</script>
 <!-- SISTEMA DE PODRIDÃO -->
-<div class="sh reveal"><div class="sl"></div><div class="st">Passiva Especial · Sistema de Parasitismo</div><div class="sl r"></div></div>
+<div class="page">
+<div class="sh reveal" style="margin-top:-80px;"><div class="sl"></div><div class="st">Passiva Especial · Sistema de Parasitismo</div><div class="sl r"></div></div>
 <div class="rot-sys reveal">
   <div class="rsh">
     <div class="rsjp">疫病層位 · 10 Estágios · 4 Fases · Parasita · Controle · Dispersão Terminal</div>
@@ -1064,156 +1189,8 @@ Feiticeiro nível 1: <strong>Feitiçaria</strong> e <strong>Iniciativa</strong> 
   </div>
 </div>
 
-<!-- TÉCNICA INATA -->
-<div class="sh reveal"><div class="sl"></div><div class="st">Técnica Inata · Iluminada · Maestria Iluminada</div><div class="sl r"></div></div>
-<div class="b reveal"><strong style="font-size:1.1rem;color:var(--char)">寄生術式 — Kisei Jutsu</strong> &nbsp;·&nbsp; <em style="color:var(--bile-lit);font-size:.9rem">O Parasita</em><br><span style="color:var(--ash);font-size:.88rem;font-style:italic">Arte do Parasitismo · Técnica Amaldiçoada de Infestação Contínua e Controle Neurológico</span></div>
-<div class="b reveal">O Projeto não criou esse organismo — aprendeu a cultivá-lo, concentrá-lo e instalá-lo como função metabólica primária. O parasita é o que o sangue de Sousuke produz naturalmente. Ele não gasta energia criando-o — gasta energia direcionando-o. A diferença de custo é a diferença entre hospedar e liberar.</div>
-
-<!-- VÍRUS TABS: GARANTIA / IRREVERSIBILIDADE / LIMITES -->
-<style>
-.vtabs-wrap{position:relative;margin-bottom:28px}
-.vtabs-wrap::before{content:'';position:absolute;left:-1px;top:0;bottom:0;width:2px;
-  background:linear-gradient(180deg,var(--bile-lit),var(--blood),transparent);opacity:.4;pointer-events:none}
-
-.vtabs-nav{display:flex;gap:0;position:relative;z-index:1}
-.vtab-btn{flex:1;padding:10px 6px 9px;background:rgba(6,2,2,.9);border:1px solid rgba(155,18,18,.18);
-  border-right:none;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;
-  font-family:'Inconsolata',monospace;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--ash);text-align:center;user-select:none}
-.vtab-btn:last-child{border-right:1px solid rgba(155,18,18,.18)}
-.vtab-btn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:var(--bile-lit);transform:scaleX(0);transition:transform .2s;transform-origin:left}
-.vtab-btn:hover{background:rgba(14,3,3,.95);color:var(--char-dim)}
-.vtab-btn.vt-on{background:rgba(18,4,4,.98);color:var(--bile-lit);border-bottom-color:rgba(18,4,4,.98)}
-.vtab-btn.vt-on::after{transform:scaleX(1)}
-.vtab-btn .vt-icon{display:block;font-size:.9rem;margin-bottom:3px;opacity:.7}
-.vtab-btn.vt-on .vt-icon{opacity:1}
-
-.vtab-body{border:1px solid rgba(155,18,18,.18);border-top:none;position:relative;overflow:hidden}
-.vtab-body::before{content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse 70% 60% at 20% 80%,rgba(160,20,20,.07) 0%,transparent 65%)}
-
-.vtab-panel{display:none;padding:22px 26px;font-family:'Inconsolata',monospace;font-size:.74rem;
-  color:var(--char-dim);line-height:2;animation:vtp-in .22s ease both}
-.vtab-panel.vt-show{display:block}
-@keyframes vtp-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-
-/* panel A — Garantia Biológica: linhas de scan */
-.vtab-panel.vtp-a{background:linear-gradient(180deg,rgba(10,2,2,.97) 0%,rgba(6,1,1,.95) 100%)}
-.vtab-panel.vtp-a::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(160,20,20,.025) 28px,rgba(160,20,20,.025) 29px)}
-
-/* panel B — Irreversibilidade: grade de relógio */
-.vtab-panel.vtp-b{background:linear-gradient(135deg,rgba(8,2,2,.98),rgba(12,3,3,.95))}
-.irrev-tiers{display:grid;grid-template-columns:1fr;gap:5px;margin:14px 0}
-.irrev-tier{display:flex;align-items:stretch;gap:0;border:1px solid rgba(155,18,18,.12);overflow:hidden}
-.irrev-tier-range{padding:8px 12px;background:rgba(155,18,18,.07);border-right:1px solid rgba(155,18,18,.12);
-  font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--bile-lit);min-width:78px;
-  display:flex;align-items:center;justify-content:center;letter-spacing:.06em;line-height:1}
-.irrev-tier-range.t2{color:var(--pus)}
-.irrev-tier-range.t3{color:var(--nec-lit)}
-.irrev-tier-desc{padding:8px 14px;font-size:.68rem;color:var(--char-dim);line-height:1.75;display:flex;align-items:center}
-
-/* panel C — Pode / Não Pode: dois blocos lado a lado */
-.vtab-panel.vtp-c{background:rgba(6,2,2,.97)}
-.pnp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(155,18,18,.1);margin-top:10px}
-.pnp-col{padding:16px 18px;background:rgba(8,2,2,.96)}
-.pnp-head{font-size:.48rem;letter-spacing:.4em;text-transform:uppercase;margin-bottom:10px;padding-bottom:7px}
-.pnp-head.yes{color:var(--bile-lit);border-bottom:1px solid rgba(155,18,18,.22)}
-.pnp-head.no{color:rgba(100,100,110,.5);border-bottom:1px solid rgba(80,80,90,.12)}
-.pnp-item{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;font-size:.7rem;color:var(--char-dim);line-height:1.65}
-.pnp-item::before{content:'·';flex-shrink:0;opacity:.4}
-.pnp-col.no-col .pnp-item{opacity:.65}
-.pnp-col.no-col .pnp-item::before{content:'✕';font-size:.10rem;color:rgba(100,100,110,.4)}
-</style>
-
-<div class="vtabs-wrap reveal" id="vtabs">
-  <div class="vtabs-nav">
-    <div class="vtab-btn vt-on" onclick="VT(0)" id="vtb0">
-      <span class="vt-icon"></span>garantia biológica
-    </div>
-    <div class="vtab-btn" onclick="VT(1)" id="vtb1">
-      <span class="vt-icon"></span>irreversibilidade
-    </div>
-    <div class="vtab-btn" onclick="VT(2)" id="vtb2">
-      <span class="vt-icon"></span>pode · não pode
-    </div>
-  </div>
-  <div class="vtab-body">
-
-    <!-- PAINEL A: Garantia Biológica -->
-    <div class="vtab-panel vtp-a vt-show" id="vtp0">
-      <div style="font-size:.48rem;letter-spacing:.38em;text-transform:uppercase;color:rgba(210,50,50,.5);margin-bottom:14px">☣ Vetor Universal</div>
-      <div style="margin-bottom:12px"><strong style="color:var(--blood-lit)">O Parasita invade qualquer estrutura biológica, sem exceção.</strong> Resistência a doenças, imunidade mágica, blindagem energética — se tem células, tem entrada.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(155,18,18,.1);margin-bottom:14px">
-        <div style="padding:10px 14px;background:rgba(8,2,2,.96)"><div style="font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:5px">Resistente a magia</div><div style="font-size:.7rem;color:var(--char-dim)">Entra pela biologia. A técnica é biológica primeiro.</div></div>
-        <div style="padding:10px 14px;background:rgba(8,2,2,.96)"><div style="font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:5px">Resistente a doenças</div><div style="font-size:.7rem;color:var(--char-dim)">Entra pela EA corrompida. A técnica é energética quando precisa ser.</div></div>
-        <div style="padding:10px 14px;background:rgba(8,2,2,.96)"><div style="font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:5px">Ambas as resistências</div><div style="font-size:.7rem;color:var(--char-dim)">Progressão lenta, mas <strong style="color:var(--blood-lit)">Estágio 1 garantido</strong> — sem teste, sem exceção.</div></div>
-        <div style="padding:10px 14px;background:rgba(8,2,2,.96)"><div style="font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-bottom:5px">Zero EA</div><div style="font-size:.7rem;color:var(--char-dim)">A biologia basta. Civis, animais, não-feiticeiros — todos são vetores.</div></div>
-      </div>
-      <div style="font-size:.7rem;color:var(--char-dim);line-height:1.85"><strong style="color:var(--blood-lit)">Como armadilha:</strong> Tag Parasitária pode ser instalada em superfície ou área sem alvo ativo. Quem tocar ativa a inoculação. Dispersão em área infecta múltiplos alvos simultaneamente.</div>
-      <div style="margin-top:12px;font-size:.7rem;color:var(--char-dim)"><strong style="color:var(--char)">Remoção voluntária:</strong> Estágios 1–3 podem ser removidos por Sousuke como ação bônus. Em Estágio 4+, o processo pertence ao parasita, não a ele.</div>
-    </div>
-
-    <!-- PAINEL B: Irreversibilidade -->
-    <div class="vtab-panel vtp-b" id="vtp1">
-      <div style="font-size:.48rem;letter-spacing:.38em;text-transform:uppercase;color:rgba(210,50,50,.5);margin-bottom:6px">⏳ Lei do Tempo</div>
-      <div style="margin-bottom:16px;font-size:.74rem;color:var(--char-dim);line-height:1.85"><strong style="color:var(--blood-lit)">A infestação parasitária não pode ser removida instantaneamente. Nunca.</strong> Instalar Estágio 10 é processo — remover qualquer Estágio também é. O parasita respeita a lei do tempo em ambas as direções.</div>
-      <div class="irrev-tiers">
-        <div class="irrev-tier">
-          <div class="irrev-tier-range">1–4</div>
-          <div class="irrev-tier-desc">Descanso curto, tratamento médico ou EA Reversa — mínimo <strong>1 min</strong> fora de combate.</div>
-        </div>
-        <div class="irrev-tier">
-          <div class="irrev-tier-range t2">5–7</div>
-          <div class="irrev-tier-desc">Descanso longo + especialista em EA Reversa — mínimo <strong>10 min</strong> de tratamento ativo.</div>
-        </div>
-        <div class="irrev-tier">
-          <div class="irrev-tier-range t3">8–10</div>
-          <div class="irrev-tier-desc">EA Reversa especializada · <strong>10 EA por Estágio</strong> · processo de horas ou tratamento narrativo de longa duração.</div>
-        </div>
-      </div>
-      <div style="border-left:2px solid rgba(155,18,18,.4);padding:10px 14px;background:rgba(155,18,18,.04);font-size:.68rem;color:rgba(190,80,80,.65);line-height:1.85;margin-top:4px">
-        Remoção instantânea por qualquer método = <strong style="color:var(--blood-lit)">violação de voto inato.</strong> O executor sofre a mesma penalidade de quem quebra juramento de técnica inata. O processo não é negociável.
-      </div>
-    </div>
-
-    <!-- PAINEL C: Pode / Não Pode -->
-    <div class="vtab-panel vtp-c" id="vtp2">
-      <div style="font-size:.48rem;letter-spacing:.38em;text-transform:uppercase;color:rgba(210,50,50,.5);margin-bottom:10px">⚖ Escopo da Técnica</div>
-      <div class="pnp-grid">
-        <div class="pnp-col">
-          <div class="pnp-head yes">✓ pode</div>
-          <div class="pnp-item">Infectar qualquer estrutura orgânica ou energética</div>
-          <div class="pnp-item">Acumular até 10 Estágios por alvo, contadores independentes</div>
-          <div class="pnp-item">Tag à distância ou contato direto</div>
-          <div class="pnp-item">Controle mental em Estágio 7+</div>
-          <div class="pnp-item">Dispersão biológica no Estágio 10 gerando onda e Parasitados</div>
-          <div class="pnp-item">Usar como armadilha ou em área, incluindo civis</div>
-        </div>
-        <div class="pnp-col no-col">
-          <div class="pnp-head no">✕ não pode</div>
-          <div class="pnp-item">Curar, defender ou suportar aliados</div>
-          <div class="pnp-item">Infectar conceitos abstratos ou inorgânicos sem substrato</div>
-          <div class="pnp-item">Funcionar instantaneamente — sempre precisa de acúmulo</div>
-          <div class="pnp-item">Ser removida instantaneamente por qualquer meio</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-<script>
-function VT(n) {
-  for (let i = 0; i < 3; i++) {
-    document.getElementById('vtb'+i).classList.toggle('vt-on', i===n);
-    document.getElementById('vtp'+i).classList.toggle('vt-show', i===n);
-  }
-}
-</script>
-
-<!-- APLICAÇÕES -->
-<div class="sh reveal"><div class="sl"></div><div class="st">Aplicações do Parasitismo</div><div class="sl r"></div></div>
+ <!-- APLICAÇÕES -->
+ <div class="sh reveal"><div class="sl"></div><div class="st">Aplicações do Parasitismo</div><div class="sl r"></div></div>
 
 <div class="tech core reveal">
   <div class="th" onclick="T(this)"><div><div class="tjp">感染印 · 接触感染 — Kansen-in · Sesshoku Kansen</div><div class="tn">Marca Parasitária &amp; Contato Parasitário</div></div><div style="display:flex;gap:10px;align-items:center"><div class="tc g">5 EA (Tag) · 8 EA (Contato) · Bônus ou Padrão</div><div class="hint">[+]</div></div></div>
@@ -2229,142 +2206,157 @@ Mas lentamente se torna algo mais.
 
 <!-- CICLO I -->
 <div class="lpanel c1 show" id="pcp-1">
-  <span class="ltitle">Ciclo I — Inoculação Primária</span>
-  <span class="lphase" style="color:var(--bile-lit)">寄生初期 · N1, N11, N21... · Classe + Presença</span>
+  <span class="ltitle">Ciclo I — Inoculação</span>
+  <span class="lphase" style="color:var(--bile-lit)">寄生開始 · N1</span>
   <div class="mech" style="border-left-color:var(--bile-lit);color:var(--pus)">
-    [CLASSE +1] Sousuke sobe um nível de classe — ganhos padrão da classe Feiticeiro aplicados normalmente.<br><br>
+    [PRESENÇA] +1 Presença — o hospedeiro passa a irradiar uma presença parasitária instintiva.<br><br>
 
-    [PRESENÇA +1] A aura parasitária começa a se manifestar.<br><br>
+    [PERÍCIA] O corpo reage ao intruso e aprimora suas respostas básicas.
+    +1 em uma perícia de combate à sua escolha.<br><br>
 
-    [APTIDÃO] Role <strong>1d3+2</strong> e distribua esse número em perícias à sua escolha.
+    [SAÚDE] Ganha +1d4+4 de Saúde.
   </div>
-  <div class="tags"><span class="tag g">Progressão</span><span class="tag p">Presença</span></div>
+  <div class="tags"><span class="tag g">Integração Inicial</span></div>
 </div>
 
 <!-- CICLO II -->
 <div class="lpanel c1" id="pcp-2">
-  <span class="ltitle">Ciclo II — Propagação Nervosa</span>
-  <span class="lphase" style="color:var(--bile-lit)">神経寄生 · N2, N12, N22... · Influência + Saúde</span>
+  <span class="ltitle">Ciclo II — Reflexos Parasitários</span>
+  <span class="lphase" style="color:var(--bile-lit)">寄生反応 · N2</span>
   <div class="mech" style="border-left-color:var(--bile-lit);color:var(--pus)">
-    [PRESENÇA +1] O parasita altera a linguagem corporal e os instintos sociais.<br><br>
+    [PERÍCIAS] O parasita estimula conexões neurais para melhor adaptação ao ambiente.
+    Gire 1d3+2 e receba esse número em perícias fora de combate.<br><br>
 
-    [SAÚDE] +1d8.<br><br>
+    [ENERGIA AMALDIÇOADA] +5 de Energia Amaldiçoada máxima.<br><br>
 
-    [INSTINTO SOCIAL] Testes de intimidação, pressão psicológica ou leitura emocional recebem +1.
+    [SAÚDE] Ganha +1d4+4 de Saúde.
   </div>
-  <div class="tags"><span class="tag g">Passivo</span><span class="tag p">Influência</span></div>
+  <div class="tags"><span class="tag g">Adaptação Física</span></div>
 </div>
 
 <!-- CICLO III -->
 <div class="lpanel c2" id="pcp-3">
-  <span class="ltitle">Ciclo III — Memória Adaptativa</span>
-  <span class="lphase" style="color:var(--pus)">適応記憶 · N3, N13, N23... · Aprendizado + Presença</span>
+  <span class="ltitle">Ciclo III — Aprendizado Biológico</span>
+  <span class="lphase" style="color:var(--pus)">寄生知識 · N3</span>
   <div class="mech" style="border-left-color:var(--pus);color:var(--pus)">
-    [APRENDIZADO] Aprende ou refina uma técnica parasitária na campanha (aprovação do GM).<br><br>
+    [APRENDIZADO] O parasita assimila padrões de energia e comportamento.
+    Aprenda uma nova técnica ou habilidade dentro da campanha.<br><br>
 
-    [PRESENÇA +1] A mente coletiva do parasita melhora sua leitura de pessoas.<br><br>
+    [PRESENÇA] +1 Presença — o hospedeiro passa a irradiar uma presença mais dominante.<br><br>
 
-    [APTIDÃO] Role <strong>1d3+2</strong> e distribua esse número em perícias à sua escolha.
+    [SAÚDE] Ganha +1d4+4 de Saúde.
   </div>
-  <div class="tags"><span class="tag g">Progressão</span><span class="tag p">Adaptação</span></div>
+  <div class="tags"><span class="tag g">Assimilação</span></div>
 </div>
 
 <!-- CICLO IV -->
 <div class="lpanel c2" id="pcp-4">
-  <span class="ltitle">Ciclo IV — Saturação Tissular</span>
-  <span class="lphase" style="color:var(--pus)">組織飽和 · N4, N14, N24... · Presença + Saúde</span>
+  <span class="ltitle">Ciclo IV — Expansão Neural</span>
+  <span class="lphase" style="color:var(--pus)">神経拡張 · N4</span>
   <div class="mech" style="border-left-color:var(--pus);color:var(--pus)">
-    [PRESENÇA +1] A presença de Sousuke torna-se biologicamente inquietante.<br><br>
+    [PERÍCIA DE COMBATE] O parasita aprimora controle muscular e coordenação.
+    +5 em uma perícia de combate à sua escolha.<br><br>
 
-    [SAÚDE] +1d8.<br><br>
+    [PERÍCIAS] Gire 1d3+2 e receba esse número em perícias fora de combate.<br><br>
 
-    [AURA INCÔMODA] Criaturas sensíveis à energia ou instinto sofrem –1 em testes sociais contra Sousuke.
+    [SAÚDE] Ganha +1d4+4 de Saúde.
   </div>
-  <div class="tags"><span class="tag g">Aura</span><span class="tag p">Pressão Social</span></div>
+  <div class="tags"><span class="tag g">Adaptação Cognitiva</span></div>
 </div>
 
 <!-- CICLO V -->
 <div class="lpanel c2" id="pcp-5">
-  <span class="ltitle">Ciclo V — Simbiose Forçada</span>
-  <span class="lphase" style="color:var(--pus)">強制共生 · N5, N15, N25... · Energia + Presença</span>
+  <span class="ltitle">Ciclo V — Metabolismo Amaldiçoado</span>
+  <span class="lphase" style="color:var(--pus)">呪力代謝 · N5</span>
   <div class="mech" style="border-left-color:var(--pus);color:var(--pus)">
-    [ENERGIA +5] EA máxima aumenta em 5.<br><br>
+    [ENERGIA AMALDIÇOADA] +5 de Energia Amaldiçoada máxima.<br><br>
 
-    [PRESENÇA +1] O parasita reage ao ambiente e reforça a postura dominante de Sousuke.<br><br>
+    [VANTAGEM EM PERÍCIA] +1d20 em uma perícia à sua escolha.<br><br>
 
-    [APTIDÃO] Role <strong>1d3+2</strong> e distribua esse número em perícias à sua escolha.
+    [SAÚDE] Ganha +1d4+4 de Saúde.
   </div>
-  <div class="tags"><span class="tag g">Progressão</span><span class="tag p">Domínio</span></div>
+  <div class="tags"><span class="tag g">Sinergia Energética</span></div>
 </div>
 
 <!-- CICLO VI -->
 <div class="lpanel c3" id="pcp-6">
-  <span class="ltitle">Ciclo VI — Cepa Assinatura</span>
-  <span class="lphase" style="color:var(--nec-lit)">署名株 · N6, N16, N26... · Presença + Saúde</span>
+  <span class="ltitle">Ciclo VI — Rede Sensorial</span>
+  <span class="lphase" style="color:var(--nec-lit)">感覚網 · N6</span>
   <div class="mech" style="border-left-color:var(--nec-lit);color:var(--nec-lit)">
-    [PRESENÇA +1] A identidade do parasita se torna única.<br><br>
+    [PERÍCIAS] O parasita expande sua rede sensorial pelo corpo.
+    Gire 1d3+2 e receba esse número em perícias fora de combate.<br><br>
 
-    [SAÚDE] +1d8.<br><br>
+    [PRESENÇA] +1 Presença — a aura biológica do parasita torna-se mais perceptível.<br><br>
 
-    [MARCA SOCIAL] NPCs ou inimigos reconhecem Sousuke como ameaça incomum — vantagem narrativa em intimidação ou autoridade.
+    [ENERGIA AMALDIÇOADA] +5 de Energia Amaldiçoada máxima.<br><br>
+
+    [SAÚDE] Ganha +1d4+4 de Saúde.
   </div>
-  <div class="tags"><span class="tag g">Narrativo</span><span class="tag p">Identidade</span></div>
+  <div class="tags"><span class="tag g">Percepção Ampliada</span></div>
 </div>
 
 <!-- CICLO VII -->
 <div class="lpanel c3" id="pcp-7">
-  <span class="ltitle">Ciclo VII — Amplificação Endógena</span>
-  <span class="lphase" style="color:var(--nec-lit)">内因性増幅 · N7, N17, N27... · Energia + Presença</span>
+  <span class="ltitle">Ciclo VII — Amplificação Interna</span>
+  <span class="lphase" style="color:var(--nec-lit)">内部増幅 · N7</span>
   <div class="mech" style="border-left-color:var(--nec-lit);color:var(--nec-lit)">
-    [ENERGIA +5] EA máxima aumenta em 5.<br><br>
+    [APRENDIZADO] O parasita passa a compreender melhor o fluxo da técnica amaldiçoada.
+    Aprenda uma nova técnica ou habilidade.<br><br>
 
-    [PRESENÇA +1] A pressão espiritual de Sousuke torna-se difícil de ignorar.<br><br>
+    [PERÍCIA] +3 em uma perícia de combate à sua escolha.<br><br>
 
-    [APTIDÃO] Role <strong>1d3+2</strong> e distribua esse número em perícias à sua escolha.
+    [SAÚDE] Ganha +1d4+4 de Saúde.
   </div>
-  <div class="tags"><span class="tag g">Progressão</span><span class="tag p">Pressão</span></div>
+  <div class="tags"><span class="tag g">Produção Energética</span></div>
 </div>
 
 <!-- CICLO VIII -->
 <div class="lpanel c3" id="pcp-8">
-  <span class="ltitle">Ciclo VIII — Pele Como Armadura</span>
-  <span class="lphase" style="color:var(--nec-lit)">皮膚装甲 · N8, N18, N28... · Resistência + Presença</span>
+  <span class="ltitle">Ciclo VIII — Reforço Tissular</span>
+  <span class="lphase" style="color:var(--nec-lit)">組織強化 · N8</span>
   <div class="mech" style="border-left-color:var(--nec-lit);color:var(--nec-lit)">
-    [SAÚDE] +1d8 duas vezes.<br><br>
+    [PERÍCIAS] Gire 1d3+2 e receba esse número em perícias fora de combate.<br><br>
 
-    [PRESENÇA +1] A forma de Sousuke transmite instinto predatório.<br><br>
+    [ENERGIA AMALDIÇOADA] +5 de Energia Amaldiçoada máxima.<br><br>
 
-    [POSTURA INTIMIDADORA] +1 em testes de intimidação ou domínio territorial.
+    [SAÚDE] O parasita fortalece músculos e tecidos do hospedeiro.<br>
+    Ganha +1d4+4 de Saúde duas vezes.
   </div>
-  <div class="tags"><span class="tag g">Passivo</span><span class="tag p">Intimidação</span></div>
+  <div class="tags"><span class="tag g">Fortificação Física</span></div>
 </div>
 
 <!-- CICLO IX -->
 <div class="lpanel c4" id="pcp-9">
-  <span class="ltitle">Ciclo IX — Portador Temido</span>
-  <span class="lphase" style="color:var(--blood-lit)">恐れられた保菌者 · N9, N19, N29... · Energia + Presença</span>
+  <span class="ltitle">Ciclo IX — Núcleo Viral</span>
+  <span class="lphase" style="color:var(--blood-lit)">核寄生 · N9</span>
   <div class="mech" style="border-left-color:var(--blood-lit);color:#e07070">
-    [ENERGIA +5] EA máxima aumenta em 5.<br><br>
+    [PRESENÇA] +1 Presença — o hospedeiro passa a emanar uma autoridade biológica opressiva.<br><br>
 
-    [PRESENÇA +1] A aura de Sousuke provoca receio instintivo.<br><br>
+    [PERÍCIA] +3 em uma perícia de combate à sua escolha.<br><br>
 
-    [APTIDÃO] Role <strong>1d3+2</strong> e distribua esse número em perícias à sua escolha.
+    [ENERGIA AMALDIÇOADA] +5 de Energia Amaldiçoada máxima.<br><br>
+
+    [SAÚDE] Ganha +1d4+4 de Saúde.
   </div>
-  <div class="tags"><span class="tag g">Progressão</span><span class="tag p">Temor</span></div>
+  <div class="tags"><span class="tag g">Estabilização Viral</span></div>
 </div>
 
 <!-- CICLO X -->
 <div class="lpanel c4" id="pcp-10">
-  <span class="ltitle">Ciclo X — Vírus Inato Manifestado</span>
-  <span class="lphase" style="color:var(--blood-lit)">先天性ウイルス顕現 · N10, N20, N30... · Ascensão</span>
+  <span class="ltitle">Ciclo X — Parasita Manifesto</span>
+  <span class="lphase" style="color:var(--blood-lit)">完全寄生 · N10</span>
   <div class="mech" style="border-left-color:var(--blood-lit);color:#e07070">
-    [EVOLUÇÃO TOTAL] O parasita atinge maturidade completa dentro de Sousuke.<br><br>
+    [MANIFESTAÇÃO INATA] O parasita atinge maturidade total e torna-se parte inseparável do hospedeiro.<br><br>
 
-    Todos os aspectos da ficha recebem uma melhoria significativa: atributos, perícias, resistência física, presença e controle de energia. Ajustes específicos são definidos em conjunto com o GM para refletir essa ascensão.<br><br>
+    Todos os aspectos da ficha recebem uma melhoria significativa: atributos, perícias, presença,
+    resistência física e controle de Energia Amaldiçoada.<br><br>
 
-    Este ciclo representa um salto qualitativo no personagem — não apenas crescimento numérico, mas domínio total sobre sua condição parasitária.
+    [SAÚDE] Ganha +1d4+4 de Saúde.
   </div>
-  <div class="tags"><span class="tag g">Marco</span><span class="tag r">Evolução Completa</span><span class="tag p">Melhoria Geral</span></div>
+  <div class="tags">
+    <span class="tag g">Marco Evolutivo</span>
+    <span class="tag r">Parasita Maduro</span>
+  </div>
 </div>
 
   <!-- ═══════════════ PAINEL: MUTAÇÕES VIRAIS (N10-N100) ═══════════════ -->
@@ -2576,30 +2568,49 @@ function PTB(tab) {
 </script>
 
 <!-- HISTÓRIA -->
-<div class="sh reveal"><div class="sl"></div><div class="st">Fragmento de História</div><div class="sl r"></div></div>
-<div class="oblock reveal">
-  <div class="b" style="font-style:italic;color:var(--ash)">
-    O arquivo de admissão de Sousuke foi enviado por uma organização sem nome registrado usando um protocolo de comunicação que a administração não reconheceu e não conseguiu rastrear.<br><br>
-
-    Continha: duas fotos. Uma lista de capacidades em linguagem técnica — nunca usaram a palavra "técnica inata", usaram <em>"função primária"</em>. E uma nota de uma linha: <em>"Produto requer contenção educacional antes de nova avaliação de utilidade."</em><br><br>
-
-    Não havia nome. A administração preencheu um à mão, baseada na única marca identificável: uma cicatriz no antebraço esquerdo em formato que parecia uma parede de tijolos em miniatura, milimétrica, com precisão cirúrgica. Quem fez, por quê e quando não consta em nenhum documento acessível.<br><br>
-
-    Sousuke chegou sozinho. Apareceu na recepção numa terça-feira às 6h17 — antes de qualquer funcionário — sentado numa cadeira de espera, olhando para a porta. O primeiro funcionário que chegou perguntou como ele havia entrado. Sousuke disse: <em>"A porta estava fechada."</em> O funcionário verificou. Estava fechada. Com cadeado. Por fora.<br><br>
-
-    Na primeira semana, três eventos foram registrados sem solução: a planta no corredor perto do alojamento dele estava morta — raízes negras, sem explicação botânica. Um aluno reportou coceira persistente no braço depois de encostar em Sousuke no refeitório. O coceiro durou quatro dias e deixou uma marca que um médico descreveu como <em>"inflamação tecidual localizada com padrão vascular anômalo"</em>. Um instrutor notou que a madeira do treino com o qual Sousuke trabalhou por dez minutos estava ressecada de uma forma que levaria semanas em condições normais.<br><br>
-
-    Na primeira simulação de combate, o alvo designado — um shikigami de Grau 3 construído especificamente para avaliar feiticeiros novos — foi neutralizado em 6 minutos e 8 segundos. O supervisor anotou que Sousuke não demonstrou esforço perceptível. Ficou aproximadamente parado, movendo-se em linha direta quando necessário, enquanto o shikigami progressivamente parava de funcionar.<br><br>
-
-    O comentário final do supervisor, adicionado à mão na margem do relatório:<br>
-    <em>"Parece menos um combate e mais um processo. Como observar algo se infectar com muita pressa."</em><br><br>
-
-    <span style="color:rgba(160,20,20,.3);font-style:normal;font-family:'Inconsolata',monospace;font-size:.67rem;">
-    — adendo ao arquivo, semana 4, assinado por três instâncias diferentes:<br>
-    "Incidente não reportado formalmente: aluno do 3º ano teve confronto físico com Sousuke no corredor — contexto não esclarecido. O aluno reportou sintomas de deterioração leve no braço direito por 11 dias. Sousuke, quando questionado, disse apenas: 'Ele encostou primeiro.' Investigação encerrada por falta de evidências de dolo. Arquivo mantido aberto por precaução."
-    </span>
-  </div>
+<div class="lnav" style="margin: 32px 0 24px;">
+  <div class="ln ph1" onclick="showPage('p1', this)"><div class="lnum">01</div></div>
+  <div class="ln ph2" onclick="showPage('p2', this)"><div class="lnum">02</div></div>
+  <div class="ln ph3" onclick="showPage('p3', this)"><div class="lnum">03</div></div>
 </div>
+
+<script>
+  function showPage(pageId, clickedButton) {
+    // 1. Esconde todas as divs de conteúdo
+    let pages = document.querySelectorAll('.page-content');
+    pages.forEach(page => {
+      page.style.display = 'none';
+    });
+
+    // 2. Mostra apenas a div correspondente ao botão clicado
+    document.getElementById(pageId).style.display = 'block';
+
+    // 3. (Opcional) Remove a classe 'ativo' de todos os botões e adiciona no clicado
+    let buttons = document.querySelectorAll('.ln');
+    buttons.forEach(btn => {
+      btn.style.opacity = '0.5'; // Deixa os inativos mais transparentes (ajuste como preferir)
+    });
+    clickedButton.style.opacity = '1'; // Destaca o botão atual
+  }
+</script>
+
+<div id="p1" class="page-content"> <div class="b"> <h2>I. A Queda do Alquimista</h2> <p>Na Era Heian, quando os grandes clãs de feiticeiros moldavam o Japão como se fosse um tabuleiro de guerra espiritual, Amon Kamo era considerado um homem estranho. Não por falta de talento — pelo contrário. Entre os estudiosos do clã Kamo, ele era um dos maiores prodígios da Manipulação de Sangue já registrados. O que o tornava estranho era sua obsessão silenciosa em usar aquela técnica não para destruir inimigos, mas para compreender a vida. Para Amon, sangue não era uma arma. Era um idioma. Ele acreditava que cada célula era uma frase, cada pulsação um código, cada doença um erro de escrita que poderia ser corrigido por alguém paciente o suficiente para aprender a ler o corpo humano. Era uma visão quase ingênua para o mundo em que vivia. Mas Amon não era um homem ingênuo. Ele era um homem feliz.</p> 
+  <p>Sua residência na cidadela Kamo ficava afastada dos salões políticos, rodeada por glicínias que floresciam pesadamente sobre os muros de pedra. Ali viviam três pessoas que, para Amon, eram mais importantes que qualquer técnica amaldiçoada: sua esposa, Hana, cuja presença parecia suavizar até mesmo os dias mais tensos do clã, e seu filho, Ren, uma criança curiosa que gostava de observar o pai trabalhando no laboratório. Ren sempre fazia a mesma pergunta: — Pai… o que você está fazendo? Amon respondia sorrindo: — Estou tentando ensinar o sangue a não morrer. Era uma ambição absurda. Mas naquele pequeno mundo cercado de flores, parecia quase possível.</p> 
+  <p>Tudo terminou em uma única noite. Naizen Zenin não era um guerreiro famoso, nem um herói de batalhas. Ele era algo pior: um homem que havia transformado a própria técnica amaldiçoada em uma forma refinada de decadência. Sua habilidade, conhecida entre os Zenin como Veneno da Linhagem Morta, não atacava apenas o corpo. Ela infiltrava o fluxo de energia amaldiçoada da vítima e fazia o próprio organismo iniciar um processo de autodestruição. Naizen não tinha interesse político na cidadela Kamo. Não havia guerra declarada entre os clãs naquele momento. Ele simplesmente decidiu ir até lá. Alguns homens são movidos por ambição. Outros por vingança. Naizen era movido por curiosidade mórbida.</p> 
+  <p>Amon chegou tarde demais para impedir o massacre. Quando encontrou Hana no jardim, seu corpo ainda estava quente, mas o veneno já se espalhava como tinta negra pelas veias espirituais. Ren foi encontrado dentro da casa, respirando com dificuldade enquanto o sistema nervoso lentamente se dissolvia sob a influência da técnica de Naizen. Amon fez tudo o que sabia fazer. Alterou circulação, reestruturou tecidos, manipulou sangue com uma precisão que teria salvado dezenas de outras vidas. Mas o veneno não era apenas químico. Era conceitual. Era como se o próprio princípio da vida estivesse sendo convencido a desistir.</p> 
+  <p>Quando percebeu que perderia os dois, Amon tomou uma decisão que nenhum feiticeiro havia ousado tentar. Ele interrompeu o sangue. Cada gota no corpo de Hana e Ren foi congelada no instante exato em que a morte iria ocorrer. O coração não batia mais, mas também não havia decomposição. Era um estado impossível, uma suspensão absoluta entre vida e morte. Dois corpos preservados em caixões de gelo amaldiçoado. Duas almas presas no último segundo de existência. Eles não estavam mortos. Mas também não estavam vivos.</p> </div> 
+
+</div> <div id="p2" class="page-content" style="display:none;"> <div class="b"> <h2>II. O Cultivo da Abominação</h2> <p>Durante muito tempo, Amon permaneceu sentado entre os dois caixões, escutando o silêncio do laboratório. Foi naquele silêncio que sua mente começou a se reorganizar. Doenças. Venenos. Maldições. Todos esses fenômenos tinham algo em comum: a fragilidade humana. O corpo humano era um sistema falho, cheio de irregularidades biológicas que permitiam que qualquer agente externo se infiltrasse. A solução, portanto, não era curar doenças. Era criar um organismo que não pudesse adoecer.</p> 
+  <p>Para chegar a esse resultado, Amon fez algo ainda mais cruel que vingança. Ele transformou a própria cidadela em um experimento. Os sobreviventes do massacre foram mantidos vivos, mas isolados. Amon espalhou deliberadamente a informação de que o veneno de Naizen ainda estava ativo no ambiente e que qualquer contato físico entre pessoas poderia provocar morte imediata. O medo tomou conta do lugar. Amigos pararam de se tocar. Famílias mantinham distância. Até mesmo a respiração próxima de outra pessoa tornou-se motivo de pânico. Anos se passaram assim. O medo da contaminação tornou-se algo quase tangível. E como acontece frequentemente no mundo das maldições, emoções humanas intensas eventualmente encontraram uma forma de existir.</p> 
+  <p>Nas sombras da cidadela nasceu algo. Uma maldição que não representava um indivíduo, mas um conceito coletivo: o pavor absoluto de que qualquer proximidade pudesse ser fatal. Uma entidade abissal de grau especial formada pela ideia de infecção. Amon não tentou destruí-la. Ele a capturou. Para ele, aquela criatura era simplesmente um componente biológico que ainda não havia sido classificado.</p> 
+  <p>O corpo que Amon começou a construir depois disso não foi gerado naturalmente. Ele foi cultivado da mesma forma que um artesão constrói uma obra extremamente delicada, onde cada detalhe é medido e reconstruído até atingir uma precisão quase impossível. Para isso, Amon selecionou material genético das linhagens Zenin mais estáveis, corpos conhecidos pela perfeita integração entre musculatura, reflexos e circulação de energia amaldiçoada. Esse acesso começou anos antes de sua queda na obsessão. Como pesquisador respeitado dentro do clã Kamo, Amon possuía permissão para estudar cadáveres de feiticeiros mortos em combate, analisar registros médicos e observar padrões hereditários de técnicas amaldiçoadas. Durante essas pesquisas, ele passou a coletar discretamente pequenas amostras — sangue, fragmentos de tecido, fios de cabelo, células preservadas em autópsias. Na época, eram apenas dados para estudos acadêmicos; depois do massacre, tornaram-se matéria-prima.</p> 
+  <p>Com o tempo, Amon também passou a recuperar corpos diretamente dos rastros de conflitos entre clãs e batalhas contra maldições, lugares onde cadáveres de feiticeiros frequentemente desapareciam sem grande investigação. Em seu laboratório isolado, ele não preservava indivíduos inteiros, mas desmontava cada corpo em busca de estruturas ideais: fibras musculares perfeitas, sistemas nervosos de resposta impecável, tecidos capazes de conduzir energia amaldiçoada sem perda. O organismo que ele começou a cultivar não era a cópia de um único Zenin — era uma síntese, construída a partir das melhores possibilidades biológicas que aquela linhagem havia produzido ao longo de gerações. Órgãos foram cultivados separadamente. Tecidos foram corrigidos repetidamente. Cada falha microscópica foi eliminada. O resultado foi um organismo biologicamente perfeito. Um corpo incapaz de adoecer. Incapaz de deteriorar. Incapaz de sofrer qualquer tipo de mutação. Mas ainda faltava algo que permitisse a esse corpo existir em harmonia com o mundo espiritual.</p> 
+  <p>Foi então que Amon cometeu um crime contra o próprio clã. Maki Kamo possuía uma técnica rara conhecida como Humanidade — com capacidade de projetar reflexos biológicos de si mesma, ecos perfeitos do que o clã acreditava ser a forma humana ideal. Amon interceptou um desses reflexos e o analisou como um matemático analisaria uma equação. Ali estava um molde. A arquitetura conceitual de um ser humano em equilíbrio absoluto com o cosmos. Esse molde foi fundido ao corpo artificial. Em seguida vieram os outros componentes: o veneno extraído de Naizen e a maldição da contaminação. Três forças que deveriam se destruir mutuamente. Dentro daquele corpo, no entanto, elas encontraram equilíbrio.</p> 
+  <p>Quando o organismo finalmente abriu os olhos pela primeira vez, ele ainda não possuía identidade. Faltava apenas uma coisa: uma alma. Amon abriu o caixão de gelo onde Ren estava preservado. A alma da criança ainda estava presa naquele instante congelado de agonia e esperança. Com um ritual extremamente delicado, Amon transferiu aquela alma para o novo corpo. Por um momento, o laboratório ficou silencioso. Parecia que o processo havia funcionado. Então o corpo reagiu. A biologia perfeita rejeitou a alma humana. Para aquele organismo, a alma era uma irregularidade estrutural. A maldição da contaminação, programada para eliminar qualquer elemento considerado falho, despertou e atacou. A alma de Ren foi consumida dentro do próprio corpo que deveria salvá-lo, não subjugada, e sim consumida. Quando os olhos da criatura se abriram novamente, algo estava ali. Mas não era Ren. A primeira coisa que ele fez foi observar Amon com uma curiosidade quase gentil. Não havia hostilidade naquele olhar. Apenas interesse. — Então foi você quem me criou. A voz era calma. Educada. Quase suave. Amon demorou muito tempo para perceber que havia criado algo muito mais perigoso do que imaginava. Ele chamou aquela criatura de Sousuke.</p> </div> 
+
+</div> <div id="p3" class="page-content" style="display:none;"> <div class="b"> <h2>III. O Legado de Sousuke</h2> <p>Sousuke cresceu rápido. Seu corpo já era perfeito desde o início, mas sua mente parecia absorver informações com uma facilidade desconcertante. Ele era curioso, educado e estranhamente agradável na presença de outras pessoas. As pessoas gostavam dele, mesmo quando algo nelas sussurrava que talvez não devessem. Sousuke observava os seres humanos com uma atenção quase afetuosa, como alguém que observa animais raros em um jardim. Ele fazia perguntas delicadas, escutava respostas com interesse e frequentemente sorria de forma gentil. Mas havia algo perturbador naquela gentileza. Era como se cada conversa fosse um experimento invisível.</p> 
+  <p>Quando Amon finalmente decidiu morrer — acreditando que sua morte despertaria algum tipo de emoção verdadeira no ser que havia criado — Sousuke apenas observou o corpo cair com a mesma serenidade com que observaria uma folha caindo de uma árvore. Não houve tristeza. Mas também não houve desprezo. Apenas curiosidade. Sem Amon, Sousuke passou a caminhar pelo mundo. Ele não tinha um objetivo claro no início. O mundo era vasto, cheio de culturas, técnicas amaldiçoadas e diferentes formas de vida espiritual. Sousuke se interessava por tudo aquilo. Para ele, cada lugar era um ambiente novo para observar, compreender e testar as possibilidades de sua própria existência.</p> <p>Eventualmente ele encontrou Karmatagem. A fortaleza espiritual construída sobre um vulcão era um lugar fascinante. O calor constante, a densidade de energia amaldiçoada e os rituais antigos que protegiam o local criavam um ecossistema único. Sousuke passou algum tempo ali, observando monges, estudantes e técnicas ancestrais. Por um tempo, foi apenas mais um visitante silencioso. Até que começaram os pequenos incidentes: um estudante que entrou em desespero inexplicável após conversar com ele; um ritual antigo que falhou após Sousuke tocar discretamente em um dos selos; uma sequência de decisões irracionais tomadas por pessoas que, até então, eram conhecidas por sua disciplina. Nada era diretamente atribuível a ele. Mas, lentamente, tornou-se evidente que sua presença alterava o comportamento das pessoas ao redor. Não era violência. Era influência. Algo sutil. Algo parecido com contaminação.</p> 
+  <p>Karmatagem percebeu tarde demais que havia permitido que algo profundamente anormal circulasse por seus corredores. Eles não tentaram matá-lo. Talvez por medo. Talvez por curiosidade. Em vez disso, decidiram enviá-lo para Kyoto — oficialmente sob o pretexto de que ele precisava encontrar a chamada Vontade do Céu. Na prática, era uma forma elegante de removê-lo. Kyoto era diferente de qualquer lugar que Sousuke havia visitado. As montanhas filtravam o ar, os templos mantinham barreiras espirituais milenares e o equilíbrio energético da região era quase perfeito. Sousuke caminhou pelos jardins silenciosos por muito tempo antes de dizer qualquer coisa. Finalmente, olhando para as árvores antigas e os templos imaculados, ele sorriu levemente. Era um sorriso bonito. Gentil. Mas havia algo profundamente inquietante nele. Porque naquele momento Sousuke havia entendido algo fundamental: ambientes perfeitamente puros são extremamente frágeis. Eles não sabem como reagir quando algo novo aparece. Kyoto acreditava ser um santuário. Sousuke, no entanto, via algo diferente. Ele via um ecossistema fechado. Um lugar que jamais havia sido exposto a algo como ele. E, por isso mesmo, o lugar ideal para começar a se espalhar.</p> </div> </div>
 
 <div class="footnote reveal">
   "Não é que ele quer que tudo sangre.<br>
@@ -3821,130 +3832,174 @@ function PD2(n) {
 </script>
 <script>
 (function() {
-    const TRACK_PATH = './audio/bgm.mp3'; // coloca o arquivo em /audio/bgm.mp3
+    // 1. Configuração das músicas
+    const PLAYLIST = [
+        { title: 'PARASITA', path: './audio/bgm1.mp3' },
+        { title: 'HOSPEDEIRO', path: './audio/bgm2.mp3' },
+        { title: 'CABANA', path: './audio/bgm3.mp3' }
+    ];
+
     let currentVol = 0.25;
     let isReady = false;
     let audio = null;
     let fadeInterval = null;
 
-    /* ── BOTÃO DE VOLUME ── */
-    const volBtn = document.createElement('div');
-    volBtn.id = 'bgm-vol';
-    volBtn.style.cssText = 'position:fixed;top:18px;left:18px;z-index:9998;display:flex;align-items:center;gap:8px;color:#b82020;cursor:pointer;opacity:0;transition:opacity .4s;font-family:monospace;font-size:13px;letter-spacing:2px;';
-    volBtn.textContent = 'VOL';
+    /* ── UI: VOLUME E TROCA (Canto Superior Esquerdo) ── */
+    const UI_CONTAINER = document.createElement('div');
+    UI_CONTAINER.style.cssText = 'position:fixed;top:18px;left:18px;z-index:9998;display:flex;flex-direction:column;gap:10px;opacity:0;transition:opacity .4s;';
+    document.body.appendChild(UI_CONTAINER);
+
+    // Linha do Volume
+    const volRow = document.createElement('div');
+    volRow.style.cssText = 'display:flex;align-items:center;gap:8px;color:#b82020;cursor:pointer;font-family:monospace;font-size:13px;letter-spacing:2px;';
+    volRow.textContent = 'VOL';
 
     const slider = document.createElement('input');
-    slider.id = 'bgm-slider';
     slider.type = 'range';
     slider.min = 0;
     slider.max = 100;
     slider.value = 25;
-    slider.style.cssText = 'width:0;transition:width .3s;accent-color:#b82020;cursor:pointer;vertical-align:middle;';
-    volBtn.appendChild(slider);
-    document.body.appendChild(volBtn);
+    slider.style.cssText = 'width:0;transition:width .3s;accent-color:#b82020;cursor:pointer;';
+    
+    volRow.appendChild(slider);
+    volRow.onmouseenter = () => slider.style.width = '80px';
+    volRow.onmouseleave = () => slider.style.width = '0';
 
-    volBtn.addEventListener('mouseenter', () => slider.style.width = '80px');
-    volBtn.addEventListener('mouseleave', () => slider.style.width = '0');
+    // Linha de Trocar BGM
+    const switchBtn = document.createElement('div');
+    switchBtn.style.cssText = 'color:#b82020;cursor:pointer;font-family:monospace;font-size:11px;letter-spacing:2px;border:1px solid transparent;width:fit-content;transition:all .3s;';
+    switchBtn.textContent = '[ TROCAR TRILHA SONORA ]';
+    switchBtn.onmouseenter = () => switchBtn.style.color = '#fff';
+    switchBtn.onmouseleave = () => switchBtn.style.color = '#b82020';
+    switchBtn.onclick = () => openModal(true); // Abre o modal em modo de troca
 
-    /* ── FADE DE VOLUME ── */
-    function fadeTo(target, duration) {
-        if (!isReady || !audio) return;
-        if (fadeInterval) { clearInterval(fadeInterval); fadeInterval = null; }
+    UI_CONTAINER.appendChild(volRow);
+    UI_CONTAINER.appendChild(switchBtn);
+
+    /* ── LÓGICA DE ÁUDIO ── */
+    function fadeTo(target, duration, callback) {
+        if (!audio) return;
+        if (fadeInterval) clearInterval(fadeInterval);
+        
         const steps = 40;
         const delay = duration / steps;
         let step = 0;
-        const start = audio.volume;
+        const startVol = audio.volume;
         const targetNorm = target / 100;
-        const delta = (targetNorm - start) / steps;
-        fadeInterval = setInterval(function() {
+        const delta = (targetNorm - startVol) / steps;
+
+        fadeInterval = setInterval(() => {
             step++;
-            const v = Math.min(1, Math.max(0, start + delta * step));
+            const v = Math.min(1, Math.max(0, startVol + delta * step));
             audio.volume = v;
             if (step >= steps) {
                 clearInterval(fadeInterval);
                 fadeInterval = null;
-                if (target > 0) currentVol = targetNorm;
+                if (callback) callback();
             }
         }, delay);
     }
 
-    /* ── MODAL ── */
-    const modal = document.createElement('div');
-    modal.id = 'bgm-modal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#050505;display:flex;align-items:center;justify-content:center;z-index:10000;font-family:monospace;color:#b82020;transition:opacity .6s;';
-
-    const box = document.createElement('div');
-    box.style.cssText = 'border:1px solid #b82020;padding:30px;text-align:center;';
-
-    const title = document.createElement('h2');
-    title.style.cssText = 'letter-spacing:5px;font-size:14px;margin-bottom:20px;';
-    title.textContent = 'INICIAR SISTEMA SONORO?';
-
-    const btnSim = document.createElement('button');
-    btnSim.style.cssText = 'background:#b82020;color:#fff;border:none;padding:10px 30px;cursor:pointer;font-family:monospace;margin-right:10px;letter-spacing:2px;';
-    btnSim.textContent = 'SIM';
-
-    const btnNao = document.createElement('button');
-    btnNao.style.cssText = 'background:transparent;color:#444;border:1px solid #222;padding:10px 30px;cursor:pointer;font-family:monospace;letter-spacing:2px;';
-    btnNao.textContent = 'NAO';
-
-    box.appendChild(title);
-    box.appendChild(btnSim);
-    box.appendChild(btnNao);
-    modal.appendChild(box);
-    document.body.appendChild(modal);
-
-    /* ── PLAYER ── */
-    function initPlayer() {
-        audio = new Audio(TRACK_PATH);
-        audio.loop = true;
-        audio.volume = 0;
-        audio.preload = 'auto';
-
-        audio.addEventListener('canplaythrough', function() {
-            if (isReady) return;
-            isReady = true;
-            audio.play().then(function() {
-                fadeTo(25, 2000);
-                volBtn.style.opacity = '1';
-            }).catch(function(e) {
-                console.error('BGM ERRO ao dar play:', e);
+    function playTrack(trackPath, isSwitching = false) {
+        const startMusic = () => {
+            if (audio) { audio.pause(); audio = null; }
+            
+            audio = new Audio(trackPath);
+            audio.loop = true;
+            audio.volume = 0;
+            audio.play().then(() => {
+                isReady = true;
+                UI_CONTAINER.style.opacity = '1';
+                fadeTo(currentVol * 100, 2000);
             });
-        }, { once: true });
+        };
 
-        audio.load();
-
-        slider.addEventListener('input', function() {
-            const v = parseInt(this.value) / 100;
-            currentVol = v;
-            if (!fadeInterval) audio.volume = v;
-        });
-
-        /* ── FADE AO SAIR / VOLTAR ── */
-        document.addEventListener('visibilitychange', function() {
-            if (!isReady) return;
-            if (document.hidden) {
-                fadeTo(0, 800);
-            } else {
-                fadeTo(Math.round(currentVol * 100), 800);
-            }
-        });
-
-        window.addEventListener('pagehide', function() {
-            if (audio) { audio.volume = 0; audio.pause(); }
-        });
+        if (isSwitching && audio) {
+            // Se estiver trocando, faz fadeout da atual primeiro
+            fadeTo(0, 500, startMusic);
+        } else {
+            startMusic();
+        }
     }
 
-    btnSim.onclick = function() {
-        modal.style.opacity = '0';
-        setTimeout(function() { modal.remove(); }, 600);
-        try { initPlayer(); } catch(e) { console.error('BGM ERRO:', e); }
-    };
+    /* ── MODAL DE SELEÇÃO ── */
+    function openModal(isSwitching = false) {
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(5,5,5,0.95);display:flex;align-items:center;justify-content:center;z-index:10000;font-family:monospace;color:#b82020;';
+        
+        const box = document.createElement('div');
+        box.style.cssText = 'border:1px solid #b82020;padding:30px;text-align:center;min-width:300px;background:#050505;';
+        
+        const title = document.createElement('h2');
+        title.style.cssText = 'letter-spacing:5px;font-size:14px;margin-bottom:20px;';
+        title.textContent = isSwitching ? 'ALTERAR TRILHA SONORA' : 'INICIAR SISTEMA SONORO?';
 
-    btnNao.onclick = function() {
-        modal.style.opacity = '0';
-        setTimeout(function() { modal.remove(); }, 600);
-    };
+        box.appendChild(title);
+
+        if (!isSwitching) {
+            // Botão SIM inicial
+            const btnSim = document.createElement('button');
+            btnSim.textContent = 'SIM';
+            btnSim.style.cssText = 'background:#b82020;color:#fff;border:none;padding:10px 30px;cursor:pointer;font-family:monospace;margin-right:10px;';
+            btnSim.onclick = () => {
+                box.innerHTML = '';
+                box.appendChild(title);
+                title.textContent = 'SELECIONE A BGM:';
+                renderOptions();
+            };
+            
+            const btnNao = document.createElement('button');
+            btnNao.textContent = 'NAO';
+            btnNao.style.cssText = 'background:transparent;color:#444;border:1px solid #222;padding:10px 30px;cursor:pointer;font-family:monospace;';
+            btnNao.onclick = () => modal.remove();
+
+            box.appendChild(btnSim);
+            box.appendChild(btnNao);
+        } else {
+            renderOptions();
+        }
+
+        function renderOptions() {
+            PLAYLIST.forEach(track => {
+                const b = document.createElement('button');
+                b.style.cssText = 'display:block;width:100%;background:transparent;color:#b82020;border:1px solid #b82020;padding:10px;margin-bottom:10px;cursor:pointer;font-family:monospace;transition:all .3s;';
+                b.textContent = track.title;
+                b.onmouseenter = () => { b.style.background = '#b82020'; b.style.color = '#fff'; };
+                b.onmouseleave = () => { b.style.background = 'transparent'; b.style.color = '#b82020'; };
+                b.onclick = () => {
+                    modal.remove();
+                    playTrack(track.path, isSwitching);
+                };
+                box.appendChild(b);
+            });
+            
+            if(isSwitching) {
+                const btnFechar = document.createElement('p');
+                btnFechar.textContent = '[ CANCELAR ]';
+                btnFechar.style.cssText = 'font-size:10px;margin-top:15px;cursor:pointer;opacity:0.6;';
+                btnFechar.onclick = () => modal.remove();
+                box.appendChild(btnFechar);
+            }
+        }
+
+        modal.appendChild(box);
+        document.body.appendChild(modal);
+    }
+
+    // Inicialização
+    openModal(false);
+
+    // Listener do slider de volume
+    slider.addEventListener('input', function() {
+        currentVol = parseInt(this.value) / 100;
+        if (audio && !fadeInterval) audio.volume = currentVol;
+    });
+
+    /* ── EVENTOS DE VISIBILIDADE ── */
+    document.addEventListener('visibilitychange', () => {
+        if (!isReady || !audio) return;
+        document.hidden ? fadeTo(0, 800) : fadeTo(currentVol * 100, 800);
+    });
 })();
 </script>
 
@@ -4171,6 +4226,70 @@ function PD2(n) {
     : init();
 
 })();
+</script>
+
+
+<script>
+  /* ==========================================
+     PAINEL DE CONTROLE DE STATUS (Variáveis)
+  ========================================== */
+  const STATUS = {
+    // Básicos
+    nivel: 1,
+    xp: 0,
+    
+    // Combate
+    hpAtual: 25,
+    hpMax: 25,
+    eaAtual: 26,
+    eaMax: 26,
+    defesa: 13,
+    percepcao: 13,
+    dtResistencia: "Mod + 9",
+    
+    // Atributos
+    forca: 1,
+    agilidade: 1,
+    constituicao: 1,
+    inteligencia: 2,
+    presenca: 4
+  };
+
+ /* ==========================================
+     MOTOR DE ATUALIZAÇÃO (Atualizado)
+  ========================================== */
+  document.addEventListener("DOMContentLoaded", () => {
+    // Nova função que injeta o valor em todos os elementos com a mesma classe
+    const setVal = (seletor, valor) => {
+      // Tenta encontrar por ID primeiro (para manter compatibilidade com o resto)
+      const elid = document.getElementById(seletor);
+      if (elid) elid.innerText = valor;
+
+      // Procura por todos os elementos que usam essa classe
+      const elementos = document.querySelectorAll("." + seletor);
+      elementos.forEach(el => {
+        el.innerText = valor;
+      });
+    };
+
+    // Aplicando os valores
+    // Agora o "val-nivel" vai procurar tanto o ID quanto a CLASSE
+    setVal("val-nivel", STATUS.nivel); 
+    
+    setVal("val-xp", STATUS.xp);
+    setVal("val-hp-atual", STATUS.hpAtual);
+    setVal("val-hp-max", STATUS.hpMax);
+    setVal("val-ea-atual", STATUS.eaAtual);
+    setVal("val-ea-max", STATUS.eaMax);
+    setVal("val-defesa", STATUS.defesa);
+    setVal("val-percepcao", STATUS.percepcao);
+    setVal("val-dt", STATUS.dtResistencia);
+    setVal("val-for", STATUS.forca);
+    setVal("val-agi", STATUS.agilidade);
+    setVal("val-con", STATUS.constituicao);
+    setVal("val-int", STATUS.inteligencia);
+    setVal("val-pre", STATUS.presenca);
+  });
 </script>
 </body>
 </html>
